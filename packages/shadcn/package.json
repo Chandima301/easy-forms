@@ -4,14 +4,14 @@
   "description": "Default renderer registry for @easy-forms/core — shadcn-style components built on Radix UI + Tailwind.",
   "license": "MIT",
   "author": "Easy Forms",
-  "homepage": "https://easy-forms.dev",
+  "homepage": "https://github.com/Chandima301/easy-forms#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/easy-forms/easy-forms.git",
+    "url": "git+https://github.com/Chandima301/easy-forms.git",
     "directory": "packages/shadcn"
   },
   "bugs": {
-    "url": "https://github.com/easy-forms/easy-forms/issues"
+    "url": "https://github.com/Chandima301/easy-forms/issues"
   },
   "keywords": [
     "react",

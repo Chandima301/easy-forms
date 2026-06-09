@@ -21,5 +21,5 @@ export const baseOptions: BaseLayoutProps = {
 		{ text: 'Examples', url: '/docs/examples' },
 		{ text: 'Enterprise', url: '/enterprise' },
 	],
-	githubUrl: 'https://github.com/easy-forms/easy-forms',
+	githubUrl: 'https://github.com/Chandima301/easy-forms',
 };
