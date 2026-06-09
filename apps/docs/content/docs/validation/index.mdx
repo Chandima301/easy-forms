@@ -1,0 +1,42 @@
+---
+title: Overview
+description: How validation works — typed built-ins, custom and async validators, messages, and modes.
+icon: ShieldCheck
+---
+
+Validation is declared on each question's `validators` object. The available rules are
+**narrowed by the field's value type**, so you can only use rules that make sense for the
+control.
+
+```tsx
+{
+	key: 'email',
+	label: 'Email',
+	control: 'email',
+	validators: {
+		required: true,
+		email: true,
+		minLength: 5,
+	},
+}
+```
+
+## The pipeline
+
+When a field validates, rules run in a defined order, short-circuiting on the first error:
+
+1. **Synchronous built-ins** (`required`, `minLength`, `email`, `min`, …)
+2. **Synchronous custom** validators
+3. **Asynchronous custom** validators (token-guarded against races)
+
+Hidden fields short-circuit entirely — a field hidden by a dependency is not validated and
+not included in the submitted values.
+
+## In this section
+
+<Cards>
+	<Card title="Built-in validators" href="/docs/validation/built-in" description="The typed-by-value rule set." />
+	<Card title="Custom & async" href="/docs/validation/custom-async" description="Functions, named errors, and server checks." />
+	<Card title="Messages & modes" href="/docs/validation/messages-modes" description="Custom messages and when validation runs." />
+	<Card title="Extending" href="/docs/validation/extending" description="Register your own named validators." />
+</Cards>

@@ -1,0 +1,48 @@
+---
+title: Performance
+description: Why Easy Forms stays fast — topic-based subscriptions, surgical re-renders, and bundle size.
+icon: Zap
+---
+
+Form performance usually degrades because every keystroke re-renders the entire form.
+Easy Forms is architected to avoid that.
+
+## Topic-based subscriptions
+
+The form state lives in a custom external store consumed via `useSyncExternalStore`. The
+store keeps **per-field listeners**. Changing one field replaces only that field's state
+object and notifies:
+
+- the subscribers of that field, and
+- the form-state subscriber (for aggregate `isDirty` / `isValid`).
+
+Every other field stays put. A 100-field form behaves like a 1-field form when you type.
+
+```text
+type in "email"  ──▶  re-render: <Field key="email"> + the submit footer
+                      no re-render: the other 99 fields
+```
+
+## No manual memoization
+
+Because subscriptions are scoped, you don't need to wrap fields in `memo`, split forms into
+sub-components, or debounce inputs to keep things smooth. The architecture does it.
+
+## Derived values don't thrash
+
+`valueDependsOn` derivations run on a microtask and write with `markDirty: false`, so they
+recompute efficiently and don't churn the dirty state or trigger unrelated work.
+
+## Bundle size
+
+- `@easy-forms/core` has **zero UI dependencies** and is tree-shakeable — you pull in only
+  what you import.
+- Builds ship in dual **ESM/CJS** with `.d.ts`, so bundlers can shake unused exports.
+- The shadcn package marks CSS as a side effect so styles aren't dropped, while code stays
+  shakeable.
+
+## Tips for very large forms
+
+- Prefer `valueDependsOn` over manual effects for derived fields.
+- Keep `compute` functions pure and cheap; they run on source-field changes.
+- Use the wizard to split long flows — all panels mount, but only one is visible.

@@ -1,0 +1,5 @@
+{
+	"title": "Core concepts",
+	"icon": "Boxes",
+	"pages": ["index", "schema", "groups-layout", "store-rendering", "lifecycle"]
+}

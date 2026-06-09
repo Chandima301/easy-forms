@@ -1,0 +1,49 @@
+---
+title: Hooks
+description: Subscribe to exactly the slice of form state you need.
+icon: Anchor
+---
+
+All hooks must be used inside a `<Form>` (or a `FormStoreProvider`).
+
+## useField
+
+```ts
+const field = useField(key: string): UseFieldReturn;
+```
+
+Subscribes to a single field. Returns its `value`, `error`, `touched`/`dirty` flags, and
+setters (`setValue`, `setTouched`, …). This is what renderers use under the hood.
+
+## useFormState
+
+```ts
+const { isDirty, isValid, isSubmitting, submitCount } = useFormState();
+```
+
+Subscribes to the aggregate form state. Use it to build a custom footer or submit gate.
+
+## useFormValues
+
+```ts
+const values = useFormValues(): Record<string, unknown>;
+```
+
+Subscribes to all current values. Prefer `useWatch` when you only need a few.
+
+## useWatch
+
+```ts
+const [country, region] = useWatch(['country', 'region']);
+```
+
+Subscribes to just the named fields — efficient for reacting to specific values outside the
+dependency engine.
+
+## useGroup
+
+```ts
+const group = useGroup(id: string);
+```
+
+Subscribes to a group's runtime props (e.g. its effective `hidden`).

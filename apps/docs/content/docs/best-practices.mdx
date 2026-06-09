@@ -1,0 +1,48 @@
+---
+title: Best practices
+description: Patterns that keep schemas readable, typed, and maintainable at scale.
+icon: Sparkles
+---
+
+## Type your form data
+
+Always pass `TFormData` to `FormSchema` and `Form`. You get autocomplete on keys, typed
+dependency sources, and a typed `onSubmit` payload — and typos become compile errors.
+
+## Organize large schemas
+
+- Split a big schema into composable arrays of groups and spread them together.
+- Co-locate a group's questions with the data they represent.
+- Give groups stable `id`s when they use dependencies (required) — and it helps debugging
+  even when they don't.
+
+## Choose the right dependency kind
+
+| You want to… | Use |
+| --- | --- |
+| Show/hide, change options, toggle required/readOnly | `propsDependsOn` |
+| Compute a value from other fields | `valueDependsOn` |
+| Clear a field when a switch flips on | `resetDependsOn` |
+| Clear a field/section when it hides | `clearWhenHidden` |
+
+## Groups vs. wizard
+
+- Use **groups** to organize a single-page form.
+- Use a **wizard** when the flow is long enough that step-by-step reduces cognitive load,
+  or when later steps depend on earlier answers.
+
+## Derived fields are read-only
+
+Mark `valueDependsOn` targets `readOnly: true` so users don't fight the computation, and
+rely on `markDirty: false` keeping the form from looking dirty after a recompute.
+
+## Validate on the server
+
+Mirror critical validators on your backend. Client validation is for fast feedback; the
+server is the source of truth. See [Security](/docs/security).
+
+## Test the behavior, not the markup
+
+Because logic lives in the schema, you can assert on submitted values and conditional
+behavior without snapshotting DOM. Drive fields through the store or fire events on the
+rendered controls.

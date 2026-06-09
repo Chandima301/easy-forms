@@ -1,0 +1,31 @@
+---
+title: Number
+description: Numeric input with prefix/suffix, decimal scale, and thousand separators.
+icon: Hash
+---
+
+Stores `number | null`.
+
+<LiveForm
+	schema={{ groups: [{ layout: 'grid', gridCols: 2, questions: [
+		{ key: 'price', label: 'Price', control: 'number', prefix: '$', decimalScale: 2, allowThousandSeparator: true, validators: { min: 0 } },
+		{ key: 'discount', label: 'Discount', control: 'number', suffix: '%', validators: { min: 0, max: 100 } },
+	] }] }}
+	initialValues={{ price: null, discount: null }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'min', type: 'number', description: 'Minimum allowed value (also a validator).' },
+	{ name: 'max', type: 'number', description: 'Maximum allowed value (also a validator).' },
+	{ name: 'decimalScale', type: 'number', description: 'Number of decimal places to display.' },
+	{ name: 'allowThousandSeparator', type: 'boolean', description: 'Group digits with separators (1,000).' },
+	{ name: 'prefix', type: 'string', description: 'Static text before the value (e.g. "$").' },
+	{ name: 'suffix', type: 'string', description: 'Static text after the value (e.g. "%").' },
+	{ name: 'placeholder', type: 'string', description: 'Placeholder text.' },
+]} />
+
+## Validators
+
+`required`, `min`, `max`, and `custom`. The empty state is `null`, not `0`.

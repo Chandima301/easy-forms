@@ -1,0 +1,42 @@
+---
+title: Extending validators
+description: Register your own reusable named validator rules via module augmentation.
+icon: Puzzle
+---
+
+Beyond `custom`, you can teach the type system about your own reusable validator rules so
+they're available — and type-checked — across every schema.
+
+## Augment the registry
+
+```ts
+declare module '@easy-forms/core' {
+	interface ValidatorRegistry {
+		creditCard?: boolean;
+		stronger?: { minScore: number };
+	}
+}
+```
+
+Now `validators: { creditCard: true }` is valid and typed wherever you author a schema.
+
+```tsx
+{
+	key: 'card',
+	label: 'Card number',
+	control: 'text',
+	validators: { required: true, creditCard: true },
+}
+```
+
+## Wire up the implementation
+
+Provide the runtime behavior for your registered rule when you configure validation in your
+app (alongside the built-in validators). Pair this with a `custom` validator if you want to
+keep the logic inline, or centralize it so every schema benefits.
+
+<Callout type="info">
+	This is the same module-augmentation pattern used to add [custom control
+	types](/docs/components/custom-controls) and [custom dependency
+	kinds](/docs/dynamic) — extend the library without forking it.
+</Callout>

@@ -1,0 +1,32 @@
+---
+title: Dropdown
+description: Single choice from a list, with optional async option loading.
+icon: ChevronDown
+---
+
+Stores `value | null` (the selected option's `value`).
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'country', label: 'Country', control: 'dropdown', placeholder: 'Pick a country', clearable: true, options: [
+			{ value: 'us', label: 'United States' },
+			{ value: 'gb', label: 'United Kingdom' },
+			{ value: 'lk', label: 'Sri Lanka' },
+		], validators: { required: true } },
+	] }] }}
+	initialValues={{ country: null }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'options', type: 'Option[]', description: 'Static list of { value, label, disabled? }.' },
+	{ name: 'loadOptions', type: '(values) => Option[] | Promise<Option[]>', description: 'Load options dynamically (e.g. from an API).' },
+	{ name: 'placeholder', type: 'string', description: 'Placeholder when nothing is selected.' },
+	{ name: 'clearable', type: 'boolean', description: 'Allow clearing back to null.' },
+]} />
+
+## Dynamic options
+
+Options frequently depend on another field (country → region). Drive them with a
+`propsDependsOn` rule — see [Dynamic props](/docs/dynamic/props-depends-on).

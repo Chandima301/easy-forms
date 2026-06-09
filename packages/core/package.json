@@ -1,0 +1,71 @@
+{
+  "name": "@easy-forms/core",
+  "version": "0.1.0",
+  "description": "Headless React form library — types, state engine, hooks, dependency engine, wizard.",
+  "license": "MIT",
+  "author": "Easy Forms",
+  "homepage": "https://easy-forms.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easy-forms/easy-forms.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/easy-forms/easy-forms/issues"
+  },
+  "keywords": [
+    "react",
+    "form",
+    "forms",
+    "form-builder",
+    "schema",
+    "schema-driven",
+    "validation",
+    "wizard",
+    "headless",
+    "typescript"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist .turbo"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "jsdom": "^25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  }
+}

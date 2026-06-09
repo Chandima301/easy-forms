@@ -1,0 +1,78 @@
+---
+title: Custom controls
+description: Render any UI as a field with the `custom` control, or register a brand-new control type.
+icon: Wand
+---
+
+When none of the built-ins fit, the `custom` control lets you render any component as a
+fully-managed field — it participates in validation, dirty/touched tracking, and
+dependencies like any other.
+
+## The `custom` control
+
+Provide a `component` (or a `render` function). It receives `CustomRendererProps`:
+
+```ts
+interface CustomRendererProps<TValue> {
+	value: TValue;
+	onChange: (value: TValue) => void;
+	onBlur: () => void;
+	disabled: boolean;
+	readOnly: boolean;
+	error: string | null;
+	[extra: string]: unknown; // anything from componentProps
+}
+```
+
+```tsx title="color-swatch.tsx"
+import type { CustomRendererProps } from '@easy-forms/core';
+
+function ColorSwatch({ value, onChange, disabled }: CustomRendererProps<string>) {
+	const palette = ['#0f172a', '#dc2626', '#16a34a', '#2563eb', '#9333ea'];
+	return (
+		<div style={{ display: 'flex', gap: 8 }}>
+			{palette.map((hex) => (
+				<button
+					key={hex}
+					type="button"
+					disabled={disabled}
+					aria-label={hex}
+					aria-pressed={value === hex}
+					onClick={() => onChange(hex)}
+					style={{ width: 28, height: 28, borderRadius: 999, background: hex }}
+				/>
+			))}
+		</div>
+	);
+}
+
+const schema = {
+	groups: [{ questions: [
+		{ key: 'color', label: 'Theme color', control: 'custom', component: ColorSwatch },
+	] }],
+};
+```
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'component', type: 'ComponentType<CustomRendererProps>', description: 'Your control component.' },
+	{ name: 'componentProps', type: 'Record<string, unknown>', description: 'Extra props merged into CustomRendererProps.' },
+	{ name: 'render', type: '(props) => ReactNode', description: 'Inline render function (alternative to component).' },
+]} />
+
+## Registering a new control type
+
+For a control you want to reuse across many schemas, register a new control identifier via
+module augmentation, then add a renderer for it to your registry:
+
+```ts
+declare module '@easy-forms/core' {
+	interface ControlTypeExtensions {
+		signature: { canvasSize: { w: number; h: number } };
+	}
+}
+```
+
+Now `control: 'signature'` is a first-class, type-checked control. Add a `signature`
+renderer to your registry. See [Theming & customization](/docs/theming).

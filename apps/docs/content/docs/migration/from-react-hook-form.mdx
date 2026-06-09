@@ -1,0 +1,57 @@
+---
+title: From React Hook Form
+description: Translate register/Controller patterns into schema questions.
+icon: ArrowLeftRight
+---
+
+React Hook Form is excellent and lower-level. Easy Forms sits one layer up: instead of
+registering inputs, you declare them.
+
+## Mental model
+
+| React Hook Form | Easy Forms |
+| --- | --- |
+| `useForm()` | `<Form schema registry onSubmit>` |
+| `register('email')` | a question `{ key: 'email', control: 'email' }` |
+| `<Controller>` for custom inputs | the [`custom` control](/docs/components/custom-controls) |
+| `formState.errors` | per-field state via `useField`, or the rendered error |
+| `resolver` (zod/yup) | typed `validators` per question (+ custom/async) |
+| `watch('x')` | `useWatch(['x'])` or a `propsDependsOn` rule |
+
+## Before (RHF)
+
+```tsx
+const { register, handleSubmit, formState: { errors } } = useForm();
+
+<form onSubmit={handleSubmit(onSubmit)}>
+	<input {...register('email', { required: true })} />
+	{errors.email && <span>Required</span>}
+	<input type="number" {...register('age', { min: 18 })} />
+	<button>Submit</button>
+</form>;
+```
+
+## After (Easy Forms)
+
+```tsx
+const schema: FormSchema = {
+	groups: [{ questions: [
+		{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true } },
+		{ key: 'age', label: 'Age', control: 'number', validators: { min: 18 } },
+	] }],
+};
+
+<Form schema={schema} registry={shadcnRegistry} onSubmit={onSubmit} />;
+```
+
+## What you gain
+
+- Conditional logic, derived values, and resets without `watch` + effects.
+- Accessible renderers without wiring labels and ARIA yourself.
+- A serializable definition you can store and assemble at runtime.
+
+## What's different
+
+- No `register`/`Controller` — the schema owns inputs.
+- Validation is declared per question (with full custom/async support) rather than via an
+  external resolver.

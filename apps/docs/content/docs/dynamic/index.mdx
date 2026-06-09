@@ -1,0 +1,50 @@
+---
+title: Overview
+description: Three categorical dependency kinds cover every dynamic behavior in a form.
+icon: Workflow
+---
+
+Conditional logic in Easy Forms is declarative. A question (or group) declares a
+`dependents` object with up to three kinds of dependency. The dependency engine subscribes
+to the right source fields and reacts when they change.
+
+## The three kinds
+
+<Cards>
+	<Card title="propsDependsOn" href="/docs/dynamic/props-depends-on" description="Change any display/behavior prop: hidden, required, options, placeholder, min/max, and more." />
+	<Card title="valueDependsOn" href="/docs/dynamic/value-depends-on" description="Derive a field's value from other fields." />
+	<Card title="resetDependsOn" href="/docs/dynamic/reset-depends-on" description="Reset a field when a predicate becomes true." />
+</Cards>
+
+## Why only three?
+
+Earlier designs had a separate handler per behavior (visibility, options, required,
+read-only, min/max…). Easy Forms collapses all *display and behavior* changes into one kind
+— `propsDependsOn` — whose `compute` returns a `Partial<RuntimeProps>`. **Adding a new
+dynamic prop requires zero new handler code.** Value changes are the other category, split
+into derive (`valueDependsOn`) and reset (`resetDependsOn`).
+
+```ts
+interface BuiltInDependencies<TFormData> {
+	propsDependsOn?: PropsDependencyRule<TFormData>[];
+	valueDependsOn?: ValueDependency<TFormData>;
+	resetDependsOn?: ResetDependency<TFormData>;
+}
+```
+
+## Typed sources
+
+Each rule lists its `fieldNames`; the `compute`/`when` function receives a `Pick<>` of just
+those fields, fully typed:
+
+```ts
+dependents: {
+	propsDependsOn: [{
+		fieldNames: ['country'],
+		compute: (v) => ({ disabled: !v.country }), // v is { country: ... }
+	}],
+}
+```
+
+Groups can declare dependencies too — see [Conditional
+groups](/docs/dynamic/conditional-groups).

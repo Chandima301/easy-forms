@@ -1,0 +1,51 @@
+---
+title: Enterprise
+description: What ships today for teams, and a transparent roadmap for governance and support.
+icon: Building2
+---
+
+Easy Forms is designed so a platform team can standardize every form in a product on one
+typed, accessible, headless foundation. This page is an honest split between what is
+**available today** and what is **on the roadmap**.
+
+## Available today
+
+<Cards>
+	<Card title="Typed schema & validators" description="Strict TypeScript end to end. Field keys, dependency sources, and submit payloads are all type-checked." />
+	<Card title="Headless & owned" description="You own the markup, theming, and accessibility. No vendor UI to fight." />
+	<Card title="Extensible" description="Add controls, validators, and dependency kinds via module augmentation — without forking." />
+	<Card title="Plugin lifecycle" description="onInit / onChange / onSubmit / onDestroy hooks for autosave, logging, and audit trails." />
+	<Card title="Multi-step wizards" description="Per-step validation, conditional steps, and resumable persistence." />
+	<Card title="Predictable performance" description="A topic-based store keeps large forms fast without manual memoization." />
+</Cards>
+
+## On the roadmap
+
+<Callout type="info" title="Planned — not yet available">
+	The items below are shared so you can plan adoption with full visibility. They are not
+	implemented today.
+</Callout>
+
+- **SSO / SAML-aware field packs** — drop-in identity fields for enterprise auth flows.
+- **First-party audit-log plugin** — structured change events for compliance.
+- **SOC 2 posture & compliance documentation.**
+- **Private renderer registry distribution** for internal design systems.
+- **Priority support with response SLAs.**
+
+## Build the governance you need today
+
+Even before the roadmap lands, the plugin system lets you implement audit logging and
+autosave now:
+
+```ts
+import { definePlugin } from '@easy-forms/core';
+
+const auditPlugin = definePlugin({
+	onChange: ({ key, values }) => track('form.field.changed', { key }),
+	onSubmit: ({ values }) => track('form.submitted', { keys: Object.keys(values) }),
+});
+```
+
+## Talk to us
+
+Planning a rollout? Reach the team from the [Enterprise page](/enterprise).

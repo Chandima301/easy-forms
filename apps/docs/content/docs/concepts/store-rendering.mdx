@@ -1,0 +1,72 @@
+---
+title: The store & rendering
+description: The custom external store, topic-based per-field subscriptions, and why re-renders stay surgical.
+icon: Cpu
+---
+
+Easy Forms does **not** use React Hook Form, Zustand, or React state for form data. It
+uses a custom external store consumed via React's `useSyncExternalStore`.
+
+## Topic-based subscriptions
+
+The store maintains a per-field listener registry. When a field's value changes, the store
+replaces that field's state object with a new reference and notifies **only**:
+
+- the subscribers of that specific field, and
+- the form-state subscriber (for aggregate `isDirty` / `isValid`).
+
+Other fields do not re-render. This is what keeps large forms fast without you sprinkling
+`memo` everywhere.
+
+```text
+setValue('email', ...) ──▶ wake "email" subscribers + form-state subscriber
+                           (the other 99 fields stay put)
+```
+
+## The hooks
+
+You rarely touch the store directly — the hooks subscribe to exactly the right topic:
+
+| Hook | Subscribes to | Returns |
+| --- | --- | --- |
+| `useField(key)` | one field | value, error, touched/dirty, setters |
+| `useFormState()` | form aggregate | `isDirty`, `isValid`, `isSubmitting`, counts |
+| `useFormValues()` | all values | the current values object |
+| `useWatch(keys)` | specific fields | just those values |
+| `useGroup(id)` | one group | the group's runtime props (e.g. hidden) |
+
+See the [Hooks API](/docs/api/hooks) for full signatures.
+
+## Field state
+
+Each field tracks:
+
+```ts
+interface FieldState {
+	value: unknown;
+	initialValue: unknown;
+	error: string | null;
+	errors: Record<string, string>;   // named custom validators
+	touched: boolean;
+	dirty: boolean;
+	validating: boolean;
+	runtimeOverrides: Partial<RuntimeProps>; // written by propsDependsOn
+	hiddenByAncestor: boolean;               // ancestor group hidden
+}
+```
+
+## Bring your own store
+
+`<Form>` creates a store for you. For advanced cases (driving values
+programmatically, sharing one store across components), create one yourself and pass it in:
+
+```tsx
+import { createFormStore, Form } from '@easy-forms/core';
+
+const store = createFormStore({ initialValues: { qty: 1 } });
+store.setValue('qty', 5);
+
+<Form store={store} schema={schema} registry={shadcnRegistry} onSubmit={...} />;
+```
+
+This is exactly how the homepage animation drives its "interaction beat".

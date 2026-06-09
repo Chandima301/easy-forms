@@ -1,0 +1,51 @@
+---
+title: Plugins
+description: Lifecycle hooks and the built-in logger / autosave plugins.
+icon: Plug
+---
+
+Plugins observe and react to the form lifecycle. Pass them to `<Form plugins={[...]}>`.
+
+## definePlugin
+
+```ts
+import { definePlugin } from '@easy-forms/core';
+
+const myPlugin = definePlugin({
+	onInit:    (ctx) => {},
+	onChange:  (ctx) => {},
+	onSubmit:  (ctx) => {},
+	onDestroy: (ctx) => {},
+});
+```
+
+Each hook receives a `PluginContext` with access to the store and current values.
+
+## Built-in: loggerPlugin
+
+```ts
+import { loggerPlugin } from '@easy-forms/core';
+
+<Form plugins={[loggerPlugin({ prefix: '[signup]' })]} ... />;
+```
+
+Logs lifecycle events to the console — handy in development.
+
+## Built-in: autosavePlugin
+
+```ts
+import { autosavePlugin } from '@easy-forms/core';
+
+<Form plugins={[autosavePlugin({ key: 'draft', debounceMs: 800 })]} ... />;
+```
+
+Debounced persistence of form values. Use it for draft-saving long forms.
+
+## Example: an audit plugin
+
+```ts
+const auditPlugin = definePlugin({
+	onChange: ({ key }) => analytics.track('field.changed', { key }),
+	onSubmit: ({ values }) => analytics.track('form.submitted', { keys: Object.keys(values) }),
+});
+```

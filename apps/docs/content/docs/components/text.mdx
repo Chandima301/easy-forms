@@ -1,0 +1,31 @@
+---
+title: Text
+description: Single-line text input — also password, tel, and url via inputType.
+icon: Type
+---
+
+Stores a `string`. The most common control.
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'username', label: 'Username', control: 'text', placeholder: 'ada', prefix: '@', validators: { required: true, minLength: 3 } },
+		{ key: 'password', label: 'Password', control: 'text', inputType: 'password', validators: { required: true, minLength: 8 } },
+	] }] }}
+	initialValues={{ username: '', password: '' }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'placeholder', type: 'string', description: 'Placeholder text.' },
+	{ name: 'maxLength', type: 'number', description: 'Maximum character count.' },
+	{ name: 'capitalize', type: "'upper' | 'lower' | 'title'", description: 'Transform the value as the user types.' },
+	{ name: 'prefix', type: 'string', description: 'Static text shown before the input (e.g. "@").' },
+	{ name: 'suffix', type: 'string', description: 'Static text shown after the input.' },
+	{ name: 'inputType', type: "'text' | 'password' | 'tel' | 'url'", default: "'text'", description: 'The underlying HTML input type.' },
+]} />
+
+## Validators
+
+`required`, `minLength`, `maxLength`, `pattern`, and `custom`. See
+[Validation](/docs/validation).

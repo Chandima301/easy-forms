@@ -1,0 +1,5 @@
+{
+	"title": "Migration",
+	"icon": "ArrowLeftRight",
+	"pages": ["index", "from-react-hook-form", "from-formik", "from-handrolled"]
+}

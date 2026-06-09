@@ -1,0 +1,44 @@
+---
+title: Overview
+description: The four ideas that make Easy Forms work — the schema, the store, the renderer registry, and the dependency engine.
+icon: Boxes
+---
+
+Easy Forms has a small number of moving parts. Once these click, the whole library
+makes sense.
+
+## The pipeline
+
+```text
+FormSchema ──▶ <Form> ──▶ FormStore ──▶ <Field> per question ──▶ Renderer (from registry)
+                  │            ▲                                        │
+                  │            └──────────── values / errors ──────────┘
+                  └──▶ Dependency engine (props / value / reset)
+                  └──▶ Plugins (onInit / onChange / onSubmit / onDestroy)
+```
+
+1. **Schema** — a typed description of the form as data. [Read more](/docs/concepts/schema)
+2. **Store** — a custom external store (via `useSyncExternalStore`) holding every field's
+   value, error, and touched/dirty state, with topic-based per-field subscriptions.
+   [Read more](/docs/concepts/store-rendering)
+3. **Renderer registry** — a map from a control name (`text`, `dropdown`, …) to a React
+   component. The shadcn registry is the default; it is fully swappable.
+   [Read more](/docs/theming)
+4. **Dependency engine** — evaluates the three categorical dependency kinds to update
+   props, derive values, and reset fields. [Read more](/docs/dynamic)
+
+## What you write vs. what the library owns
+
+<Cards>
+	<Card title="You write" description="The schema, validators, dependency rules, your onSubmit handler, and (optionally) custom renderers." />
+	<Card title="The library owns" description="State, rendering, validation execution, conditional logic, dirty/touched tracking, wizard navigation, and submission flow." />
+</Cards>
+
+## Mount order matters
+
+`<Field>` registers itself with the store in a `useEffect`. `<Form>` attaches the
+dependency engine and plugins in its own `useEffect`, which runs **after** all child
+field effects — so the engine sees every registered field on its first run. You never
+manage this yourself; it is worth knowing when reasoning about timing.
+
+Continue with [The schema](/docs/concepts/schema).

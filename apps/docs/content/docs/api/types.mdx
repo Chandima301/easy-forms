@@ -1,0 +1,78 @@
+---
+title: Types
+description: The core type vocabulary.
+icon: Type
+---
+
+## FormSchema
+
+```ts
+interface FormSchema<TFormData> {
+	id?: string;
+	title?: string;
+	description?: string;
+	groups: Group<TFormData>[];
+	wizard?: WizardConfig<TFormData>;
+}
+```
+
+## Question
+
+A discriminated union keyed by `control`. The shared base:
+
+```ts
+interface BaseQuestion<TControl, TValue, TFormData> {
+	key: string;
+	label: string;
+	control: TControl;
+	defaultValue?: TValue;
+	description?: string;
+	className?: string;
+	readOnly?: boolean;
+	disabled?: boolean;
+	hidden?: boolean;
+	required?: boolean;
+	ignoreDirtyState?: boolean;
+	clearWhenHidden?: boolean;       // default true
+	validators?: Validators<TValue, TFormData>;
+	dependents?: Dependency<TFormData>;
+	formatter?: (value: TValue) => TValue;
+	meta?: Record<string, unknown>;
+}
+```
+
+See [Form components](/docs/components) for every control's specific options.
+
+## Validators
+
+`BuiltInValidators<TValue, TFormData>` narrows by value type (string / number / array), plus
+`required` and `custom` everywhere. Augment `ValidatorRegistry` to add your own. See
+[Validation](/docs/validation).
+
+## Dependency
+
+```ts
+interface BuiltInDependencies<TFormData> {
+	propsDependsOn?: PropsDependencyRule<TFormData>[];
+	valueDependsOn?: ValueDependency<TFormData>;
+	resetDependsOn?: ResetDependency<TFormData>;
+}
+```
+
+Augment `DependencyRegistry` for custom dependency kinds.
+
+## RuntimeProps
+
+The props `propsDependsOn` may write: `hidden`, `required`, `readOnly`, `disabled`,
+`options`, `min`, `max`, `minDate`, `maxDate`, `placeholder`, `prefix`, `suffix`,
+`description`, `label`, `className`, and (group-only) `title`.
+
+## Module augmentation
+
+```ts
+declare module '@easy-forms/core' {
+	interface ControlTypeExtensions { signature: { canvasSize: { w: number; h: number } } }
+	interface ValidatorRegistry { creditCard?: boolean }
+	interface DependencyRegistry<TFormData> { /* custom kinds */ }
+}
+```

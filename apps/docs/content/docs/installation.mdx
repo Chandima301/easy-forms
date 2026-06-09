@@ -1,0 +1,84 @@
+---
+title: Installation
+description: Install Easy Forms, wire up Tailwind for the shadcn renderers, and import the form chrome stylesheet.
+icon: Download
+---
+
+Easy Forms ships as two packages. Install both to get the engine plus the default
+shadcn renderer registry.
+
+<PackageInstall packages="@easy-forms/core @easy-forms/shadcn" />
+
+<Callout type="info">
+	`@easy-forms/core` is headless and has zero UI dependencies. If you provide your own
+	renderer registry, you can use it without `@easy-forms/shadcn`.
+</Callout>
+
+## Peer dependencies
+
+The packages expect React 18+ in your app:
+
+| Dependency | Version |
+| --- | --- |
+| `react` | `>= 18` |
+| `react-dom` | `>= 18` |
+| `tailwindcss` | `>= 3.4` (only for `@easy-forms/shadcn`) |
+
+## Import the form chrome stylesheet
+
+The shadcn package ships its container, footer, buttons, grid, and wizard navigation
+as **plain CSS**. Import it once, near your app root:
+
+```ts title="app/layout.tsx"
+import '@easy-forms/shadcn/styles.css';
+```
+
+## Configure Tailwind
+
+The shadcn **renderers** (inputs, selects, etc.) use Tailwind utility classes. Tailwind
+must scan the package's compiled output so those classes are generated.
+
+<Tabs items={["Tailwind v3", "Tailwind v4"]}>
+	<Tab value="Tailwind v3">
+
+```js title="tailwind.config.js"
+export default {
+	content: [
+		'./src/**/*.{ts,tsx}',
+		// Scan the shadcn renderer bundles:
+		'./node_modules/@easy-forms/shadcn/dist/**/*.{js,cjs}',
+	],
+};
+```
+
+	</Tab>
+	<Tab value="Tailwind v4">
+
+```css title="globals.css"
+@import 'tailwindcss';
+
+/* Scan the shadcn renderer bundles so their utility classes are generated. */
+@source '../node_modules/@easy-forms/shadcn/dist/**/*.js';
+```
+
+	</Tab>
+</Tabs>
+
+<Callout type="warn" title="Don't put chrome classes in @layer components">
+	The form chrome ships as plain CSS on purpose. If you re-declare those class names inside
+	a Tailwind `@layer components` block, Tailwind may purge them when it can't find the class
+	names in your scanned source.
+</Callout>
+
+## Framework notes
+
+<Cards>
+	<Card title="Next.js" description="Import styles.css in your root layout. If you consume the packages from source in a monorepo, add them to transpilePackages." />
+	<Card title="Vite" description="Import styles.css in main.tsx and add the shadcn dist path to your Tailwind content array." />
+	<Card title="Remix" description="Import the stylesheet via a links() export or a global CSS import, then configure Tailwind content as above." />
+</Cards>
+
+## Verify it works
+
+Continue to the [Quick start](/docs/quick-start) to render your first form and confirm
+your styles are wired up correctly.

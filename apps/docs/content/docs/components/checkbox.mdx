@@ -1,0 +1,20 @@
+---
+title: Checkbox
+description: A single boolean toggle.
+icon: SquareCheck
+---
+
+Stores a `boolean`.
+
+<CheckboxRequiredDemo />
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'checkboxLabel', type: 'string', description: 'The text shown next to the checkbox (distinct from the field label).' },
+]} />
+
+## Validators
+
+`required` (must be `true`) and `custom`. A `custom` validator is the idiomatic way to
+require a checkbox with a friendly message, as shown above.

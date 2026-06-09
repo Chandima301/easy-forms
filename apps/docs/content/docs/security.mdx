@@ -1,0 +1,48 @@
+---
+title: Security
+description: The client-side trust boundary, safe custom renderers, and what's on the roadmap.
+icon: ShieldAlert
+---
+
+Easy Forms runs in the browser. That shapes where its guarantees end and your
+responsibilities begin.
+
+## The trust boundary
+
+<Callout type="warn" title="Client validation is UX, not enforcement">
+	Every validator — built-in, custom, or async — runs on the client and can be bypassed.
+	**Always re-validate on the server** before trusting submitted data.
+</Callout>
+
+Treat the schema's validators as the first line of feedback for users, and your backend as
+the actual gate.
+
+## File uploads
+
+The `file` control's `accept`, `maxSizeMB`, `minSizeMB`, and `maxFiles` improve the upload
+experience but are not a security control. On the server:
+
+- Re-check MIME type and size.
+- Scan or sandbox untrusted files.
+- Never trust the client-reported filename or type.
+
+## Custom renderers and XSS
+
+The core does not inject HTML. If you build a [custom control](/docs/components/custom-controls)
+that renders user-provided strings, follow normal React safety:
+
+- Prefer rendering values as text (React escapes by default).
+- Avoid `dangerouslySetInnerHTML`; if you must, sanitize first.
+
+## No `eval`
+
+The dependency engine evaluates plain JavaScript functions you provide (`compute`, `when`).
+There is no string-based expression evaluation or `eval` of schema data.
+
+## Roadmap
+
+<Callout type="info" title="Planned, not yet available">
+	First-party sanitization helpers, Content-Security-Policy guidance, and an audit-log
+	plugin are on the [roadmap](/docs/enterprise). Today, apply your platform's existing CSP
+	and sanitization practices.
+</Callout>

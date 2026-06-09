@@ -1,0 +1,85 @@
+---
+title: The schema
+description: FormSchema, groups, and questions — the typed shape that is the single source of truth.
+icon: FileJson
+---
+
+A form is a `FormSchema<TFormData>`. It is plain, serializable data (apart from
+functions like validators and dependency `compute`).
+
+## Shape
+
+```ts
+interface FormSchema<TFormData> {
+	id?: string;
+	title?: string;
+	description?: string;
+	groups: Group<TFormData>[];
+	wizard?: WizardConfig<TFormData>;
+}
+```
+
+- **`groups`** — the content of the form. Groups are recursive containers of questions
+  (or nested groups). See [Groups & layout](/docs/concepts/groups-layout).
+- **`wizard`** — when present, the form renders as a multi-step wizard instead of a single
+  page. See [Wizard](/docs/wizard).
+
+## A question
+
+Every question shares a common base, then adds control-specific options:
+
+```ts
+interface BaseQuestion {
+	key: string;          // unique field key — becomes the value key
+	label: string;
+	control: ControlType; // 'text' | 'number' | 'dropdown' | ...
+	defaultValue?: TValue;
+	description?: string;
+	readOnly?: boolean;
+	disabled?: boolean;
+	hidden?: boolean;
+	required?: boolean;          // usually derived from validators
+	clearWhenHidden?: boolean;   // default true
+	validators?: Validators<TValue, TFormData>;
+	dependents?: Dependency<TFormData>;
+	formatter?: (value: TValue) => TValue;
+	meta?: Record<string, unknown>; // renderer escape hatch
+}
+```
+
+The `control` string is the **discriminator**. Each control narrows its value type, so
+the available options and validators are type-checked. For example, a `checkbox` has a
+`boolean` value, so `validators: { minLength: 3 }` on it is a compile error.
+
+<Callout type="info">
+	See every control and its options in [Form components](/docs/components).
+</Callout>
+
+## Typing your form data
+
+Provide `TFormData` to get full type-safety on keys and dependency sources:
+
+```ts
+interface ProfileData extends Record<string, unknown> {
+	displayName: string;
+	age: number | null;
+	newsletter: boolean;
+}
+
+const schema: FormSchema<ProfileData> = {
+	groups: [
+		{ questions: [
+			{ key: 'displayName', label: 'Display name', control: 'text' },
+			{ key: 'age', label: 'Age', control: 'number' },
+			{ key: 'newsletter', label: 'Newsletter', control: 'checkbox' },
+			// { key: 'typo', ... }  // ❌ 'typo' is not a key of ProfileData
+		] },
+	],
+};
+```
+
+## Serializability
+
+Apart from functions (validators, `compute`, `loadOptions`, custom `component`), a schema
+is plain JSON. That means you can store the static parts in a database or CMS and assemble
+forms at runtime — which is exactly what the [Playground](/playground) does.

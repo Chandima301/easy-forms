@@ -1,0 +1,66 @@
+---
+title: Groups & layout
+description: Recursive groups, grid vs stack layouts, and group-level behavior.
+icon: LayoutGrid
+---
+
+Groups are recursive containers. They organize questions visually and act as a unit for
+conditional logic.
+
+## Shape
+
+```ts
+interface Group<TFormData> {
+	id?: string;            // required when the group has `dependents`
+	title?: string;
+	description?: string;
+	className?: string;
+	layout?: 'stack' | 'grid';
+	gridCols?: 1 | 2 | 3 | 4 | 6 | 12;
+	dependents?: Dependency<TFormData>;
+	clearWhenHidden?: boolean;
+	questions?: Question<TFormData>[];
+	groups?: Group<TFormData>[]; // nest groups arbitrarily deep
+}
+```
+
+## Grid vs stack
+
+The default layout is `stack` (one field per row). Use `grid` with `gridCols` to place
+fields side by side.
+
+<LiveForm
+	showResult={false}
+	schema={{
+		groups: [
+			{ title: 'Stacked (default)', questions: [
+				{ key: 'a', label: 'Field A', control: 'text' },
+				{ key: 'b', label: 'Field B', control: 'text' },
+			] },
+			{ title: 'Grid, 3 columns', layout: 'grid', gridCols: 3, questions: [
+				{ key: 'c', label: 'City', control: 'text' },
+				{ key: 'd', label: 'State', control: 'text' },
+				{ key: 'e', label: 'Zip', control: 'text' },
+			] },
+		],
+	}}
+	initialValues={{ a: '', b: '', c: '', d: '', e: '' }}
+/>
+
+<Callout type="warn" title="Grid class goes on the inner content div">
+	When you build a custom group renderer, put the grid class on the inner content
+	`<div>`, not the `<section>`. Otherwise the group title becomes the first grid cell and
+	every field misaligns.
+</Callout>
+
+## Group-level conditional logic
+
+A group can declare `dependents` to hide or relabel the whole section at once. A group with
+`dependents` **must have a stable `id`** — the dependency engine uses it as the group's
+address in the graph.
+
+When a group is hidden, it is **CSS-hidden** (not unmounted), so descendant field state is
+preserved across show/hide. Hidden descendants drop out of `getValues()` and skip
+validation. Set `clearWhenHidden` to reset descendants when the group hides.
+
+See [Conditional groups](/docs/dynamic/conditional-groups) for a live example.

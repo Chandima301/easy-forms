@@ -1,0 +1,20 @@
+node_modules
+dist
+.turbo
+coverage
+*.log
+.DS_Store
+.env
+.env.local
+.vscode
+.idea
+
+# Next.js / Fumadocs (apps/docs)
+.next
+out
+.source
+next-env.d.ts
+*.tsbuildinfo
+
+# Vercel
+.vercel

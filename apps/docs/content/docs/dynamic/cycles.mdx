@@ -1,0 +1,33 @@
+---
+title: Cycle detection
+description: How the engine catches dependency loops in development.
+icon: RefreshCcw
+---
+
+Because dependencies form a graph, it is possible to create a loop — A derives from B,
+which derives from A. Easy Forms detects this.
+
+## Development-time detection
+
+In development, the engine runs a depth-first search over the dependency graph (using
+composite node keys like `field:x` and `group:y`). If it finds a cycle, it **throws** with
+the cycle path so you can see exactly which fields are involved.
+
+```text
+DependencyCycleError: total → subtotal → total
+```
+
+## Fixing a cycle
+
+A cycle usually means two fields are trying to derive from each other. Break it by:
+
+- Making one field the **source of truth** and the other purely derived (`valueDependsOn`
+  in one direction only).
+- Introducing an intermediate, user-editable field.
+- Using `propsDependsOn` (display) instead of `valueDependsOn` (value) where you don't
+  actually need to write a value.
+
+## Production
+
+Cycle detection is a development aid. Author your schema so the graph is acyclic — the
+detector exists to catch mistakes early, not to be relied on at runtime.

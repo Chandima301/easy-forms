@@ -1,0 +1,86 @@
+---
+title: Custom & async validation
+description: Write your own validators, return named errors, and check values against a server.
+icon: FunctionSquare
+---
+
+A custom validator is a function that returns an error string (or `null` when valid). It
+can be sync or async.
+
+```ts
+type CustomValidator<TValue, TFormData> = (
+	value: TValue,
+	allValues: TFormData,
+) => string | null | Promise<string | null>;
+```
+
+## A single custom validator
+
+```tsx
+{
+	key: 'username',
+	label: 'Username',
+	control: 'text',
+	validators: {
+		required: true,
+		custom: (value) =>
+			/^[a-z0-9_]+$/.test(value) ? null : 'Lowercase letters, numbers, and underscores only',
+	},
+}
+```
+
+## Cross-field validation
+
+Custom validators receive **all** form values, so confirming a password is easy:
+
+```tsx
+{
+	key: 'confirmPassword',
+	label: 'Confirm password',
+	control: 'text',
+	inputType: 'password',
+	validators: {
+		custom: (value, all) => (value === all.password ? null : 'Passwords do not match'),
+	},
+}
+```
+
+## Named validators (multiple errors)
+
+Pass a record to run several named checks. Each result is tracked under its key in the
+field's `errors` map.
+
+```tsx
+validators: {
+	custom: {
+		hasUpper: (v) => (/[A-Z]/.test(v) ? null : 'Needs an uppercase letter'),
+		hasNumber: (v) => (/[0-9]/.test(v) ? null : 'Needs a number'),
+	},
+}
+```
+
+## Async validators
+
+Return a promise — ideal for uniqueness checks. The pipeline is **token-guarded**: if the
+value changes while an async check is in flight, the stale result is discarded.
+
+```tsx
+{
+	key: 'email',
+	label: 'Email',
+	control: 'email',
+	validators: {
+		email: true,
+		custom: async (value) => {
+			const res = await fetch(`/api/check-email?email=${encodeURIComponent(value)}`);
+			const { taken } = await res.json();
+			return taken ? 'That email is already registered' : null;
+		},
+	},
+}
+```
+
+<Callout type="warn">
+	Async (and all client) validation is for UX. Always re-validate on the server — see
+	[Security](/docs/security).
+</Callout>

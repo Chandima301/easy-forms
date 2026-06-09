@@ -1,0 +1,33 @@
+---
+title: Multi-select
+description: Multiple choices from a list, with optional "select all".
+icon: ListChecks
+---
+
+Stores `value[]` (an array of selected option values).
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'skills', label: 'Skills', control: 'multiselect', placeholder: 'Pick a few', enableSelectAll: true, options: [
+			{ value: 'ts', label: 'TypeScript' },
+			{ value: 'go', label: 'Go' },
+			{ value: 'rs', label: 'Rust' },
+			{ value: 'py', label: 'Python' },
+		], validators: { minLength: 1 } },
+	] }] }}
+	initialValues={{ skills: [] }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'options', type: 'Option[]', description: 'Static list of selectable options.' },
+	{ name: 'loadOptions', type: '(values) => Option[] | Promise<Option[]>', description: 'Load options dynamically.' },
+	{ name: 'enableSelectAll', type: 'boolean', description: 'Show a "select all" affordance.' },
+	{ name: 'placeholder', type: 'string', description: 'Placeholder when nothing is selected.' },
+]} />
+
+## Validators
+
+Array validators apply: `required`, `minLength`, `maxLength` (counts selections), and
+`custom`.

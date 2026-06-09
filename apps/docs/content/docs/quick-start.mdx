@@ -1,0 +1,135 @@
+---
+title: Quick start
+description: Build your first validated, accessible form in about five minutes.
+icon: Rocket
+---
+
+This guide takes you from an empty file to a working, validated form. It assumes you
+have completed [Installation](/docs/installation).
+
+<Steps>
+
+<Step>
+
+### Describe your form as data
+
+A schema is an object with a `groups` array. Each group holds `questions`. Each question
+has a `key`, a `label`, and a `control`.
+
+```tsx title="signup-form.tsx"
+import type { FormSchema } from '@easy-forms/core';
+
+const schema: FormSchema = {
+	title: 'Create your account',
+	groups: [
+		{
+			layout: 'grid',
+			gridCols: 2,
+			questions: [
+				{ key: 'firstName', label: 'First name', control: 'text', validators: { required: true, minLength: 2 } },
+				{ key: 'lastName', label: 'Last name', control: 'text', validators: { required: true } },
+			],
+		},
+		{
+			questions: [
+				{ key: 'email', label: 'Email', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
+				{ key: 'plan', label: 'Plan', control: 'dropdown', placeholder: 'Choose a plan', options: [
+					{ value: 'free', label: 'Free' },
+					{ value: 'pro', label: 'Pro' },
+				], validators: { required: true } },
+			],
+		},
+	],
+};
+```
+
+</Step>
+
+<Step>
+
+### Render it with `<Form>`
+
+Pass the schema, a renderer registry, optional `initialValues`, and an `onSubmit` handler.
+
+```tsx title="signup-form.tsx"
+import { Form } from '@easy-forms/core';
+import { shadcnRegistry } from '@easy-forms/shadcn';
+
+export function SignupForm() {
+	return (
+		<Form
+			schema={schema}
+			registry={shadcnRegistry}
+			initialValues={{ firstName: '', lastName: '', email: '', plan: null }}
+			onSubmit={async (values) => {
+				await fetch('/api/signup', { method: 'POST', body: JSON.stringify(values) });
+			}}
+		/>
+	);
+}
+```
+
+</Step>
+
+<Step>
+
+### That's it — here it is, live
+
+The submit button stays disabled until the form is dirty and valid. Try submitting with
+empty fields, then fill them in.
+
+<LiveForm
+	schema={{
+		title: 'Create your account',
+		groups: [
+			{ layout: 'grid', gridCols: 2, questions: [
+				{ key: 'firstName', label: 'First name', control: 'text', validators: { required: true, minLength: 2 } },
+				{ key: 'lastName', label: 'Last name', control: 'text', validators: { required: true } },
+			] },
+			{ questions: [
+				{ key: 'email', label: 'Email', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
+				{ key: 'plan', label: 'Plan', control: 'dropdown', placeholder: 'Choose a plan', options: [
+					{ value: 'free', label: 'Free' },
+					{ value: 'pro', label: 'Pro' },
+				], validators: { required: true } },
+			] },
+		],
+	}}
+	initialValues={{ firstName: '', lastName: '', email: '', plan: null }}
+/>
+
+</Step>
+
+</Steps>
+
+## Type your form data
+
+Pass a type argument to `Form` (and `FormSchema`) to get autocomplete and type-checking
+on field keys, derived values, and dependency sources.
+
+```tsx
+interface SignupData extends Record<string, unknown> {
+	firstName: string;
+	lastName: string;
+	email: string;
+	plan: string | null;
+}
+
+const schema: FormSchema<SignupData> = {
+	/* keys are now checked against SignupData */
+	groups: [],
+};
+
+<Form<SignupData> schema={schema} registry={shadcnRegistry} onSubmit={(values) => {
+	// values is typed as SignupData
+}} />
+```
+
+## Next steps
+
+<Cards>
+	<Card title="Core concepts" href="/docs/concepts" description="Understand the schema, store, and render flow." />
+	<Card title="Validation" href="/docs/validation" description="Built-in, custom, and async validators." />
+	<Card title="Dynamic forms" href="/docs/dynamic" description="Conditional fields and derived values." />
+	<Card title="Components" href="/docs/components" description="Every built-in control, with live examples." />
+</Cards>

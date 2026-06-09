@@ -1,0 +1,282 @@
+/*
+ * @easy-forms/shadcn — default form-chrome styles.
+ *
+ * Import once in your app entry:
+ *   import '@easy-forms/shadcn/styles.css';
+ *
+ * This is PLAIN CSS — it needs no Tailwind processing, so it works in any
+ * bundler regardless of your styling setup. It styles the chrome that
+ * `@easy-forms/core` renders directly (form container, header, footer,
+ * submit/reset buttons, group containers, grid layout, wizard navigation).
+ *
+ * The control inputs themselves (text, dropdown, checkbox, …) are styled by
+ * the renderer components' inline Tailwind classes — for those you still need
+ * Tailwind configured and scanning `@easy-forms/shadcn/dist`.
+ *
+ * Values match the shadcn "slate" aesthetic. Override any class in your own
+ * stylesheet (load it after this file) to re-theme.
+ */
+
+/* ------------------------------------------------------------------ Form */
+
+.easy-forms {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	border-radius: 0.5rem;
+	border: 1px solid #e2e8f0;
+	background-color: #fff;
+	padding: 1.5rem;
+	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+.easy-forms__header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+.easy-forms__title {
+	font-size: 1.25rem;
+	line-height: 1.75rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+.easy-forms__description {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	color: #64748b;
+}
+.easy-forms__body {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+.easy-forms__footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	border-top: 1px solid #e2e8f0;
+	padding-top: 1rem;
+}
+
+/* -------------------------------------------------------- Form buttons */
+
+.easy-forms__submit,
+.easy-forms__reset {
+	display: inline-flex;
+	height: 2.5rem;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.375rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+.easy-forms__submit {
+	background-color: #0f172a;
+	color: #fff;
+	border: 1px solid transparent;
+}
+.easy-forms__submit:hover {
+	background-color: #1e293b;
+}
+.easy-forms__reset {
+	border: 1px solid #cbd5e1;
+	background-color: #fff;
+	color: #0f172a;
+}
+.easy-forms__reset:hover {
+	background-color: #f8fafc;
+}
+.easy-forms__submit:focus-visible,
+.easy-forms__reset:focus-visible {
+	outline: none;
+	box-shadow:
+		0 0 0 2px #fff,
+		0 0 0 4px #0f172a;
+}
+.easy-forms__submit:disabled,
+.easy-forms__reset:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+/* ----------------------------------------------------------- Groups */
+
+.easy-forms-group {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+.easy-forms-group__header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+}
+.easy-forms-group__title {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.025em;
+	color: #334155;
+}
+.easy-forms-group__description {
+	font-size: 0.75rem;
+	line-height: 1rem;
+	color: #64748b;
+}
+
+/* ----------------------------------------------------------- Layout */
+
+.easy-forms-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+.easy-forms-grid {
+	display: grid;
+	gap: 1rem;
+}
+.easy-forms-grid-1,
+.easy-forms-grid-2,
+.easy-forms-grid-3,
+.easy-forms-grid-4 {
+	grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.easy-forms-grid-6 {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.easy-forms-grid-12 {
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+@media (min-width: 768px) {
+	.easy-forms-grid-2 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.easy-forms-grid-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+	.easy-forms-grid-4 {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+	.easy-forms-grid-6 {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+	.easy-forms-grid-12 {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+	}
+}
+
+/* ----------------------------------------------------------- Wizard */
+
+.easy-forms-wizard {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+.easy-forms-wizard__nav-list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	border-bottom: 1px solid #e2e8f0;
+	padding-bottom: 0.75rem;
+	margin: 0;
+	padding-left: 0;
+	list-style: none;
+}
+.easy-forms-wizard__nav-item button {
+	border-radius: 9999px;
+	border: 1px solid #cbd5e1;
+	background-color: #fff;
+	padding: 0.25rem 0.75rem;
+	font-size: 0.75rem;
+	line-height: 1rem;
+	font-weight: 500;
+	color: #334155;
+	cursor: pointer;
+}
+.easy-forms-wizard__nav-item button:hover {
+	background-color: #f8fafc;
+}
+.easy-forms-wizard__nav-item button:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+.easy-forms-wizard__nav-item--active button {
+	border-color: #0f172a;
+	background-color: #0f172a;
+	color: #fff;
+}
+.easy-forms-wizard__nav-item--visited:not(.easy-forms-wizard__nav-item--active) button {
+	border-color: #059669;
+	color: #047857;
+}
+.easy-forms-wizard__panels {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+.easy-forms-wizard__footer {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5rem;
+	border-top: 1px solid #e2e8f0;
+	padding-top: 1rem;
+}
+.easy-forms-wizard__previous,
+.easy-forms-wizard__next,
+.easy-forms-wizard__submit {
+	display: inline-flex;
+	height: 2.5rem;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.375rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+.easy-forms-wizard__previous:focus-visible,
+.easy-forms-wizard__next:focus-visible,
+.easy-forms-wizard__submit:focus-visible {
+	outline: none;
+	box-shadow:
+		0 0 0 2px #fff,
+		0 0 0 4px #0f172a;
+}
+.easy-forms-wizard__previous:disabled,
+.easy-forms-wizard__next:disabled,
+.easy-forms-wizard__submit:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+.easy-forms-wizard__previous {
+	border: 1px solid #cbd5e1;
+	background-color: #fff;
+	color: #0f172a;
+}
+.easy-forms-wizard__previous:hover {
+	background-color: #f8fafc;
+}
+.easy-forms-wizard__next,
+.easy-forms-wizard__submit {
+	background-color: #0f172a;
+	color: #fff;
+	border: 1px solid transparent;
+}
+.easy-forms-wizard__next:hover,
+.easy-forms-wizard__submit:hover {
+	background-color: #1e293b;
+}

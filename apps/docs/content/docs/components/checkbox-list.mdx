@@ -1,0 +1,32 @@
+---
+title: Checkbox list
+description: Multiple toggles rendered inline, with optional "select all".
+icon: ListTodo
+---
+
+Stores `value[]`. Use it when all options should be visible at once (versus a
+multi-select dropdown).
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'notifications', label: 'Notifications', control: 'checkboxList', showSelectAll: true, options: [
+			{ value: 'email', label: 'Email' },
+			{ value: 'sms', label: 'SMS' },
+			{ value: 'push', label: 'Push' },
+		] },
+	] }] }}
+	initialValues={{ notifications: [] }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'options', type: 'Option[]', required: true, description: 'The list of toggles.' },
+	{ name: 'vertical', type: 'boolean', description: 'Stack options vertically.' },
+	{ name: 'showSelectAll', type: 'boolean', description: 'Show a "select all" toggle.' },
+	{ name: 'selectAllLabel', type: 'string', description: 'Custom label for the select-all toggle.' },
+]} />
+
+## Validators
+
+Array validators: `required`, `minLength`, `maxLength`, and `custom`.

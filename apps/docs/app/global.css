@@ -1,0 +1,57 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+/* Scan Fumadocs UI + the @easy-forms/shadcn renderer bundles so the Tailwind
+   utility classes used by the live <Form> demos are generated. */
+@source '../node_modules/fumadocs-ui/dist/**/*.js';
+@source '../../../packages/shadcn/dist/**/*.js';
+
+/* ---- Easy Forms brand tokens -------------------------------------------- */
+:root {
+	--ef-brand: 243 75% 59%; /* indigo 600-ish */
+	--ef-brand-foreground: 0 0% 100%;
+}
+
+/* Map Fumadocs primary onto the Easy Forms brand for a cohesive identity. */
+:root,
+.dark {
+	--color-fd-primary: hsl(var(--ef-brand));
+	--color-fd-primary-foreground: hsl(var(--ef-brand-foreground));
+}
+
+/* Premium landing-page helpers ------------------------------------------- */
+.ef-grid-bg {
+	background-image:
+		linear-gradient(to right, color-mix(in oklab, var(--color-fd-border) 60%, transparent) 1px, transparent 1px),
+		linear-gradient(to bottom, color-mix(in oklab, var(--color-fd-border) 60%, transparent) 1px, transparent 1px);
+	background-size: 64px 64px;
+	mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+.ef-hero-glow {
+	background: radial-gradient(
+		60% 50% at 50% 0%,
+		color-mix(in oklab, hsl(var(--ef-brand)) 22%, transparent),
+		transparent 70%
+	);
+}
+
+/* Live-demo surface: keep embedded forms tidy inside frames. */
+.ef-demo-surface .easy-forms {
+	width: 100%;
+}
+.ef-demo-surface .easy-forms__header {
+	margin-bottom: 0.75rem;
+}
+
+@keyframes ef-fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

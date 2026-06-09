@@ -1,0 +1,30 @@
+---
+title: File
+description: File uploads with accept filters and size/count constraints.
+icon: Upload
+---
+
+Stores `File[] | null`.
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'avatar', label: 'Avatar', control: 'file', accept: { 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }, maxSizeMB: 5 },
+	] }] }}
+	initialValues={{ avatar: null }}
+	showResult={false}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'accept', type: 'Record<string, string[]>', description: 'Accepted MIME types mapped to extensions, e.g. { "image/*": [".png", ".jpg"] }.' },
+	{ name: 'multiple', type: 'boolean', description: 'Allow selecting more than one file.' },
+	{ name: 'maxFiles', type: 'number', description: 'Maximum number of files.' },
+	{ name: 'maxSizeMB', type: 'number', description: 'Maximum size per file, in megabytes.' },
+	{ name: 'minSizeMB', type: 'number', description: 'Minimum size per file, in megabytes.' },
+]} />
+
+<Callout type="warn">
+	Client-side size and type constraints are a UX convenience, not a security boundary.
+	Always re-validate uploads on the server. See [Security](/docs/security).
+</Callout>

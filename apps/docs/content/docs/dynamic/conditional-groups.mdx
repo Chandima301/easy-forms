@@ -1,0 +1,38 @@
+---
+title: Conditional groups
+description: Show, hide, and reset an entire section at once.
+icon: Group
+---
+
+Groups participate in the dependency engine just like fields. Declare `dependents` on a
+group to control the whole section.
+
+<Callout type="warn" title="Group dependencies require a stable id">
+	A group with `dependents` must have an `id`. The engine uses it as the group's address in
+	the dependency graph. In development, a missing id throws.
+</Callout>
+
+## Example: reveal a section
+
+The "Marketing preferences" section appears only when the user opts in.
+
+<ConditionalGroupsDemo />
+
+```tsx
+{
+	id: 'marketing',
+	title: 'Marketing preferences',
+	dependents: {
+		propsDependsOn: [{ fieldNames: ['subscribe'], compute: (v) => ({ hidden: v.subscribe !== true }) }],
+	},
+	questions: [ /* ... */ ],
+}
+```
+
+## State is preserved by default
+
+A hidden group is **CSS-hidden**, not unmounted, so descendant field state survives a
+hide/show cycle. Hidden descendants are excluded from `getValues()` and skipped during
+validation.
+
+To clear descendants when the group hides, set `clearWhenHidden: true` on the group.

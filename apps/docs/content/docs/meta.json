@@ -1,0 +1,29 @@
+{
+	"title": "Documentation",
+	"root": true,
+	"pages": [
+		"---Get started---",
+		"index",
+		"installation",
+		"quick-start",
+		"---Core concepts---",
+		"concepts",
+		"components",
+		"validation",
+		"dynamic",
+		"wizard",
+		"---Customize & operate---",
+		"theming",
+		"accessibility",
+		"performance",
+		"security",
+		"---Reference---",
+		"api",
+		"migration",
+		"best-practices",
+		"troubleshooting",
+		"---Enterprise---",
+		"enterprise",
+		"examples"
+	]
+}

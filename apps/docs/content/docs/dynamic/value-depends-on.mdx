@@ -1,0 +1,50 @@
+---
+title: valueDependsOn
+description: Derive a field's value from the values of other fields.
+icon: Calculator
+---
+
+`valueDependsOn` computes a target field's **value** from its source fields. The derivation
+runs on a microtask and is written with `markDirty: false`, so derived writes never flip the
+form's `isDirty` flag.
+
+```ts
+interface ValueDependency<TFormData> {
+	fieldNames: readonly (keyof TFormData)[];
+	compute: (values: Pick<TFormData, ...>) => TValue;
+}
+```
+
+## Example: a live total
+
+Edit subtotal or tax rate — the read-only total recomputes immediately.
+
+<ValueDependsOnDemo />
+
+```tsx
+{
+	key: 'total',
+	label: 'Total',
+	control: 'number',
+	prefix: '$',
+	readOnly: true,
+	dependents: {
+		valueDependsOn: {
+			fieldNames: ['subtotal', 'taxRate'],
+			compute: (v) => Number(((v.subtotal ?? 0) * (1 + (v.taxRate ?? 0) / 100)).toFixed(2)),
+		},
+	},
+}
+```
+
+<Callout type="info">
+	Mark derived fields `readOnly: true` so users don't fight the computation. Because derived
+	writes use `markDirty: false`, the form won't appear dirty just from a recompute.
+</Callout>
+
+## Good uses
+
+- Totals, subtotals, and tax.
+- Slugs derived from a title.
+- A full name assembled from first + last.
+- A normalized value mirrored from a raw input.

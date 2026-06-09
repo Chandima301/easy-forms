@@ -1,0 +1,46 @@
+---
+title: resetDependsOn
+description: Reset a field to its initial value when a condition becomes true.
+icon: RotateCcw
+---
+
+`resetDependsOn` resets the target field to its `initialValue` on the **rising edge** of a
+predicate — i.e. when `when` transitions from `false` to `true`.
+
+```ts
+interface ResetDependency<TFormData> {
+	fieldNames: readonly (keyof TFormData)[];
+	when: (values: Pick<TFormData, ...>) => boolean;
+}
+```
+
+## Example
+
+When the account type switches to "personal", the company name is reset.
+
+```tsx
+{
+	key: 'companyName',
+	label: 'Company name',
+	control: 'text',
+	dependents: {
+		resetDependsOn: {
+			fieldNames: ['accountType'],
+			when: (v) => v.accountType === 'personal',
+		},
+	},
+}
+```
+
+## Rising edge, not continuous
+
+The reset fires once, on the transition into `true`. It does not keep clearing the field
+while the predicate stays true — so the user can type again after the reset.
+
+## Reset vs. hide-and-clear
+
+| Goal | Use |
+| --- | --- |
+| Clear a value when a switch flips on | `resetDependsOn` |
+| Clear a value when a field becomes hidden | `clearWhenHidden` + `propsDependsOn` |
+| Clear a whole section when it hides | `clearWhenHidden` on the group |

@@ -1,0 +1,33 @@
+---
+title: Overview
+description: The twelve built-in controls, what they store, and when to reach for each.
+icon: Component
+---
+
+Set a question's `control` to one of the built-in control types. Each control narrows its
+value type, so validators and options are type-checked against it.
+
+| Control | Stores | Use for |
+| --- | --- | --- |
+| [`text`](/docs/components/text) | `string` | single-line text, password, tel, url |
+| [`textarea`](/docs/components/textarea) | `string` | multi-line text |
+| [`number`](/docs/components/number) | `number \| null` | numeric input with formatting |
+| [`email`](/docs/components/email) | `string` | email addresses |
+| [`dropdown`](/docs/components/dropdown) | `value \| null` | single choice from a list |
+| [`multiselect`](/docs/components/multiselect) | `value[]` | multiple choices from a list |
+| [`checkbox`](/docs/components/checkbox) | `boolean` | a single on/off toggle |
+| [`checkboxList`](/docs/components/checkbox-list) | `value[]` | multiple toggles |
+| [`radioGroup`](/docs/components/radio-group) | `value \| null` | one of a few visible choices |
+| [`date`](/docs/components/date) | `string \| null` | ISO date selection |
+| [`file`](/docs/components/file) | `File[] \| null` | file uploads |
+| [`custom`](/docs/components/custom-controls) | anything | your own control |
+
+<Callout type="info">
+	Renderers read everything from the (effective) question object. Conditional logic that
+	changes options, placeholders, min/max, etc. flows through the same props — see
+	[Dynamic forms](/docs/dynamic).
+</Callout>
+
+Need a control that isn't here? Build one with the [`custom`
+control](/docs/components/custom-controls), or register a brand-new control type via module
+augmentation.

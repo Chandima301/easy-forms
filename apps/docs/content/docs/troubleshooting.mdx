@@ -1,0 +1,58 @@
+---
+title: Troubleshooting
+description: Common symptoms, their causes, and fixes.
+icon: LifeBuoy
+---
+
+## Renderers look unstyled
+
+**Symptom:** inputs and selects render without their Tailwind styles.
+
+**Cause:** Tailwind isn't scanning the shadcn renderer bundles, so their utility classes
+aren't generated.
+
+**Fix:** add the shadcn `dist` to your Tailwind `content` (v3) or add an `@source` directive
+(v4). See [Installation](/docs/installation).
+
+## The form chrome is missing
+
+**Symptom:** the container, footer, and buttons have no styling.
+
+**Cause:** the chrome stylesheet isn't imported.
+
+**Fix:** `import '@easy-forms/shadcn/styles.css'` once near your app root. Don't move those
+classes into a Tailwind `@layer components` block — they'll be purged.
+
+## A group's fields are misaligned
+
+**Symptom:** in a grid group, the title occupies the first cell and every field shifts.
+
+**Cause:** the grid class is on the `<section>` instead of the inner content `<div>`.
+
+**Fix:** put the layout/grid class on the inner content `<div>` in your group renderer.
+
+## "Group with dependents is missing an id"
+
+**Symptom:** a thrown error in development when a group has `dependents`.
+
+**Cause:** group-level dependencies need a stable address.
+
+**Fix:** add an `id` to the group.
+
+## A dependency cycle error
+
+**Symptom:** `DependencyCycleError` with a path like `a → b → a`.
+
+**Cause:** two fields derive from each other.
+
+**Fix:** make one field the source of truth and derive the other in a single direction. See
+[Cycle detection](/docs/dynamic/cycles).
+
+## Edits to the library don't show up
+
+**Symptom:** in a monorepo, changes to the packages aren't reflected in your app.
+
+**Cause:** your app imports the built `dist`, not the source.
+
+**Fix:** rebuild the packages (or run them in watch mode). For Next.js consuming source, add
+the packages to `transpilePackages`.

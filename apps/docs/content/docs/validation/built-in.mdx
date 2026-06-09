@@ -1,0 +1,50 @@
+---
+title: Built-in validators
+description: The rule set, narrowed by the field's value type.
+icon: ListChecks
+---
+
+The shape of `validators` depends on the control's value type. Putting a string rule on a
+number field (or vice versa) is a **compile error** — that's the point.
+
+## Available everywhere
+
+<PropsTable rows={[
+	{ name: 'required', type: 'boolean | { value, message }', description: 'The field must have a value (non-empty / non-null / true for checkbox).' },
+	{ name: 'custom', type: 'fn | Record<string, fn>', description: 'One or more custom validators. See Custom & async.' },
+]} />
+
+## String values (`text`, `textarea`, `email`)
+
+<PropsTable rows={[
+	{ name: 'minLength', type: 'number | { value, message }', description: 'Minimum length.' },
+	{ name: 'maxLength', type: 'number | { value, message }', description: 'Maximum length.' },
+	{ name: 'pattern', type: 'RegExp | { value, message }', description: 'Must match the regular expression.' },
+	{ name: 'email', type: 'boolean | { value, message }', description: 'Must be a valid email address.' },
+]} />
+
+## Number values (`number`)
+
+<PropsTable rows={[
+	{ name: 'min', type: 'number | { value, message }', description: 'Minimum value.' },
+	{ name: 'max', type: 'number | { value, message }', description: 'Maximum value.' },
+]} />
+
+## Array values (`multiselect`, `checkboxList`)
+
+<PropsTable rows={[
+	{ name: 'minLength', type: 'number | { value, message }', description: 'Minimum number of selections.' },
+	{ name: 'maxLength', type: 'number | { value, message }', description: 'Maximum number of selections.' },
+]} />
+
+## Try it
+
+The email below requires a valid address of at least 5 characters.
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true, minLength: 5 } },
+		{ key: 'age', label: 'Age', control: 'number', validators: { required: true, min: 18, max: 120 } },
+	] }] }}
+	initialValues={{ email: '', age: null }}
+/>

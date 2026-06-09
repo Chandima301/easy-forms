@@ -1,0 +1,51 @@
+---
+title: From Formik
+description: Translate Formik's <Field> and validationSchema into a schema.
+icon: ArrowLeftRight
+---
+
+## Mental model
+
+| Formik | Easy Forms |
+| --- | --- |
+| `<Formik initialValues onSubmit>` | `<Form initialValues onSubmit>` |
+| `<Field name="email" />` | a question `{ key: 'email', control: 'email' }` |
+| `validationSchema` (Yup) | typed `validators` per question |
+| `values.x` in render props | `useFormValues()` / `useWatch(['x'])` |
+| conditional rendering in JSX | `propsDependsOn` |
+
+## Before (Formik)
+
+```tsx
+<Formik initialValues={{ email: '', plan: '' }} onSubmit={onSubmit} validationSchema={schema}>
+	{() => (
+		<Form>
+			<Field name="email" type="email" />
+			<Field as="select" name="plan">
+				<option value="free">Free</option>
+				<option value="pro">Pro</option>
+			</Field>
+			<button type="submit">Submit</button>
+		</Form>
+	)}
+</Formik>;
+```
+
+## After (Easy Forms)
+
+```tsx
+const schema: FormSchema = {
+	groups: [{ questions: [
+		{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true } },
+		{ key: 'plan', label: 'Plan', control: 'dropdown', options: [
+			{ value: 'free', label: 'Free' },
+			{ value: 'pro', label: 'Pro' },
+		], validators: { required: true } },
+	] }],
+};
+
+<Form schema={schema} registry={shadcnRegistry} initialValues={{ email: '', plan: null }} onSubmit={onSubmit} />;
+```
+
+Conditional fields that you'd express with render-prop branching become declarative
+[`propsDependsOn`](/docs/dynamic/props-depends-on) rules.

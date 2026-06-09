@@ -1,0 +1,19 @@
+{
+	"title": "Form components",
+	"icon": "Component",
+	"pages": [
+		"index",
+		"text",
+		"textarea",
+		"number",
+		"email",
+		"dropdown",
+		"multiselect",
+		"checkbox",
+		"checkbox-list",
+		"radio-group",
+		"date",
+		"file",
+		"custom-controls"
+	]
+}

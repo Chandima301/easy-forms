@@ -1,0 +1,50 @@
+---
+title: Accessibility
+description: What the default renderers give you, and how to keep custom controls accessible.
+icon: Accessibility
+---
+
+Accessibility is a first-class concern. The default shadcn renderers are built on **Radix
+UI primitives**, which handle the hard parts — roles, keyboard interaction, focus
+management, and ARIA wiring — for you.
+
+## What you get by default
+
+- **Labels are associated** with their inputs via the shared `FieldShell` / `Label`
+  primitives, so clicking a label focuses the control and screen readers announce it.
+- **Keyboard support** for selects, popovers, radio groups, and checkboxes comes from
+  Radix (arrow keys, type-ahead, escape to close, focus trapping where appropriate).
+- **Errors are surfaced** next to the field and associated with the control so assistive
+  tech announces them.
+- **Disabled and read-only** states are conveyed both visually and to assistive tech.
+
+## Keeping custom controls accessible
+
+When you build a [custom control](/docs/components/custom-controls), you own its
+accessibility. A few rules of thumb:
+
+- Render a real, focusable element (`<button>`, `<input>`) — not a clickable `<div>`.
+- Reflect state with ARIA: the color-swatch example uses `aria-pressed` and `aria-label`.
+- Honor the `disabled` and `readOnly` props you receive.
+- Call `onBlur` so touched-state and blur-mode validation work.
+
+```tsx
+<button
+	type="button"
+	aria-pressed={value === hex}
+	aria-label={hex}
+	disabled={disabled}
+	onClick={() => onChange(hex)}
+/>
+```
+
+## A checklist before you ship
+
+<Cards>
+	<Card title="Labels" description="Every field has a visible, associated label." />
+	<Card title="Keyboard" description="Every control is reachable and operable without a mouse." />
+	<Card title="Focus" description="Focus is visible and moves logically; nothing traps it unexpectedly." />
+	<Card title="Errors" description="Validation messages are announced and tied to the field." />
+	<Card title="Contrast" description="Text and interactive states meet WCAG AA contrast." />
+	<Card title="Motion" description="Honor prefers-reduced-motion for any animation you add." />
+</Cards>

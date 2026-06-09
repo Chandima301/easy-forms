@@ -1,0 +1,62 @@
+---
+title: Lifecycle & submission
+description: How a form mounts, validates, and submits — and where plugins hook in.
+icon: Workflow
+---
+
+## Mount
+
+1. `<Form>` creates (or receives) a `FormStore`.
+2. Each `<Field>` registers its descriptor (key, validators, options) with the store in a
+   `useEffect`.
+3. `<Form>` attaches the **dependency engine** and **plugins** in its own `useEffect`,
+   which runs after all field effects — so the engine sees every field on its first pass
+   and computes initial conditional state.
+
+## Change
+
+When a value changes:
+
+1. The store updates that field and wakes its subscribers (and the form-state subscriber).
+2. Validation runs according to the validation mode.
+3. The dependency engine reacts: `propsDependsOn` rules whose sources changed recompute and
+   merge into the target's runtime props; `valueDependsOn` derivations are queued on a
+   microtask; `resetDependsOn` checks its rising edge.
+4. Plugin `onChange` hooks fire.
+
+## Submission
+
+```tsx
+<Form
+	schema={schema}
+	registry={shadcnRegistry}
+	onSubmit={async (values) => {
+		// values: only visible, non-hidden fields
+		await save(values);
+	}}
+/>
+```
+
+On submit, the store validates all (visible) fields. If everything passes, `onSubmit`
+receives the values and `isSubmitting` is true while your promise resolves. Hidden fields
+(via field or group visibility) are excluded from the payload and skipped during
+validation.
+
+The default footer disables submit until the form is **dirty and valid** and re-disables
+it while submitting.
+
+## Plugins
+
+Plugins observe and react to the lifecycle:
+
+```ts
+interface FormPlugin {
+	onInit?(ctx): void;
+	onChange?(ctx): void;
+	onSubmit?(ctx): void;
+	onDestroy?(ctx): void;
+}
+```
+
+Built-ins: `loggerPlugin` (logs lifecycle events) and `autosavePlugin` (debounced
+persistence). See the [Plugins API](/docs/api/plugins).

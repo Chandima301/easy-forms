@@ -1,0 +1,5 @@
+{
+	"title": "Validation",
+	"icon": "ShieldCheck",
+	"pages": ["index", "built-in", "custom-async", "messages-modes", "extending"]
+}

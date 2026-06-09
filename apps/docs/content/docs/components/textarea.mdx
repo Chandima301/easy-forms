@@ -1,0 +1,26 @@
+---
+title: Textarea
+description: Multi-line text input.
+icon: Text
+---
+
+Stores a `string`.
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'bio', label: 'Bio', control: 'textarea', rows: 4, placeholder: 'A few sentences about yourself', maxLength: 280, validators: { maxLength: 280 } },
+	] }] }}
+	initialValues={{ bio: '' }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'rows', type: 'number', description: 'Visible rows (height).' },
+	{ name: 'placeholder', type: 'string', description: 'Placeholder text.' },
+	{ name: 'maxLength', type: 'number', description: 'Maximum character count.' },
+]} />
+
+## Validators
+
+`required`, `minLength`, `maxLength`, `pattern`, and `custom`.

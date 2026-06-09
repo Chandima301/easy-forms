@@ -1,0 +1,29 @@
+---
+title: Date
+description: ISO date selection with min/max bounds and date/month/year views.
+icon: Calendar
+---
+
+Stores an ISO `yyyy-mm-dd` string, or `null`.
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'startDate', label: 'Start date', control: 'date', validators: { required: true } },
+	] }] }}
+	initialValues={{ startDate: null }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'minDate', type: 'string | ((values) => string)', description: 'Earliest selectable date — a fixed ISO string or a function of the current values.' },
+	{ name: 'maxDate', type: 'string | ((values) => string)', description: 'Latest selectable date — fixed or derived.' },
+	{ name: 'view', type: "'date' | 'month' | 'year'", default: "'date'", description: 'Granularity of selection.' },
+	{ name: 'placeholder', type: 'string', description: 'Placeholder text.' },
+]} />
+
+## Dependent bounds
+
+`minDate` / `maxDate` accept a function of the form values — perfect for "end date must be
+after start date". You can also drive them through a `propsDependsOn` rule. See
+[Dynamic props](/docs/dynamic/props-depends-on).

@@ -1,0 +1,29 @@
+---
+title: Radio group
+description: Pick exactly one from a small set of visible options.
+icon: CircleDot
+---
+
+Stores `value | null`.
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'role', label: 'Primary role', control: 'radioGroup', options: [
+			{ value: 'eng', label: 'Engineer' },
+			{ value: 'design', label: 'Designer' },
+			{ value: 'pm', label: 'Product manager' },
+		], validators: { required: true } },
+	] }] }}
+	initialValues={{ role: null }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'options', type: 'Option[]', required: true, description: 'The choices.' },
+	{ name: 'vertical', type: 'boolean', description: 'Stack options vertically.' },
+]} />
+
+## Validators
+
+`required` and `custom`.

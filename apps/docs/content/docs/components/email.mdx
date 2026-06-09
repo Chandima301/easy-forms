@@ -1,0 +1,26 @@
+---
+title: Email
+description: Email input with built-in email validation.
+icon: Mail
+---
+
+Stores a `string`. Pair with the `email` validator.
+
+<LiveForm
+	schema={{ groups: [{ questions: [
+		{ key: 'email', label: 'Email address', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
+	] }] }}
+	initialValues={{ email: '' }}
+/>
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'placeholder', type: 'string', description: 'Placeholder text.' },
+]} />
+
+## Validators
+
+`required`, `email`, `minLength`, `maxLength`, `pattern`, and `custom`. Use a custom or
+async validator to check uniqueness against your backend — see
+[Custom & async validation](/docs/validation/custom-async).

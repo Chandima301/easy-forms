@@ -1,0 +1,35 @@
+---
+title: <Form>
+description: The top-level component that renders a schema.
+icon: SquareCode
+---
+
+```tsx
+import { Form } from '@easy-forms/core';
+```
+
+## Props
+
+<PropsTable rows={[
+	{ name: 'schema', type: 'FormSchema<TFormData>', required: true, description: 'The form definition.' },
+	{ name: 'registry', type: 'RendererRegistry', required: true, description: 'Maps control names to renderer components (e.g. shadcnRegistry).' },
+	{ name: 'onSubmit', type: '(values: TFormData) => void | Promise<void>', required: true, description: 'Called with the validated, visible values on submit.' },
+	{ name: 'initialValues', type: 'Partial<TFormData>', description: 'Initial field values.' },
+	{ name: 'store', type: 'FormStore', description: 'Provide an external store instead of creating one internally.' },
+	{ name: 'dependencyHandlers', type: 'DependencyHandlerRegistry', description: 'Additional or replacement dependency handlers, merged over the defaults.' },
+	{ name: 'plugins', type: 'FormPlugin[]', description: 'Lifecycle plugins (logger, autosave, custom).' },
+	{ name: 'submitLabel', type: 'string', default: "'Submit'", description: 'Submit button label.' },
+	{ name: 'resetLabel', type: 'string', default: "'Reset'", description: 'Reset button label.' },
+	{ name: 'showReset', type: 'boolean', default: 'false', description: 'Show a reset button in the footer.' },
+	{ name: 'className', type: 'string', description: 'Class applied to the form element.' },
+	{ name: 'wizardNextLabel', type: 'string', description: 'Override the wizard Next label.' },
+	{ name: 'wizardPreviousLabel', type: 'string', description: 'Override the wizard Previous label.' },
+]} />
+
+## Behavior
+
+- When `schema.wizard` is present, `<Form>` renders the wizard navigation instead of a
+  single page and owns its own submit flow.
+- The default footer disables submit until the form is dirty and valid, and while
+  submitting.
+- Hidden fields (via field or group visibility) are excluded from the `onSubmit` payload.

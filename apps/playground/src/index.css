@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Form chrome (container, header, footer, buttons, groups, grid, wizard) now
+ * comes from `@easy-forms/shadcn/styles.css`, imported in main.tsx — exactly
+ * how a real consumer wires it. This file only holds Tailwind + page-level base.
+ */
+
+body {
+	@apply bg-slate-50 text-slate-900;
+	font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}

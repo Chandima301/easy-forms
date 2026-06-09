@@ -1,0 +1,59 @@
+---
+title: propsDependsOn
+description: Drive any display or behavior prop from the value of other fields.
+icon: SlidersHorizontal
+---
+
+`propsDependsOn` is an **array of rules**. Each rule names its source `fieldNames` and a
+`compute` function returning a `Partial<RuntimeProps>` that is merged into the target.
+
+## Props you can return
+
+`hidden`, `required`, `readOnly`, `disabled`, `options`, `min`, `max`, `minDate`,
+`maxDate`, `placeholder`, `prefix`, `suffix`, `description`, `label`, `className`. (Groups
+meaningfully use `hidden`, `title`, `description`, `className`.)
+
+## Example: dependent options + show/hide
+
+Selecting a country fills the region options; checking "gift" reveals and requires the
+message field.
+
+<PropsDependsOnDemo />
+
+```tsx
+{
+	key: 'region',
+	label: 'Region',
+	control: 'dropdown',
+	options: [],
+	dependents: {
+		propsDependsOn: [{
+			fieldNames: ['country'],
+			compute: (v) => ({
+				options: REGIONS[v.country] ?? [],
+				disabled: !v.country,
+				placeholder: v.country ? 'Pick a region' : 'Pick a country first',
+			}),
+		}],
+	},
+}
+```
+
+## Multiple rules
+
+Provide several rules with disjoint source sets; the engine subscribes to each
+independently. When two rules write the same prop, the **later rule wins** (last-write).
+
+```ts
+dependents: {
+	propsDependsOn: [
+		{ fieldNames: ['plan'], compute: (v) => ({ hidden: v.plan === 'free' }) },
+		{ fieldNames: ['region'], compute: (v) => ({ required: v.region === 'eu' }) },
+	],
+}
+```
+
+## `clearWhenHidden`
+
+By default a field's value is cleared when it becomes hidden (default `true`). Set
+`clearWhenHidden: false` to preserve the value across show/hide.

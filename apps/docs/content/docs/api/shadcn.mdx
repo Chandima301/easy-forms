@@ -1,0 +1,46 @@
+---
+title: '@easy-forms/shadcn'
+description: The default renderer registry, renderers, and primitives.
+icon: Palette
+---
+
+```ts
+import { shadcnRegistry } from '@easy-forms/shadcn';
+import '@easy-forms/shadcn/styles.css';
+```
+
+## shadcnRegistry
+
+A `RendererRegistry` mapping every built-in control to a renderer:
+
+```ts
+const shadcnRegistry = {
+	text, textarea, number, email, dropdown, multiselect,
+	checkbox, checkboxList, radioGroup, date, file, custom,
+};
+```
+
+## Individual renderers
+
+Each renderer is exported for granular override or composition: `TextRenderer`,
+`TextAreaRenderer`, `NumberRenderer`, `EmailRenderer`, `DropdownRenderer`,
+`MultiSelectRenderer`, `CheckboxRenderer`, `CheckboxListRenderer`, `RadioGroupRenderer`,
+`DateRenderer`, `FileRenderer`, `CustomRenderer`.
+
+```tsx
+import { shadcnRegistry, DropdownRenderer } from '@easy-forms/shadcn';
+const registry = { ...shadcnRegistry, dropdown: MyDropdown };
+```
+
+## Primitives
+
+Building blocks for your own renderers: `Button`, `Checkbox`, `FieldShell`, `Input`,
+`Label`, `Popover` (+ `PopoverContent`, `PopoverTrigger`), `RadioGroup` (+ `RadioGroupItem`),
+`Select` (+ `SelectContent`, `SelectGroup`, `SelectItem`, `SelectTrigger`, `SelectValue`),
+`Textarea`, and the `cn` class-name helper.
+
+## Styles
+
+- `@easy-forms/shadcn/styles.css` — the plain-CSS form chrome.
+- Renderer utility classes require the package's `dist` in your Tailwind `content` /
+  `@source`. See [Installation](/docs/installation) and [Theming](/docs/theming).

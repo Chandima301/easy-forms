@@ -1,0 +1,38 @@
+---
+title: Messages & modes
+description: Customize error messages and control when validation runs.
+icon: MessageSquare
+---
+
+## Custom messages
+
+Every built-in rule accepts either a bare value or a `{ value, message }` object:
+
+```tsx
+validators: {
+	required: { value: true, message: 'We need your name' },
+	minLength: { value: 2, message: 'That seems too short' },
+	pattern: { value: /^[A-Z]/, message: 'Start with a capital letter' },
+}
+```
+
+Without a custom `message`, a sensible default is used.
+
+## Validation modes
+
+The validation mode controls **when** a field validates:
+
+<PropsTable rows={[
+	{ name: "'onChange'", type: 'mode', description: 'Validate on every change. Most immediate feedback.' },
+	{ name: "'onBlur'", type: 'mode', description: 'Validate when the field loses focus.' },
+	{ name: "'onSubmit'", type: 'mode', description: 'Validate only when the form is submitted.' },
+	{ name: "'all'", type: 'mode', description: 'Validate on both change and blur.' },
+]} />
+
+Regardless of mode, all visible fields are validated on submit before `onSubmit` runs.
+
+## The submit gate
+
+The default footer keeps the submit button disabled until the form is **dirty and valid**,
+and disables it while submitting. You can build your own footer using
+[`useFormState`](/docs/api/hooks) if you need different behavior.

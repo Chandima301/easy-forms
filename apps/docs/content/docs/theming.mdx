@@ -1,0 +1,72 @@
+---
+title: Theming & customization
+description: Swap the renderer registry, override single controls, and style the form chrome.
+icon: Palette
+---
+
+Easy Forms separates the **engine** (headless) from the **renderers** (UI). You control
+the look at three levels: the whole registry, individual renderers, and the form chrome.
+
+## The renderer registry
+
+A registry maps a control name to a React component:
+
+```ts
+type RendererRegistry = Record<string, ComponentType<RendererProps>>;
+```
+
+`shadcnRegistry` is the default. To use a different design system, provide your own
+registry to `<Form registry={...}>`.
+
+## Override a single control
+
+Start from the shadcn registry and replace just the renderers you want:
+
+```tsx
+import { shadcnRegistry } from '@easy-forms/shadcn';
+import { MyFancySelect } from './MyFancySelect';
+
+const registry = { ...shadcnRegistry, dropdown: MyFancySelect };
+
+<Form schema={schema} registry={registry} onSubmit={...} />;
+```
+
+## Compose from primitives
+
+`@easy-forms/shadcn` exports its primitives (`Input`, `Select`, `Checkbox`, `Label`,
+`FieldShell`, `Button`, …) so you can build a renderer that matches the others:
+
+```tsx
+import { FieldShell, Input } from '@easy-forms/shadcn';
+
+function PhoneRenderer(props) {
+	return (
+		<FieldShell question={props.question} error={props.error}>
+			<Input {...} />
+		</FieldShell>
+	);
+}
+```
+
+Renderers read everything from the effective `question` (including dynamic overrides from
+`propsDependsOn`). There is no separate `computed` map.
+
+## Tailwind vs. plain CSS
+
+The split is deliberate:
+
+| Layer | Styling |
+| --- | --- |
+| Renderers (Input, Select, …) | Inline **Tailwind** utility classes — add the shadcn `dist` to your Tailwind `content`. |
+| Chrome (container, footer, buttons, grid, wizard nav) | Plain **CSS** in `@easy-forms/shadcn/styles.css`. |
+
+<Callout type="warn">
+	Don't move chrome classes into a Tailwind `@layer components` block — Tailwind will purge
+	them when it can't find the class names in your scanned source.
+</Callout>
+
+## Dark mode
+
+The shadcn renderers and chrome respond to your app's color scheme. Drive dark mode the way
+you already do (a `dark` class or `data-theme`); the renderers inherit the surrounding
+tokens.

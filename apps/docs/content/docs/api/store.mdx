@@ -1,0 +1,43 @@
+---
+title: Store
+description: createFormStore and the FormStore interface.
+icon: Database
+---
+
+```ts
+import { createFormStore } from '@easy-forms/core';
+
+const store = createFormStore({ initialValues, validationMode });
+```
+
+Most apps never call this — `<Form>` creates a store internally. Create one yourself to
+drive values programmatically or share state across components, then pass it to
+`<Form store={store}>`.
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'initialValues', type: 'Record<string, unknown>', description: 'Initial field values.' },
+	{ name: 'validationMode', type: "'onChange' | 'onBlur' | 'onSubmit' | 'all'", description: 'When fields validate.' },
+]} />
+
+## FormStore (selected members)
+
+<PropsTable rows={[
+	{ name: 'getValue / getValues', type: '() => unknown', description: 'Read a field or all values.' },
+	{ name: 'setValue', type: '(key, value, options?) => void', description: 'Set a value. options: { validate, touch, markDirty }.' },
+	{ name: 'getFieldState', type: '(key) => FieldState', description: 'Read a field\'s full state.' },
+	{ name: 'getDerived', type: '() => FormDerivedState', description: 'Aggregate isDirty / isValid / values / errors.' },
+	{ name: 'validateField / validateAll', type: '(...) => Promise<boolean>', description: 'Run validation imperatively.' },
+	{ name: 'resetField / reset', type: '(...) => void', description: 'Reset one field or the whole form.' },
+	{ name: 'submit', type: '(handler) => Promise<void>', description: 'Validate then invoke the handler with values.' },
+	{ name: 'subscribeField / subscribeForm / subscribeGroup', type: '(…, listener) => unsubscribe', description: 'Low-level subscriptions (the hooks wrap these).' },
+]} />
+
+## SetValueOptions
+
+<PropsTable rows={[
+	{ name: 'validate', type: 'boolean', default: 'true', description: 'Validate after setting.' },
+	{ name: 'touch', type: 'boolean', default: 'false', description: 'Mark the field touched.' },
+	{ name: 'markDirty', type: 'boolean', default: 'true', description: 'Update the dirty flag. Dependency-engine derivations use false.' },
+]} />

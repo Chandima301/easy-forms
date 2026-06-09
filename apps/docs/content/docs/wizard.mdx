@@ -1,0 +1,57 @@
+---
+title: Multi-step wizards
+description: Per-step validation, conditional steps, and resumable persistence — from one schema.
+icon: ListChecks
+---
+
+Add a `wizard` config to your schema and `<Form>` renders a multi-step wizard instead of a
+single page. Everything else — controls, validation, dependencies — works the same.
+
+## Shape
+
+```ts
+interface WizardConfig<TFormData> {
+	steps: WizardStep<TFormData>[];
+	persistKey?: string;        // resume from localStorage
+	validateOnNext?: boolean;   // default true
+}
+
+interface WizardStep<TFormData> {
+	id: string;
+	title: string;
+	description?: string;
+	groups: Group<TFormData>[];
+	dependents?: Dependency<TFormData>; // step-level visibility
+	optional?: boolean;
+}
+```
+
+## Live example
+
+Per-step validation gates the **Next** button. The "Shipping notes" step only appears when
+you ask for shipping.
+
+<WizardDemo />
+
+## Per-step validation
+
+With `validateOnNext` (default `true`), the current step's fields are validated before
+advancing. Validation errors block **Next** but not **Previous**.
+
+## Conditional steps
+
+A step can declare `dependents.propsDependsOn` returning `{ hidden: true }` to skip itself
+based on earlier answers — exactly like a field or group. Hidden steps are removed from the
+navigation and excluded from the final values.
+
+## Resumable persistence
+
+Set `persistKey` and the wizard saves its values and current step index to `localStorage`.
+Reload mid-flow and the user resumes where they left off.
+
+```tsx
+wizard: { persistKey: 'checkout-v1', steps: [...] }
+```
+
+All step panels are mounted (and CSS-hidden) so field state is preserved as the user moves
+between steps.

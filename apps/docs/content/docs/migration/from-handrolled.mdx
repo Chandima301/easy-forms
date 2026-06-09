@@ -1,0 +1,48 @@
+---
+title: From hand-rolled forms
+description: Replace useState soup and ad-hoc handlers with one schema.
+icon: ArrowLeftRight
+---
+
+Hand-rolled forms accumulate `useState`, change handlers, validation conditionals, and
+manual error rendering. Easy Forms collapses all of it into a schema.
+
+## Before (hand-rolled)
+
+```tsx
+const [name, setName] = useState('');
+const [email, setEmail] = useState('');
+const [errors, setErrors] = useState({});
+
+function validate() {
+	const e = {};
+	if (!name) e.name = 'Required';
+	if (!/^[^@]+@[^@]+$/.test(email)) e.email = 'Invalid email';
+	setErrors(e);
+	return Object.keys(e).length === 0;
+}
+
+<form onSubmit={(ev) => { ev.preventDefault(); if (validate()) submit({ name, email }); }}>
+	<input value={name} onChange={(e) => setName(e.target.value)} />
+	{errors.name && <span>{errors.name}</span>}
+	<input value={email} onChange={(e) => setEmail(e.target.value)} />
+	{errors.email && <span>{errors.email}</span>}
+	<button>Submit</button>
+</form>;
+```
+
+## After (Easy Forms)
+
+```tsx
+const schema: FormSchema = {
+	groups: [{ questions: [
+		{ key: 'name', label: 'Name', control: 'text', validators: { required: true } },
+		{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true } },
+	] }],
+};
+
+<Form schema={schema} registry={shadcnRegistry} initialValues={{ name: '', email: '' }} onSubmit={submit} />;
+```
+
+The state, change handlers, validation logic, error rendering, dirty/touched tracking, and
+the submit gate are all handled for you.
