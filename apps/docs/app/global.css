@@ -1,6 +1,6 @@
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
 
 /* Scan Fumadocs UI + the @easy-forms/shadcn renderer bundles so the Tailwind
    utility classes used by the live <Form> demos are generated. */
@@ -22,9 +22,16 @@
 
 /* Premium landing-page helpers ------------------------------------------- */
 .ef-grid-bg {
-	background-image:
-		linear-gradient(to right, color-mix(in oklab, var(--color-fd-border) 60%, transparent) 1px, transparent 1px),
-		linear-gradient(to bottom, color-mix(in oklab, var(--color-fd-border) 60%, transparent) 1px, transparent 1px);
+	background-image: linear-gradient(
+			to right,
+			color-mix(in oklab, var(--color-fd-border) 60%, transparent) 1px,
+			transparent 1px
+		),
+		linear-gradient(
+			to bottom,
+			color-mix(in oklab, var(--color-fd-border) 60%, transparent) 1px,
+			transparent 1px
+		);
 	background-size: 64px 64px;
 	mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
 }

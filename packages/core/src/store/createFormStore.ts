@@ -13,11 +13,7 @@
 //   again before they resolved.
 
 import type { RuntimeProps } from '../types/dependencies';
-import {
-	firstError,
-	runAsyncCustoms,
-	runSyncValidators,
-} from '../validation/runValidators';
+import { firstError, runAsyncCustoms, runSyncValidators } from '../validation/runValidators';
 import { FORM_TOPIC, createListenerHub } from './listeners';
 import type {
 	FieldDescriptor,

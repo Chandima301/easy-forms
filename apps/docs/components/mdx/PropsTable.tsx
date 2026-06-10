@@ -28,7 +28,9 @@ export function PropsTable({ rows }: { rows: PropRow[] }) {
 								{r.name}
 								{r.required ? <span className="ml-1 text-red-500">*</span> : null}
 							</td>
-							<td className="px-4 py-2.5 font-mono text-[13px] text-fd-muted-foreground">{r.type}</td>
+							<td className="px-4 py-2.5 font-mono text-[13px] text-fd-muted-foreground">
+								{r.type}
+							</td>
 							<td className="px-4 py-2.5 font-mono text-[13px] text-fd-muted-foreground">
 								{r.default ?? '—'}
 							</td>

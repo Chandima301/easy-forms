@@ -16,17 +16,9 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { useFormStoreContext } from '../context/useFormStoreContext';
 import { useFormValues } from '../hooks/useFormValues';
 import type { WizardConfig, WizardStep } from '../types/schema';
-import {
-	clearPersisted,
-	createDebouncedSaver,
-	loadPersisted,
-} from '../wizard/persistence';
+import { WizardContext, type WizardContextValue, type WizardState } from '../wizard/WizardContext';
+import { clearPersisted, createDebouncedSaver, loadPersisted } from '../wizard/persistence';
 import { collectStepFieldKeys, isStepVisible } from '../wizard/walkSteps';
-import {
-	WizardContext,
-	type WizardContextValue,
-	type WizardState,
-} from '../wizard/WizardContext';
 import { GroupRenderer } from './GroupRenderer';
 
 export interface WizardProps {
@@ -62,9 +54,7 @@ export function Wizard({
 
 	// Hydrate persisted state once on mount.
 	const hydratedRef = useRef(false);
-	const [currentStepIndex, setCurrentStepIndex] = useState(
-		() => visibleStepIndices[0] ?? 0
-	);
+	const [currentStepIndex, setCurrentStepIndex] = useState(() => visibleStepIndices[0] ?? 0);
 	const [visitedSteps, setVisitedSteps] = useState<ReadonlySet<number>>(
 		() => new Set([visibleStepIndices[0] ?? 0])
 	);

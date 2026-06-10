@@ -1,11 +1,9 @@
 // FormSchema — top-level shape passed to <Form>.
 
-import type { Group } from './group';
 import type { Dependency } from './dependencies';
+import type { Group } from './group';
 
-export interface WizardStep<
-	TFormData extends Record<string, unknown> = Record<string, unknown>,
-> {
+export interface WizardStep<TFormData extends Record<string, unknown> = Record<string, unknown>> {
 	id: string;
 	title: string;
 	description?: string;
@@ -14,9 +12,7 @@ export interface WizardStep<
 	optional?: boolean;
 }
 
-export interface WizardConfig<
-	TFormData extends Record<string, unknown> = Record<string, unknown>,
-> {
+export interface WizardConfig<TFormData extends Record<string, unknown> = Record<string, unknown>> {
 	steps: WizardStep<TFormData>[];
 	/** When set, wizard state (values + currentStepIndex) is persisted to localStorage under this key. */
 	persistKey?: string;
@@ -24,9 +20,7 @@ export interface WizardConfig<
 	validateOnNext?: boolean;
 }
 
-export interface FormSchema<
-	TFormData extends Record<string, unknown> = Record<string, unknown>,
-> {
+export interface FormSchema<TFormData extends Record<string, unknown> = Record<string, unknown>> {
 	id?: string;
 	title?: string;
 	description?: string;

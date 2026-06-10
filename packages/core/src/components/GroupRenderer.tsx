@@ -38,9 +38,7 @@ export function GroupRenderer({ group, depth = 0 }: GroupRendererProps) {
 		effective.layout === 'grid'
 			? `easy-forms-grid easy-forms-grid-${effective.gridCols ?? 2}`
 			: 'easy-forms-stack';
-	const sectionClassName = ['easy-forms-group', effective.className]
-		.filter(Boolean)
-		.join(' ');
+	const sectionClassName = ['easy-forms-group', effective.className].filter(Boolean).join(' ');
 
 	const hidden = overrides.hidden === true;
 	const style = hidden ? { display: 'none' as const } : undefined;

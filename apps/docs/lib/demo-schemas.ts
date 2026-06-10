@@ -271,7 +271,13 @@ const order: DemoPreset = {
 				layout: 'grid',
 				gridCols: 3,
 				questions: [
-					{ key: 'subtotal', label: 'Subtotal', control: 'number', prefix: '$', validators: { min: 0 } },
+					{
+						key: 'subtotal',
+						label: 'Subtotal',
+						control: 'number',
+						prefix: '$',
+						validators: { min: 0 },
+					},
 					{
 						key: 'taxRate',
 						label: 'Tax rate',

@@ -13,7 +13,7 @@
 
 import type { FormStore } from '../store/types';
 import type { FormSchema } from '../types/schema';
-import { buildDependencyGraph, type DependencyEdge, type DependencyGraph } from './buildGraph';
+import { type DependencyEdge, type DependencyGraph, buildDependencyGraph } from './buildGraph';
 import { assertNoDependencyCycle } from './detectCycle';
 import type { DependencyContext, DependencyHandlerRegistry, DependencyTarget } from './types';
 
@@ -143,9 +143,7 @@ export function attachDependencyEngine(
 	for (const groupId of graph.groupIds) {
 		// Find the group object via the edges (any edge targeting this group
 		// carries the reference). If the group has no edges, walk schema once.
-		const edge = graph.edges.find(
-			(e) => e.target.kind === 'group' && e.target.id === groupId
-		);
+		const edge = graph.edges.find((e) => e.target.kind === 'group' && e.target.id === groupId);
 		const group = edge?.target.kind === 'group' ? edge.target.group : undefined;
 		groupById.set(groupId, group);
 		const cleanup = store.registerGroup({

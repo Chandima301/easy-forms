@@ -1,3 +1,6 @@
+import { CodeShowcase } from '@/components/landing/CodeShowcase';
+import { SchemaFormSync } from '@/components/landing/SchemaFormSync';
+import { InstallChip } from '@/components/ui/CopyButton';
 import {
 	Accessibility,
 	ArrowRight,
@@ -16,9 +19,6 @@ import {
 	Zap,
 } from 'lucide-react';
 import Link from 'next/link';
-import { CodeShowcase } from '@/components/landing/CodeShowcase';
-import { SchemaFormSync } from '@/components/landing/SchemaFormSync';
-import { InstallChip } from '@/components/ui/CopyButton';
 
 export default function HomePage() {
 	return (
@@ -64,9 +64,8 @@ function Hero() {
 					Forms are just <span className="text-fd-primary">data</span>.
 				</h1>
 				<p className="mt-6 max-w-xl text-balance text-lg text-fd-muted-foreground">
-					Hand Easy Forms an array of question objects. It owns rendering, validation,
-					conditional logic, multi-step wizards, and submission — so you don't wire any of it
-					by hand.
+					Hand Easy Forms an array of question objects. It owns rendering, validation, conditional
+					logic, multi-step wizards, and submission — so you don't wire any of it by hand.
 				</p>
 				<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
 					<Link
@@ -87,14 +86,18 @@ function Hero() {
 					<InstallChip />
 				</div>
 				<div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-fd-muted-foreground">
-					{['TypeScript-first', 'WCAG-minded', 'Zero core UI deps', 'Tree-shakeable', 'MIT licensed'].map(
-						(t) => (
-							<span key={t} className="inline-flex items-center gap-1.5">
-								<Check className="h-3.5 w-3.5 text-fd-primary" />
-								{t}
-							</span>
-						),
-					)}
+					{[
+						'TypeScript-first',
+						'WCAG-minded',
+						'Zero core UI deps',
+						'Tree-shakeable',
+						'MIT licensed',
+					].map((t) => (
+						<span key={t} className="inline-flex items-center gap-1.5">
+							<Check className="h-3.5 w-3.5 text-fd-primary" />
+							{t}
+						</span>
+					))}
 				</div>
 			</div>
 		</section>
@@ -116,7 +119,9 @@ function Section({
 		<section className="border-b border-fd-border px-4 py-20">
 			<div className="mx-auto max-w-5xl">
 				<div className="mx-auto mb-10 max-w-2xl text-center">
-					<p className="text-sm font-semibold uppercase tracking-wider text-fd-primary">{eyebrow}</p>
+					<p className="text-sm font-semibold uppercase tracking-wider text-fd-primary">
+						{eyebrow}
+					</p>
 					<h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
 					<p className="mt-3 text-fd-muted-foreground">{subtitle}</p>
 				</div>
@@ -199,14 +204,32 @@ function Features() {
 	);
 }
 
-const COMPARE: { feature: string; ef: boolean; rhf: 'partial' | boolean; formik: 'partial' | boolean; hand: boolean }[] = [
+const COMPARE: {
+	feature: string;
+	ef: boolean;
+	rhf: 'partial' | boolean;
+	formik: 'partial' | boolean;
+	hand: boolean;
+}[] = [
 	{ feature: 'Schema as the source of truth', ef: true, rhf: false, formik: false, hand: false },
-	{ feature: 'Conditional logic built-in', ef: true, rhf: 'partial', formik: 'partial', hand: false },
+	{
+		feature: 'Conditional logic built-in',
+		ef: true,
+		rhf: 'partial',
+		formik: 'partial',
+		hand: false,
+	},
 	{ feature: 'Derived / computed values', ef: true, rhf: 'partial', formik: false, hand: false },
 	{ feature: 'Multi-step wizard + persistence', ef: true, rhf: false, formik: false, hand: false },
 	{ feature: 'Accessible renderers by default', ef: true, rhf: false, formik: false, hand: false },
 	{ feature: 'Per-field surgical re-renders', ef: true, rhf: true, formik: false, hand: false },
-	{ feature: 'Swappable renderer registry', ef: true, rhf: 'partial', formik: 'partial', hand: true },
+	{
+		feature: 'Swappable renderer registry',
+		ef: true,
+		rhf: 'partial',
+		formik: 'partial',
+		hand: true,
+	},
 ];
 
 function Cell({ v }: { v: 'partial' | boolean }) {
@@ -229,19 +252,31 @@ function Comparison() {
 						<tr className="border-b border-fd-border bg-fd-muted/40">
 							<th className="px-4 py-3 text-left font-medium">Capability</th>
 							<th className="px-4 py-3 text-center font-semibold text-fd-primary">Easy Forms</th>
-							<th className="px-4 py-3 text-center font-medium text-fd-muted-foreground">React Hook Form</th>
+							<th className="px-4 py-3 text-center font-medium text-fd-muted-foreground">
+								React Hook Form
+							</th>
 							<th className="px-4 py-3 text-center font-medium text-fd-muted-foreground">Formik</th>
-							<th className="px-4 py-3 text-center font-medium text-fd-muted-foreground">Hand-rolled</th>
+							<th className="px-4 py-3 text-center font-medium text-fd-muted-foreground">
+								Hand-rolled
+							</th>
 						</tr>
 					</thead>
 					<tbody>
 						{COMPARE.map((row, i) => (
 							<tr key={row.feature} className={i % 2 ? 'bg-fd-muted/20' : ''}>
 								<td className="px-4 py-3 text-left">{row.feature}</td>
-								<td className="px-4 py-3"><Cell v={row.ef} /></td>
-								<td className="px-4 py-3"><Cell v={row.rhf} /></td>
-								<td className="px-4 py-3"><Cell v={row.formik} /></td>
-								<td className="px-4 py-3"><Cell v={row.hand} /></td>
+								<td className="px-4 py-3">
+									<Cell v={row.ef} />
+								</td>
+								<td className="px-4 py-3">
+									<Cell v={row.rhf} />
+								</td>
+								<td className="px-4 py-3">
+									<Cell v={row.formik} />
+								</td>
+								<td className="px-4 py-3">
+									<Cell v={row.hand} />
+								</td>
 							</tr>
 						))}
 					</tbody>
@@ -256,16 +291,18 @@ function Performance() {
 		<section className="border-b border-fd-border px-4 py-20">
 			<div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
 				<div>
-					<p className="text-sm font-semibold uppercase tracking-wider text-fd-primary">Performance</p>
+					<p className="text-sm font-semibold uppercase tracking-wider text-fd-primary">
+						Performance
+					</p>
 					<h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
 						One field changes. One field re-renders.
 					</h2>
 					<p className="mt-4 text-fd-muted-foreground">
-						Easy Forms is built on a custom external store with topic-based, per-field
-						subscriptions via <code className="rounded bg-fd-muted px-1.5 py-0.5 text-sm">useSyncExternalStore</code>.
-						Typing in one input wakes only that field's subscribers and the form-state
-						subscriber — not the entire form. Hundred-field forms stay smooth without manual
-						memoization.
+						Easy Forms is built on a custom external store with topic-based, per-field subscriptions
+						via{' '}
+						<code className="rounded bg-fd-muted px-1.5 py-0.5 text-sm">useSyncExternalStore</code>.
+						Typing in one input wakes only that field's subscribers and the form-state subscriber —
+						not the entire form. Hundred-field forms stay smooth without manual memoization.
 					</p>
 					<Link
 						href="/docs/performance"
@@ -304,17 +341,24 @@ function Enterprise() {
 		'Extend with custom controls, validators, deps',
 		'Dual ESM/CJS builds, tree-shakeable, MIT',
 	];
-	const roadmap = ['SSO/SAML field packs', 'Audit-log plugin', 'SOC 2 & compliance docs', 'Priority support SLAs'];
+	const roadmap = [
+		'SSO/SAML field packs',
+		'Audit-log plugin',
+		'SOC 2 & compliance docs',
+		'Priority support SLAs',
+	];
 	return (
 		<section className="border-b border-fd-border px-4 py-20">
 			<div className="mx-auto max-w-5xl rounded-2xl border border-fd-border bg-gradient-to-b from-fd-card to-fd-background p-8 sm:p-12">
 				<div className="grid gap-10 lg:grid-cols-2">
 					<div>
-						<p className="text-sm font-semibold uppercase tracking-wider text-fd-primary">Enterprise-ready</p>
+						<p className="text-sm font-semibold uppercase tracking-wider text-fd-primary">
+							Enterprise-ready
+						</p>
 						<h2 className="mt-2 text-3xl font-bold tracking-tight">Adopt with confidence</h2>
 						<p className="mt-3 text-fd-muted-foreground">
-							A predictable, typed core your team can reason about — plus a transparent roadmap
-							for the governance features large orgs ask for.
+							A predictable, typed core your team can reason about — plus a transparent roadmap for
+							the governance features large orgs ask for.
 						</p>
 						<div className="mt-6 flex flex-wrap gap-3">
 							<Link
@@ -375,8 +419,8 @@ function FinalCta() {
 					Ship your next form in minutes.
 				</h2>
 				<p className="mt-4 text-fd-muted-foreground">
-					Install the packages, paste a schema, render a form. The 5-minute quick start gets you
-					to a working, validated, accessible form.
+					Install the packages, paste a schema, render a form. The 5-minute quick start gets you to
+					a working, validated, accessible form.
 				</p>
 				<div className="mt-8 flex flex-col items-center gap-4">
 					<InstallChip />

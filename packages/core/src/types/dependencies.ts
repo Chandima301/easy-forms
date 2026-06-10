@@ -18,11 +18,9 @@
 export type FieldName<TFormData> = Extract<keyof TFormData, string>;
 
 // Typed aggregation: receives a Pick<> of just the depended-on fields.
-export type Aggregator<
-	TFormData,
-	TFields extends readonly FieldName<TFormData>[],
-	TResult,
-> = (values: Pick<TFormData, TFields[number]>) => TResult;
+export type Aggregator<TFormData, TFields extends readonly FieldName<TFormData>[], TResult> = (
+	values: Pick<TFormData, TFields[number]>
+) => TResult;
 
 // ---------------------------------------------------------------------------
 // RuntimeProps — the shape of dynamic-prop overrides written by `propsDependsOn`

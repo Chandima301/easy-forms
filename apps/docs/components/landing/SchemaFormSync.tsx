@@ -1,22 +1,28 @@
 'use client';
 
-import { createFormStore, Form, type FormStore } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
-import { Pause, Play } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CodePane } from '@/components/code/CodePane';
 import { DemoFrame, LiveBadge } from '@/components/demo/DemoFrame';
 import { demoPresets, getPreset } from '@/lib/demo-schemas';
+import { Form, type FormStore, createFormStore } from '@easy-forms/core';
+import { shadcnRegistry } from '@easy-forms/shadcn';
+import { Pause, Play } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 /** Scripted "type the schema, watch the form build, then watch it react" beat. */
-function interactionSteps(presetId: string): { delay: number; key: string; run: (s: FormStore) => void }[] {
+function interactionSteps(
+	presetId: string
+): { delay: number; key: string; run: (s: FormStore) => void }[] {
 	switch (presetId) {
 		case 'conditional':
 			return [
 				{ delay: 700, key: 'country', run: (s) => s.setValue('country', 'us') },
 				{ delay: 900, key: 'region', run: (s) => s.setValue('region', 'ca') },
 				{ delay: 1100, key: 'gift', run: (s) => s.setValue('gift', true) },
-				{ delay: 1000, key: 'giftMessage', run: (s) => s.setValue('giftMessage', 'Happy birthday! 🎉') },
+				{
+					delay: 1000,
+					key: 'giftMessage',
+					run: (s) => s.setValue('giftMessage', 'Happy birthday! 🎉'),
+				},
 			];
 		case 'order':
 			return [
@@ -46,7 +52,7 @@ export function SchemaFormSync() {
 	// A fresh store per (preset, cycle) so each loop resets the form cleanly.
 	const store = useMemo<FormStore>(
 		() => createFormStore({ initialValues: preset.initialValues }),
-		[preset, cycle],
+		[preset, cycle]
 	);
 
 	useEffect(() => {
@@ -99,7 +105,7 @@ export function SchemaFormSync() {
 						if (cancelled) return;
 						setActiveKey(step.key);
 						step.run(store);
-					}, acc),
+					}, acc)
 				);
 			}
 			// hold, clear highlight, then loop
@@ -108,12 +114,12 @@ export function SchemaFormSync() {
 				setTimeout(() => {
 					if (cancelled) return;
 					setActiveKey(null);
-				}, acc - 1200),
+				}, acc - 1200)
 			);
 			timers.push(
 				setTimeout(() => {
 					if (!cancelled) restart();
-				}, acc),
+				}, acc)
 			);
 		};
 
@@ -186,7 +192,11 @@ export function SchemaFormSync() {
 				</DemoFrame>
 
 				{/* Live form pane */}
-				<DemoFrame title="Preview" accent={<LiveBadge />} bodyClassName="relative max-h-[460px] overflow-auto p-5">
+				<DemoFrame
+					title="Preview"
+					accent={<LiveBadge />}
+					bodyClassName="relative max-h-[460px] overflow-auto p-5"
+				>
 					<div
 						className="not-prose ef-demo-surface transition-[clip-path] duration-100"
 						style={{ clipPath: `inset(0 0 ${(1 - reveal) * 100}% 0)` }}

@@ -14,9 +14,7 @@ import type { DependencyContext, DependencyHandler } from '../types';
  * `markDirty: false` keeps the form's overall isDirty status accurate (derived
  * writes don't count as user edits).
  */
-export const valueDependsOnHandler: DependencyHandler<
-	ValueDependency<Record<string, unknown>>
-> = {
+export const valueDependsOnHandler: DependencyHandler<ValueDependency<Record<string, unknown>>> = {
 	getDependencies(config) {
 		return [...config.fieldNames];
 	},

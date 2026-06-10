@@ -89,9 +89,7 @@ function NumberR(props: RendererProps<NumberQuestion>) {
 				type="number"
 				aria-label={props.question.key}
 				value={props.value == null ? '' : String(props.value)}
-				onChange={(e) =>
-					props.onChange(e.target.value === '' ? null : Number(e.target.value))
-				}
+				onChange={(e) => props.onChange(e.target.value === '' ? null : Number(e.target.value))}
 				onBlur={props.onBlur}
 			/>
 		</label>
@@ -426,9 +424,7 @@ describe('propsDependsOn (group-level)', () => {
 		const schema: FormSchema = {
 			groups: [
 				{
-					questions: [
-						{ key: 'show', label: 'Show', control: 'checkbox' } as CheckboxQuestion,
-					],
+					questions: [{ key: 'show', label: 'Show', control: 'checkbox' } as CheckboxQuestion],
 				},
 				{
 					id: 'panel',
@@ -473,9 +469,7 @@ describe('propsDependsOn (group-level)', () => {
 		const schema: FormSchema = {
 			groups: [
 				{
-					questions: [
-						{ key: 'show', label: 'Show', control: 'checkbox' } as CheckboxQuestion,
-					],
+					questions: [{ key: 'show', label: 'Show', control: 'checkbox' } as CheckboxQuestion],
 				},
 				{
 					id: 'panel',
@@ -738,9 +732,7 @@ describe('schema integrity', () => {
 					// no id
 					title: 'Bad group',
 					dependents: {
-						propsDependsOn: [
-							{ fieldNames: [], compute: () => ({ hidden: false }) },
-						],
+						propsDependsOn: [{ fieldNames: [], compute: () => ({ hidden: false }) }],
 					},
 					questions: [],
 				},

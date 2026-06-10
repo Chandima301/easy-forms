@@ -1,11 +1,11 @@
 {
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "docs",
-      "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "cd apps\\docs && node node_modules/next/dist/bin/next dev -p 3942"],
-      "port": 3942
-    }
-  ]
+	"version": "0.0.1",
+	"configurations": [
+		{
+			"name": "docs",
+			"runtimeExecutable": "cmd",
+			"runtimeArgs": ["/c", "cd apps\\docs && node node_modules/next/dist/bin/next dev -p 3942"],
+			"port": 3942
+		}
+	]
 }

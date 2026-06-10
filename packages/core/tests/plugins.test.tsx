@@ -23,9 +23,7 @@ function TextR(props: RendererProps<TextQuestion>) {
 }
 const registry: RendererRegistry = { text: TextR };
 const schema: FormSchema = {
-	groups: [
-		{ questions: [{ key: 'name', label: 'Name', control: 'text' } as TextQuestion] },
-	],
+	groups: [{ questions: [{ key: 'name', label: 'Name', control: 'text' } as TextQuestion] }],
 };
 
 describe('plugins', () => {

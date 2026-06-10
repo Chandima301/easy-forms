@@ -1,6 +1,6 @@
 import type { FileQuestion, RendererProps } from '@easy-forms/core';
-import { FieldShell } from '../primitives/FieldShell';
 import { cn } from '../lib/cn';
+import { FieldShell } from '../primitives/FieldShell';
 
 function acceptToString(accept: FileQuestion['accept']): string | undefined {
 	if (!accept) return undefined;
@@ -28,7 +28,7 @@ export function FileRenderer({
 		files.length === 0
 			? 'No file selected'
 			: files.length === 1
-				? files[0]?.name ?? ''
+				? (files[0]?.name ?? '')
 				: `${files.length} files`;
 	return (
 		<FieldShell

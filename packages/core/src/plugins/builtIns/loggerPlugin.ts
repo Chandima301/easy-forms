@@ -1,4 +1,4 @@
-import { definePlugin, type FormPlugin } from '../types';
+import { type FormPlugin, definePlugin } from '../types';
 
 export interface LoggerPluginOptions {
 	/** Optional log prefix. Default `[easy-forms]`. */

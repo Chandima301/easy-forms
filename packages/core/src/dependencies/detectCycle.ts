@@ -10,7 +10,7 @@
 //
 // Dev-only: this check is bypassed in production builds for cold-start perf.
 
-import type { DependencyGraph, DependencyEdge } from './buildGraph';
+import type { DependencyEdge, DependencyGraph } from './buildGraph';
 import type { DependencyTarget } from './types';
 
 const WHITE = 0;

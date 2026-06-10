@@ -27,7 +27,8 @@ export const metadata = {
 	twitter: {
 		card: 'summary_large_image',
 		title: 'Easy Forms — Forms are just data',
-		description: 'Schema-driven React forms with validation, conditional logic, and wizards built in.',
+		description:
+			'Schema-driven React forms with validation, conditional logic, and wizards built in.',
 	},
 };
 

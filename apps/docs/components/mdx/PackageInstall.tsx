@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { CopyButton } from '@/components/ui/CopyButton';
+import { useState } from 'react';
 
 const MANAGERS = ['pnpm', 'npm', 'yarn', 'bun'] as const;
 type Manager = (typeof MANAGERS)[number];
@@ -20,7 +20,9 @@ function command(mgr: Manager, pkg: string): string {
 }
 
 /** Package-manager tabbed install block. Usage in MDX: <PackageInstall packages="@easy-forms/core @easy-forms/shadcn" /> */
-export function PackageInstall({ packages = '@easy-forms/core @easy-forms/shadcn' }: { packages?: string }) {
+export function PackageInstall({
+	packages = '@easy-forms/core @easy-forms/shadcn',
+}: { packages?: string }) {
 	const [mgr, setMgr] = useState<Manager>('pnpm');
 	const cmd = command(mgr, packages);
 	return (
@@ -43,7 +45,10 @@ export function PackageInstall({ packages = '@easy-forms/core @easy-forms/shadcn
 						</button>
 					))}
 				</div>
-				<CopyButton value={cmd} className="mr-2 text-fd-muted-foreground hover:text-fd-foreground" />
+				<CopyButton
+					value={cmd}
+					className="mr-2 text-fd-muted-foreground hover:text-fd-foreground"
+				/>
 			</div>
 			<pre className="overflow-auto px-4 py-3 font-mono text-sm">
 				<span className="select-none text-fd-muted-foreground">$ </span>

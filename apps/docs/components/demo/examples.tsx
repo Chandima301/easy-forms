@@ -19,7 +19,10 @@ export function CheckboxRequiredDemo() {
 						label: 'Terms',
 						control: 'checkbox',
 						checkboxLabel: 'I agree to the terms of service',
-						validators: { required: true, custom: (v) => (v ? null : 'You must agree to continue') },
+						validators: {
+							required: true,
+							custom: (v) => (v ? null : 'You must agree to continue'),
+						},
 					},
 				],
 			},
@@ -98,7 +101,12 @@ export function PropsDependsOnDemo() {
 			},
 		],
 	};
-	return <LiveForm schema={schema} initialValues={{ country: null, region: null, gift: false, message: '' }} />;
+	return (
+		<LiveForm
+			schema={schema}
+			initialValues={{ country: null, region: null, gift: false, message: '' }}
+		/>
+	);
 }
 
 export function ValueDependsOnDemo() {
@@ -108,7 +116,13 @@ export function ValueDependsOnDemo() {
 				layout: 'grid',
 				gridCols: 3,
 				questions: [
-					{ key: 'subtotal', label: 'Subtotal', control: 'number', prefix: '$', validators: { min: 0 } },
+					{
+						key: 'subtotal',
+						label: 'Subtotal',
+						control: 'number',
+						prefix: '$',
+						validators: { min: 0 },
+					},
 					{
 						key: 'taxRate',
 						label: 'Tax rate',
@@ -138,7 +152,13 @@ export function ValueDependsOnDemo() {
 			},
 		],
 	};
-	return <LiveForm schema={schema} showReset={false} initialValues={{ subtotal: 100, taxRate: 8.5, total: 0 }} />;
+	return (
+		<LiveForm
+			schema={schema}
+			showReset={false}
+			initialValues={{ subtotal: 100, taxRate: 8.5, total: 0 }}
+		/>
+	);
 }
 
 export function ConditionalGroupsDemo() {
@@ -146,17 +166,29 @@ export function ConditionalGroupsDemo() {
 		groups: [
 			{
 				questions: [
-					{ key: 'subscribe', label: 'Subscribe', control: 'checkbox', checkboxLabel: 'Email me about new features' },
+					{
+						key: 'subscribe',
+						label: 'Subscribe',
+						control: 'checkbox',
+						checkboxLabel: 'Email me about new features',
+					},
 				],
 			},
 			{
 				id: 'marketing',
 				title: 'Marketing preferences',
 				dependents: {
-					propsDependsOn: [{ fieldNames: ['subscribe'], compute: (v) => ({ hidden: v.subscribe !== true }) }],
+					propsDependsOn: [
+						{ fieldNames: ['subscribe'], compute: (v) => ({ hidden: v.subscribe !== true }) },
+					],
 				},
 				questions: [
-					{ key: 'digest', label: 'Weekly digest', control: 'checkbox', checkboxLabel: 'Send me a weekly digest' },
+					{
+						key: 'digest',
+						label: 'Weekly digest',
+						control: 'checkbox',
+						checkboxLabel: 'Send me a weekly digest',
+					},
 					{
 						key: 'frequency',
 						label: 'Frequency',
@@ -170,7 +202,12 @@ export function ConditionalGroupsDemo() {
 			},
 		],
 	};
-	return <LiveForm schema={schema} initialValues={{ subscribe: false, digest: false, frequency: null }} />;
+	return (
+		<LiveForm
+			schema={schema}
+			initialValues={{ subscribe: false, digest: false, frequency: null }}
+		/>
+	);
 }
 
 export function WizardDemo() {
@@ -188,8 +225,18 @@ export function WizardDemo() {
 							layout: 'grid',
 							gridCols: 2,
 							questions: [
-								{ key: 'firstName', label: 'First name', control: 'text', validators: { required: true, minLength: 2 } },
-								{ key: 'lastName', label: 'Last name', control: 'text', validators: { required: true } },
+								{
+									key: 'firstName',
+									label: 'First name',
+									control: 'text',
+									validators: { required: true, minLength: 2 },
+								},
+								{
+									key: 'lastName',
+									label: 'Last name',
+									control: 'text',
+									validators: { required: true },
+								},
 							],
 						},
 					],
@@ -200,8 +247,18 @@ export function WizardDemo() {
 					groups: [
 						{
 							questions: [
-								{ key: 'line1', label: 'Address line 1', control: 'text', validators: { required: true } },
-								{ key: 'needsShipping', label: 'Shipping', control: 'checkbox', checkboxLabel: 'I need expedited shipping' },
+								{
+									key: 'line1',
+									label: 'Address line 1',
+									control: 'text',
+									validators: { required: true },
+								},
+								{
+									key: 'needsShipping',
+									label: 'Shipping',
+									control: 'checkbox',
+									checkboxLabel: 'I need expedited shipping',
+								},
 							],
 						},
 					],
@@ -210,7 +267,12 @@ export function WizardDemo() {
 					id: 'shipping',
 					title: 'Shipping notes',
 					dependents: {
-						propsDependsOn: [{ fieldNames: ['needsShipping'], compute: (v) => ({ hidden: v.needsShipping !== true }) }],
+						propsDependsOn: [
+							{
+								fieldNames: ['needsShipping'],
+								compute: (v) => ({ hidden: v.needsShipping !== true }),
+							},
+						],
 					},
 					groups: [{ questions: [{ key: 'notes', label: 'Notes', control: 'textarea', rows: 3 }] }],
 				},
@@ -220,7 +282,12 @@ export function WizardDemo() {
 					groups: [
 						{
 							questions: [
-								{ key: 'confirmEmail', label: 'Confirm email', control: 'email', validators: { required: true, email: true } },
+								{
+									key: 'confirmEmail',
+									label: 'Confirm email',
+									control: 'email',
+									validators: { required: true, email: true },
+								},
 							],
 						},
 					],
@@ -231,7 +298,14 @@ export function WizardDemo() {
 	return (
 		<LiveForm
 			schema={schema}
-			initialValues={{ firstName: '', lastName: '', line1: '', needsShipping: false, notes: '', confirmEmail: '' }}
+			initialValues={{
+				firstName: '',
+				lastName: '',
+				line1: '',
+				needsShipping: false,
+				notes: '',
+				confirmEmail: '',
+			}}
 		/>
 	);
 }
@@ -244,27 +318,50 @@ export function SignupDemo() {
 				layout: 'grid',
 				gridCols: 2,
 				questions: [
-					{ key: 'firstName', label: 'First name', control: 'text', validators: { required: true, minLength: 2 } },
+					{
+						key: 'firstName',
+						label: 'First name',
+						control: 'text',
+						validators: { required: true, minLength: 2 },
+					},
 					{ key: 'lastName', label: 'Last name', control: 'text', validators: { required: true } },
 				],
 			},
 			{
 				questions: [
-					{ key: 'email', label: 'Email', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
-					{ key: 'password', label: 'Password', control: 'text', inputType: 'password', validators: { required: true, minLength: 8 } },
+					{
+						key: 'email',
+						label: 'Email',
+						control: 'email',
+						placeholder: 'you@example.com',
+						validators: { required: true, email: true },
+					},
+					{
+						key: 'password',
+						label: 'Password',
+						control: 'text',
+						inputType: 'password',
+						validators: { required: true, minLength: 8 },
+					},
 					{
 						key: 'terms',
 						label: 'Terms',
 						control: 'checkbox',
 						checkboxLabel: 'I agree to the terms of service',
-						validators: { required: true, custom: (v) => (v ? null : 'You must agree to continue') },
+						validators: {
+							required: true,
+							custom: (v) => (v ? null : 'You must agree to continue'),
+						},
 					},
 				],
 			},
 		],
 	};
 	return (
-		<LiveForm schema={schema} initialValues={{ firstName: '', lastName: '', email: '', password: '', terms: false }} />
+		<LiveForm
+			schema={schema}
+			initialValues={{ firstName: '', lastName: '', email: '', password: '', terms: false }}
+		/>
 	);
 }
 
@@ -277,7 +374,18 @@ export function CheckoutWizardDemo() {
 				{
 					id: 'contact',
 					title: 'Contact',
-					groups: [{ questions: [{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true } }] }],
+					groups: [
+						{
+							questions: [
+								{
+									key: 'email',
+									label: 'Email',
+									control: 'email',
+									validators: { required: true, email: true },
+								},
+							],
+						},
+					],
 				},
 				{
 					id: 'address',
@@ -288,24 +396,51 @@ export function CheckoutWizardDemo() {
 							gridCols: 2,
 							questions: [
 								{ key: 'city', label: 'City', control: 'text', validators: { required: true } },
-								{ key: 'zip', label: 'Postal code', control: 'text', validators: { required: true, pattern: /^[A-Z0-9 -]{3,10}$/i } },
+								{
+									key: 'zip',
+									label: 'Postal code',
+									control: 'text',
+									validators: { required: true, pattern: /^[A-Z0-9 -]{3,10}$/i },
+								},
 							],
 						},
-						{ questions: [{ key: 'expedite', label: 'Shipping', control: 'checkbox', checkboxLabel: 'Expedited shipping' }] },
+						{
+							questions: [
+								{
+									key: 'expedite',
+									label: 'Shipping',
+									control: 'checkbox',
+									checkboxLabel: 'Expedited shipping',
+								},
+							],
+						},
 					],
 				},
 				{
 					id: 'notes',
 					title: 'Shipping notes',
 					dependents: {
-						propsDependsOn: [{ fieldNames: ['expedite'], compute: (v) => ({ hidden: v.expedite !== true }) }],
+						propsDependsOn: [
+							{ fieldNames: ['expedite'], compute: (v) => ({ hidden: v.expedite !== true }) },
+						],
 					},
-					groups: [{ questions: [{ key: 'notes', label: 'Notes for the courier', control: 'textarea', rows: 3 }] }],
+					groups: [
+						{
+							questions: [
+								{ key: 'notes', label: 'Notes for the courier', control: 'textarea', rows: 3 },
+							],
+						},
+					],
 				},
 			],
 		},
 	};
-	return <LiveForm schema={schema} initialValues={{ email: '', city: '', zip: '', expedite: false, notes: '' }} />;
+	return (
+		<LiveForm
+			schema={schema}
+			initialValues={{ email: '', city: '', zip: '', expedite: false, notes: '' }}
+		/>
+	);
 }
 
 export function DependentDropdownsDemo() {
@@ -377,7 +512,14 @@ export function OrderCalculatorDemo() {
 				gridCols: 3,
 				questions: [
 					{ key: 'qty', label: 'Quantity', control: 'number', validators: { min: 0 } },
-					{ key: 'unitPrice', label: 'Unit price', control: 'number', prefix: '$', decimalScale: 2, validators: { min: 0 } },
+					{
+						key: 'unitPrice',
+						label: 'Unit price',
+						control: 'number',
+						prefix: '$',
+						decimalScale: 2,
+						validators: { min: 0 },
+					},
 					{
 						key: 'total',
 						label: 'Total',
@@ -387,7 +529,8 @@ export function OrderCalculatorDemo() {
 						dependents: {
 							valueDependsOn: {
 								fieldNames: ['qty', 'unitPrice'],
-								compute: (v) => Number((((v.qty as number) ?? 0) * ((v.unitPrice as number) ?? 0)).toFixed(2)),
+								compute: (v) =>
+									Number((((v.qty as number) ?? 0) * ((v.unitPrice as number) ?? 0)).toFixed(2)),
 							},
 						},
 					},
@@ -395,5 +538,11 @@ export function OrderCalculatorDemo() {
 			},
 		],
 	};
-	return <LiveForm schema={schema} showReset={false} initialValues={{ qty: 1, unitPrice: 19.99, total: 0 }} />;
+	return (
+		<LiveForm
+			schema={schema}
+			showReset={false}
+			initialValues={{ qty: 1, unitPrice: 19.99, total: 0 }}
+		/>
+	);
 }

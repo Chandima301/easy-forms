@@ -27,7 +27,9 @@ export function useGroup(id: string | undefined): Partial<RuntimeProps> {
 		if (aKeys.length === bKeys.length) {
 			let same = true;
 			for (const k of aKeys) {
-				if (!Object.is((next as Record<string, unknown>)[k], (cached as Record<string, unknown>)[k])) {
+				if (
+					!Object.is((next as Record<string, unknown>)[k], (cached as Record<string, unknown>)[k])
+				) {
 					same = false;
 					break;
 				}

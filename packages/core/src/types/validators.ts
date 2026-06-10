@@ -19,9 +19,7 @@ export type ValidatorRule<T> = T | { value: T; message: string };
 
 interface CommonValidators<TValue, TFormData> {
 	required?: ValidatorRule<boolean>;
-	custom?:
-		| CustomValidator<TValue, TFormData>
-		| Record<string, CustomValidator<TValue, TFormData>>;
+	custom?: CustomValidator<TValue, TFormData> | Record<string, CustomValidator<TValue, TFormData>>;
 }
 
 interface StringValidators {

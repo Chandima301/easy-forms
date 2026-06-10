@@ -1,5 +1,5 @@
-import type { MetadataRoute } from 'next';
 import { source } from '@/lib/source';
+import type { MetadataRoute } from 'next';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://easy-forms.dev';
 

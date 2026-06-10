@@ -56,5 +56,3 @@ const _bad3: TextQuestion<Form> = {
 	// @ts-expect-error control must be 'text' for TextQuestion
 	control: 'number',
 };
-
-export {};

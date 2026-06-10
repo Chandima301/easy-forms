@@ -18,5 +18,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 		outline: 'border border-slate-300 bg-white text-slate-900 hover:bg-slate-50',
 		ghost: 'text-slate-900 hover:bg-slate-100',
 	}[variant];
-	return <button ref={ref} type={type} className={cn(base, variantClasses, className)} {...props} />;
+	return (
+		<button ref={ref} type={type} className={cn(base, variantClasses, className)} {...props} />
+	);
 });

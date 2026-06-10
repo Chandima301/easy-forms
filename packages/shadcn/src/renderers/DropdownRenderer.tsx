@@ -45,11 +45,7 @@ export function DropdownRenderer({
 				</SelectTrigger>
 				<SelectContent>
 					{options.map((opt) => (
-						<SelectItem
-							key={String(opt.value)}
-							value={String(opt.value)}
-							disabled={opt.disabled}
-						>
+						<SelectItem key={String(opt.value)} value={String(opt.value)} disabled={opt.disabled}>
 							{opt.label}
 						</SelectItem>
 					))}

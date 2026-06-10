@@ -41,8 +41,7 @@ export function Field({ question }: FieldProps) {
 	// requiredness comes from validators or from a dep.
 	const effectiveQuestion = useMemo(() => {
 		const overrides = field.runtimeOverrides;
-		const staticRequired =
-			!!(question.validators as { required?: unknown } | undefined)?.required;
+		const staticRequired = !!(question.validators as { required?: unknown } | undefined)?.required;
 		const overrideKeys = Object.keys(overrides);
 		if (overrideKeys.length === 0 && !staticRequired) return question;
 		const merged: Question = { ...question, ...overrides } as Question;

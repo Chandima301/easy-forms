@@ -1,0 +1,16 @@
+# Normalize line endings to LF for all text files so formatting/lint is
+# consistent across Windows and the Linux CI runners.
+* text=auto eol=lf
+
+# Lockfiles and generated assets — treat as text, LF, but skip diffs.
+pnpm-lock.yaml linguist-generated=true -diff
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary

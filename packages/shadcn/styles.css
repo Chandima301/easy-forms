@@ -73,9 +73,7 @@
 	line-height: 1.25rem;
 	font-weight: 500;
 	cursor: pointer;
-	transition:
-		background-color 0.15s ease,
-		box-shadow 0.15s ease;
+	transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 .easy-forms__submit {
 	background-color: #0f172a;
@@ -96,9 +94,7 @@
 .easy-forms__submit:focus-visible,
 .easy-forms__reset:focus-visible {
 	outline: none;
-	box-shadow:
-		0 0 0 2px #fff,
-		0 0 0 4px #0f172a;
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
 }
 .easy-forms__submit:disabled,
 .easy-forms__reset:disabled {
@@ -244,17 +240,13 @@
 	line-height: 1.25rem;
 	font-weight: 500;
 	cursor: pointer;
-	transition:
-		background-color 0.15s ease,
-		box-shadow 0.15s ease;
+	transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 .easy-forms-wizard__previous:focus-visible,
 .easy-forms-wizard__next:focus-visible,
 .easy-forms-wizard__submit:focus-visible {
 	outline: none;
-	box-shadow:
-		0 0 0 2px #fff,
-		0 0 0 4px #0f172a;
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
 }
 .easy-forms-wizard__previous:disabled,
 .easy-forms-wizard__next:disabled,

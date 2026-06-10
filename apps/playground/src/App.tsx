@@ -3,11 +3,11 @@
 //   "Wizard"  — multi-step form with persistence + step-level visibility + logger plugin
 
 import {
-	Form,
 	type CustomRendererProps,
+	Form,
 	type FormSchema,
-	loggerPlugin,
 	type Option,
+	loggerPlugin,
 } from '@easy-forms/core';
 import { shadcnRegistry } from '@easy-forms/shadcn';
 import { useState } from 'react';
@@ -411,9 +411,7 @@ const wizardSchema: FormSchema<WizardData> = {
 				},
 				groups: [
 					{
-						questions: [
-							{ key: 'shippingNotes', label: 'Notes', control: 'textarea', rows: 3 },
-						],
+						questions: [{ key: 'shippingNotes', label: 'Notes', control: 'textarea', rows: 3 }],
 					},
 				],
 			},
@@ -520,11 +518,7 @@ export function App() {
 				<section className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
 					<h2 className="text-sm font-semibold text-emerald-900">Last submission</h2>
 					<pre className="mt-2 overflow-auto text-xs text-emerald-900">
-						{JSON.stringify(
-							submitted,
-							(_k, v) => (v instanceof File ? `[File: ${v.name}]` : v),
-							2
-						)}
+						{JSON.stringify(submitted, (_k, v) => (v instanceof File ? `[File: ${v.name}]` : v), 2)}
 					</pre>
 				</section>
 			) : null}

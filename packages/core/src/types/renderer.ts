@@ -51,7 +51,5 @@ export type Renderer<TQuestion extends Question = Question> = ComponentType<
  * Question variant. Registering a Dropdown renderer under `text` is a TS error.
  */
 export type RendererRegistry = {
-	[K in ControlType]?: ComponentType<
-		RendererProps<Extract<Question, { control: K }>>
-	>;
+	[K in ControlType]?: ComponentType<RendererProps<Extract<Question, { control: K }>>>;
 };

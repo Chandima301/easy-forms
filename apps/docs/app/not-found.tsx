@@ -16,7 +16,10 @@ export default function NotFound() {
 				>
 					Read the docs
 				</Link>
-				<Link href="/" className="rounded-lg border border-fd-border px-5 py-2.5 text-sm font-semibold">
+				<Link
+					href="/"
+					className="rounded-lg border border-fd-border px-5 py-2.5 text-sm font-semibold"
+				>
 					Back home
 				</Link>
 			</div>
