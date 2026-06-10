@@ -5,16 +5,16 @@
 import { useEffect, useMemo } from 'react';
 import { FormStoreProvider } from '../context/FormStoreProvider';
 import {
+	type DependencyHandlerRegistry,
 	attachDependencyEngine,
 	defaultDependencyHandlers,
-	type DependencyHandlerRegistry,
 } from '../dependencies';
 import { useFormState } from '../hooks/useFormState';
-import { attachPlugins, type FormPlugin } from '../plugins';
+import { type FormPlugin, attachPlugins } from '../plugins';
 import { createFormStore } from '../store/createFormStore';
 import type { FormStore } from '../store/types';
-import type { FormSchema } from '../types/schema';
 import type { RendererRegistry } from '../types/renderer';
+import type { FormSchema } from '../types/schema';
 import { GroupRenderer } from './GroupRenderer';
 import { RendererRegistryContext } from './RegistryContext';
 import { Wizard } from './Wizard';
@@ -124,10 +124,7 @@ export function Form<TFormData extends Record<string, unknown> = Record<string, 
 						<>
 							<div className="easy-forms__body">
 								{schema.groups.map((group, index) => (
-									<GroupRenderer
-										key={group.id ?? group.title ?? `root-${index}`}
-										group={group}
-									/>
+									<GroupRenderer key={group.id ?? group.title ?? `root-${index}`} group={group} />
 								))}
 							</div>
 							<FormFooter

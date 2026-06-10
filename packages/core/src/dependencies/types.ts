@@ -26,7 +26,7 @@ export type DependencyTarget =
 			id: string;
 			// biome-ignore lint/suspicious/noExplicitAny: Group is generic in TFormData; engine doesn't read the typed shape.
 			group: Group<any>;
-		};
+	  };
 
 export interface DependencyContext {
 	store: FormStore;

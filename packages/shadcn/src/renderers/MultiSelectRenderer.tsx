@@ -3,11 +3,11 @@
 
 import type { MultiSelectQuestion, Option, RendererProps } from '@easy-forms/core';
 import { ChevronDown } from 'lucide-react';
+import { cn } from '../lib/cn';
 import { Checkbox } from '../primitives/Checkbox';
 import { FieldShell } from '../primitives/FieldShell';
 import { Label } from '../primitives/Label';
 import { Popover, PopoverContent, PopoverTrigger } from '../primitives/Popover';
-import { cn } from '../lib/cn';
 
 export function MultiSelectRenderer({
 	question,
@@ -20,9 +20,7 @@ export function MultiSelectRenderer({
 	const showError = touched && !!error;
 	const options: Option[] = (question.options as Option[] | undefined) ?? [];
 	const selected = (value ?? []) as (string | number | boolean)[];
-	const selectedLabels = options
-		.filter((o) => selected.includes(o.value))
-		.map((o) => o.label);
+	const selectedLabels = options.filter((o) => selected.includes(o.value)).map((o) => o.label);
 	const placeholder = question.placeholder ?? 'Select...';
 	const disabled = !!question.disabled;
 

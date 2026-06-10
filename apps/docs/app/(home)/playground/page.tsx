@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { SchemaStudio } from '@/components/demo/SchemaStudio';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Playground',

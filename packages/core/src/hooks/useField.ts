@@ -27,10 +27,7 @@ export function useField<T = unknown>(key: string): UseFieldReturn<T> {
 	const getSnapshot = useCallback((): FieldState => store.getFieldState(key), [store, key]);
 	const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 	const setValue = useCallback((v: T) => store.setValue(key, v, { touch: true }), [store, key]);
-	const setTouched = useCallback(
-		(touched = true) => store.setTouched(key, touched),
-		[store, key]
-	);
+	const setTouched = useCallback((touched = true) => store.setTouched(key, touched), [store, key]);
 	const validate = useCallback(() => store.validateField(key), [store, key]);
 	return {
 		value: state.value as T,

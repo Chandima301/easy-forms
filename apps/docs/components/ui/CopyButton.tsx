@@ -13,7 +13,10 @@ export function CopyButton({ value, className }: { value: string; className?: st
 				setCopied(true);
 				setTimeout(() => setCopied(false), 1500);
 			}}
-			className={['inline-flex items-center justify-center transition-colors', className ?? ''].join(' ')}
+			className={[
+				'inline-flex items-center justify-center transition-colors',
+				className ?? '',
+			].join(' ')}
 			aria-label="Copy to clipboard"
 		>
 			{copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}

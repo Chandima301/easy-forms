@@ -1,8 +1,8 @@
 // Helpers for walking wizard steps to collect their field keys (used by
 // per-step validation gating) and to derive step visibility.
 
-import type { Group } from '../types/group';
 import type { PropsDependencyRule } from '../types/dependencies';
+import type { Group } from '../types/group';
 import type { WizardStep } from '../types/schema';
 
 function walkGroup(group: Group, keys: string[]): void {

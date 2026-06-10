@@ -2,10 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { createFormStore } from '../src/store/createFormStore';
 import {
 	email,
-	maxLength,
 	max,
-	minLength,
+	maxLength,
 	min,
+	minLength,
 	pattern,
 	required,
 } from '../src/validation/builtIns';
@@ -63,9 +63,7 @@ describe('validation pipeline', () => {
 		});
 		await store.validateField('p');
 		const state = store.getFieldState('p');
-		expect(Object.keys(state.errors)).toEqual(
-			expect.arrayContaining(['minLength', 'pattern'])
-		);
+		expect(Object.keys(state.errors)).toEqual(expect.arrayContaining(['minLength', 'pattern']));
 	});
 
 	it('async custom result is not merged when a sync validator already failed', async () => {
@@ -105,10 +103,7 @@ describe('validation pipeline', () => {
 		const firstPromise = new Promise<string | null>((res) => {
 			resolveFirst = res;
 		});
-		const asyncFn = vi
-			.fn()
-			.mockReturnValueOnce(firstPromise)
-			.mockResolvedValue(null);
+		const asyncFn = vi.fn().mockReturnValueOnce(firstPromise).mockResolvedValue(null);
 		const store = createFormStore();
 		store.registerField({
 			key: 'name',

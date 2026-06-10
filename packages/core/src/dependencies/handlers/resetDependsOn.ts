@@ -13,9 +13,7 @@ import type { DependencyHandler } from '../types';
 
 const previousWhen = new WeakMap<object, boolean>();
 
-export const resetDependsOnHandler: DependencyHandler<
-	ResetDependency<Record<string, unknown>>
-> = {
+export const resetDependsOnHandler: DependencyHandler<ResetDependency<Record<string, unknown>>> = {
 	getDependencies(config) {
 		return [...config.fieldNames];
 	},

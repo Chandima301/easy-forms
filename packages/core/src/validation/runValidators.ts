@@ -75,9 +75,7 @@ export async function runAsyncCustoms(
 	isStale: () => boolean
 ): Promise<Record<string, string>> {
 	const errors: Record<string, string> = {};
-	const results = await Promise.all(
-		pending.map(async (p) => [p.name, await p.promise] as const)
-	);
+	const results = await Promise.all(pending.map(async (p) => [p.name, await p.promise] as const));
 	if (isStale()) return {};
 	for (const [name, out] of results) {
 		if (out) errors[name] = out;

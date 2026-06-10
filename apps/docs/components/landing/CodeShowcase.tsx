@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { CodePane } from '@/components/code/CodePane';
 import { DemoFrame, LiveBadge } from '@/components/demo/DemoFrame';
 import { LiveForm } from '@/components/demo/LiveForm';
 import { demoPresets, getPreset } from '@/lib/demo-schemas';
+import { useState } from 'react';
 
 /** Tabbed "code → live form" showcase. Each tab is a real, interactive form. */
 export function CodeShowcase() {
@@ -31,10 +31,18 @@ export function CodeShowcase() {
 				))}
 			</div>
 			<div className="grid items-start gap-4 lg:grid-cols-2">
-				<DemoFrame title="schema.ts" className="bg-[#0d1117]" bodyClassName="max-h-[480px] overflow-auto">
+				<DemoFrame
+					title="schema.ts"
+					className="bg-[#0d1117]"
+					bodyClassName="max-h-[480px] overflow-auto"
+				>
 					<CodePane code={preset.code} />
 				</DemoFrame>
-				<DemoFrame title="Preview" accent={<LiveBadge />} bodyClassName="max-h-[480px] overflow-auto p-5">
+				<DemoFrame
+					title="Preview"
+					accent={<LiveBadge />}
+					bodyClassName="max-h-[480px] overflow-auto p-5"
+				>
 					<LiveForm
 						key={preset.id}
 						schema={preset.schema}

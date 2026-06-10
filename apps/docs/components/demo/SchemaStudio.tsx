@@ -1,13 +1,13 @@
 'use client';
 
+import { DemoFrame, LiveBadge } from '@/components/demo/DemoFrame';
+import { studioPresets } from '@/lib/studio-presets';
 import { Form, type FormSchema } from '@easy-forms/core';
 import { shadcnRegistry } from '@easy-forms/shadcn';
 import { AlertTriangle, RotateCcw, Share2 } from 'lucide-react';
 import { Highlight } from 'prism-react-renderer';
 import { useEffect, useMemo, useState } from 'react';
 import Editor from 'react-simple-code-editor';
-import { DemoFrame, LiveBadge } from '@/components/demo/DemoFrame';
-import { studioPresets } from '@/lib/studio-presets';
 
 function decodeFromUrl(): string | null {
 	if (typeof window === 'undefined') return null;
@@ -96,12 +96,20 @@ export function SchemaStudio() {
 						<RotateCcw className="h-3.5 w-3.5" /> Reset
 					</button>
 				</div>
-				<DemoFrame title="schema.json" className="bg-[#0d1117]" bodyClassName="max-h-[560px] overflow-auto p-0">
+				<DemoFrame
+					title="schema.json"
+					className="bg-[#0d1117]"
+					bodyClassName="max-h-[560px] overflow-auto p-0"
+				>
 					<Editor
 						value={code}
 						onValueChange={setCode}
 						highlight={(c) => (
-							<Highlight code={c} language="json" theme={{ plain: { color: '#c9d1d9' }, styles: [] }}>
+							<Highlight
+								code={c}
+								language="json"
+								theme={{ plain: { color: '#c9d1d9' }, styles: [] }}
+							>
 								{({ tokens, getLineProps, getTokenProps }) => (
 									<>
 										{tokens.map((line, i) => (
@@ -128,7 +136,11 @@ export function SchemaStudio() {
 				) : null}
 			</div>
 
-			<DemoFrame title="Preview" accent={<LiveBadge />} bodyClassName="max-h-[620px] overflow-auto p-5">
+			<DemoFrame
+				title="Preview"
+				accent={<LiveBadge />}
+				bodyClassName="max-h-[620px] overflow-auto p-5"
+			>
 				{parsed.schema ? (
 					<div className="not-prose ef-demo-surface">
 						<Form

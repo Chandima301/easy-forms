@@ -1,5 +1,5 @@
 import type { NumberQuestion, RendererProps } from '@easy-forms/core';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldShell } from '../primitives/FieldShell';
 import { Input } from '../primitives/Input';
 

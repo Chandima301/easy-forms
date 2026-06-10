@@ -7,7 +7,10 @@ import { useField } from '../src/hooks/useField';
 import { useFormState } from '../src/hooks/useFormState';
 import { createFormStore } from '../src/store/createFormStore';
 
-function Wrapper({ children, store }: { children: React.ReactNode; store: ReturnType<typeof createFormStore> }) {
+function Wrapper({
+	children,
+	store,
+}: { children: React.ReactNode; store: ReturnType<typeof createFormStore> }) {
 	return <FormStoreProvider store={store}>{children}</FormStoreProvider>;
 }
 

@@ -45,11 +45,7 @@ export function LiveForm({
 						Submitted payload
 					</div>
 					<pre className="overflow-auto text-xs text-fd-foreground/80">
-						{JSON.stringify(
-							submitted,
-							(_k, v) => (v instanceof File ? `[File: ${v.name}]` : v),
-							2,
-						)}
+						{JSON.stringify(submitted, (_k, v) => (v instanceof File ? `[File: ${v.name}]` : v), 2)}
 					</pre>
 				</div>
 			) : null}

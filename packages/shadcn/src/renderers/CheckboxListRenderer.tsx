@@ -24,8 +24,7 @@ export function CheckboxListRenderer({
 		onChange(next as never);
 	}
 
-	const allSelected =
-		options.length > 0 && options.every((opt) => selected.includes(opt.value));
+	const allSelected = options.length > 0 && options.every((opt) => selected.includes(opt.value));
 	function toggleAll() {
 		onChange((allSelected ? [] : options.map((o) => o.value)) as never);
 	}
@@ -39,10 +38,7 @@ export function CheckboxListRenderer({
 			required={!!question.required}
 		>
 			<div
-				className={cn(
-					'flex gap-3',
-					question.vertical === false ? 'flex-wrap' : 'flex-col'
-				)}
+				className={cn('flex gap-3', question.vertical === false ? 'flex-wrap' : 'flex-col')}
 				role="group"
 				aria-labelledby={question.key}
 				aria-invalid={showError || undefined}

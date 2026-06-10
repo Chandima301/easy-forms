@@ -19,9 +19,9 @@ export default function EnterprisePage() {
 					Forms infrastructure your team can standardize on
 				</h1>
 				<p className="mx-auto mt-4 max-w-2xl text-fd-muted-foreground">
-					Easy Forms gives platform teams a single, typed, accessible way to build every form in
-					the product — from a two-field login to a 12-step onboarding wizard. Below is an honest
-					split of what ships today and what we are building next.
+					Easy Forms gives platform teams a single, typed, accessible way to build every form in the
+					product — from a two-field login to a 12-step onboarding wizard. Below is an honest split
+					of what ships today and what we are building next.
 				</p>
 				<div className="mt-7 flex flex-wrap justify-center gap-3">
 					<Link
@@ -41,9 +41,21 @@ export default function EnterprisePage() {
 
 			<div className="mt-14 grid gap-4 sm:grid-cols-3">
 				{[
-					{ icon: Lock, title: 'Headless & owned', body: 'You own the markup, theming, and a11y. No vendor UI lock-in.' },
-					{ icon: FileCheck2, title: 'Typed & predictable', body: 'A strict-TS schema and validators your team can review and trust.' },
-					{ icon: Headphones, title: 'Extensible', body: 'Add controls, validators, and dependency kinds without forking.' },
+					{
+						icon: Lock,
+						title: 'Headless & owned',
+						body: 'You own the markup, theming, and a11y. No vendor UI lock-in.',
+					},
+					{
+						icon: FileCheck2,
+						title: 'Typed & predictable',
+						body: 'A strict-TS schema and validators your team can review and trust.',
+					},
+					{
+						icon: Headphones,
+						title: 'Extensible',
+						body: 'Add controls, validators, and dependency kinds without forking.',
+					},
 				].map((c) => (
 					<div key={c.title} className="rounded-xl border border-fd-border bg-fd-card p-5">
 						<c.icon className="h-5 w-5 text-fd-primary" />

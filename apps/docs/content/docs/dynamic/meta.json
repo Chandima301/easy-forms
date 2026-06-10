@@ -1,5 +1,12 @@
 {
 	"title": "Dynamic forms",
 	"icon": "Workflow",
-	"pages": ["index", "props-depends-on", "value-depends-on", "reset-depends-on", "conditional-groups", "cycles"]
+	"pages": [
+		"index",
+		"props-depends-on",
+		"value-depends-on",
+		"reset-depends-on",
+		"conditional-groups",
+		"cycles"
+	]
 }

@@ -3,12 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Form } from '../src/components/Form';
 import { createFormStore } from '../src/store/createFormStore';
-import type {
-	CheckboxQuestion,
-	FormSchema,
-	NumberQuestion,
-	TextQuestion,
-} from '../src/types';
+import type { CheckboxQuestion, FormSchema, NumberQuestion, TextQuestion } from '../src/types';
 import type { RendererProps, RendererRegistry } from '../src/types/renderer';
 
 function TextR(props: RendererProps<TextQuestion>) {
@@ -44,9 +39,7 @@ function NumberR(props: RendererProps<NumberQuestion>) {
 			type="number"
 			aria-label={props.question.key}
 			value={props.value == null ? '' : String(props.value)}
-			onChange={(e) =>
-				props.onChange(e.target.value === '' ? null : Number(e.target.value))
-			}
+			onChange={(e) => props.onChange(e.target.value === '' ? null : Number(e.target.value))}
 			onBlur={props.onBlur}
 		/>
 	);
@@ -72,9 +65,7 @@ describe('Wizard', () => {
 						title: 'Step 1',
 						groups: [
 							{
-								questions: [
-									{ key: 'a', label: 'A', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'a', label: 'A', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -83,9 +74,7 @@ describe('Wizard', () => {
 						title: 'Step 2',
 						groups: [
 							{
-								questions: [
-									{ key: 'b', label: 'B', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'b', label: 'B', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -141,9 +130,7 @@ describe('Wizard', () => {
 						title: 'Step 2',
 						groups: [
 							{
-								questions: [
-									{ key: 'b', label: 'B', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'b', label: 'B', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -177,9 +164,7 @@ describe('Wizard', () => {
 						title: 'Step 1',
 						groups: [
 							{
-								questions: [
-									{ key: 'a', label: 'A', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'a', label: 'A', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -188,9 +173,7 @@ describe('Wizard', () => {
 						title: 'Step 2',
 						groups: [
 							{
-								questions: [
-									{ key: 'b', label: 'B', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'b', label: 'B', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -236,9 +219,7 @@ describe('Wizard', () => {
 						},
 						groups: [
 							{
-								questions: [
-									{ key: 'detour', label: 'Detour', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'detour', label: 'Detour', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -247,9 +228,7 @@ describe('Wizard', () => {
 						title: 'Step 3',
 						groups: [
 							{
-								questions: [
-									{ key: 'finish', label: 'Finish', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'finish', label: 'Finish', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -285,9 +264,7 @@ describe('Wizard', () => {
 						title: 'Step 1',
 						groups: [
 							{
-								questions: [
-									{ key: 'a', label: 'A', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'a', label: 'A', control: 'text' } as TextQuestion],
 							},
 						],
 					},
@@ -296,9 +273,7 @@ describe('Wizard', () => {
 						title: 'Step 2',
 						groups: [
 							{
-								questions: [
-									{ key: 'b', label: 'B', control: 'text' } as TextQuestion,
-								],
+								questions: [{ key: 'b', label: 'B', control: 'text' } as TextQuestion],
 							},
 						],
 					},

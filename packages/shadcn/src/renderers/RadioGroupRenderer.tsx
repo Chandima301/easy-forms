@@ -1,8 +1,8 @@
 import type { Option, RadioGroupQuestion, RendererProps } from '@easy-forms/core';
+import { cn } from '../lib/cn';
 import { FieldShell } from '../primitives/FieldShell';
 import { Label } from '../primitives/Label';
 import { RadioGroup, RadioGroupItem } from '../primitives/RadioGroup';
-import { cn } from '../lib/cn';
 
 export function RadioGroupRenderer({
 	question,
@@ -30,7 +30,9 @@ export function RadioGroupRenderer({
 				aria-invalid={showError || undefined}
 				aria-describedby={showError ? `${question.key}-error` : undefined}
 				onBlur={onBlur}
-				className={cn(question.vertical === false ? 'flex flex-row flex-wrap gap-4' : 'flex flex-col gap-2')}
+				className={cn(
+					question.vertical === false ? 'flex flex-row flex-wrap gap-4' : 'flex flex-col gap-2'
+				)}
 			>
 				{options.map((opt) => {
 					const id = `${question.key}-${String(opt.value)}`;
