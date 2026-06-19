@@ -2,14 +2,13 @@
 //   "Plain"   — kitchen sink of every control + the 3 categorical dependency kinds
 //   "Wizard"  — multi-step form with persistence + step-level visibility + logger plugin
 
+import { EasyForm } from '@/components/easy-forms/easy-form';
 import {
 	type CustomRendererProps,
-	Form,
 	type FormSchema,
 	type Option,
 	loggerPlugin,
 } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
 import { useState } from 'react';
 
 interface DemoFormData extends Record<string, unknown> {
@@ -469,9 +468,8 @@ export function App() {
 				</div>
 			</header>
 			{mode === 'plain' ? (
-				<Form<DemoFormData>
+				<EasyForm<DemoFormData>
 					schema={schema}
-					registry={shadcnRegistry}
 					plugins={[loggerPlugin({ prefix: '[plain]' })]}
 					initialValues={{
 						firstName: '',
@@ -498,9 +496,8 @@ export function App() {
 					onSubmit={async (values) => setSubmitted(values)}
 				/>
 			) : (
-				<Form<WizardData>
+				<EasyForm<WizardData>
 					schema={wizardSchema}
-					registry={shadcnRegistry}
 					plugins={[loggerPlugin({ prefix: '[wizard]' })]}
 					initialValues={{
 						firstName: '',

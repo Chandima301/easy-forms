@@ -1,0 +1,249 @@
+{
+	"$schema": "https://ui.shadcn.com/schema/registry.json",
+	"name": "easy-forms",
+	"homepage": "https://github.com/Chandima301/easy-forms",
+	"items": [
+		{
+			"name": "field-shell",
+			"type": "registry:component",
+			"title": "Field shell",
+			"description": "Labelled field wrapper with description + inline error. Shared by every renderer.",
+			"registryDependencies": ["label"],
+			"files": [
+				{
+					"path": "registry/easy-forms/field-shell.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/field-shell.tsx"
+				}
+			]
+		},
+		{
+			"name": "text",
+			"type": "registry:component",
+			"title": "Text renderer",
+			"description": "Renderer for the `text` control (single-line text input).",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["input", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/text-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/text-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "email",
+			"type": "registry:component",
+			"title": "Email renderer",
+			"description": "Renderer for the `email` control.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["input", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/email-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/email-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "number",
+			"type": "registry:component",
+			"title": "Number renderer",
+			"description": "Renderer for the `number` control, with prefix/suffix + thousands formatting.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["input", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/number-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/number-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "textarea",
+			"type": "registry:component",
+			"title": "Textarea renderer",
+			"description": "Renderer for the `textarea` control.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["textarea", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/textarea-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/textarea-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "select",
+			"type": "registry:component",
+			"title": "Select renderer",
+			"description": "Renderer for the `dropdown` control (single-select).",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["select", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/dropdown-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/dropdown-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "multiselect",
+			"type": "registry:component",
+			"title": "Multi-select renderer",
+			"description": "Renderer for the `multiselect` control (popover + checkbox list).",
+			"dependencies": ["@easy-forms/core", "lucide-react"],
+			"registryDependencies": ["popover", "checkbox", "label", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/multiselect-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/multiselect-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "checkbox",
+			"type": "registry:component",
+			"title": "Checkbox renderer",
+			"description": "Renderer for the single `checkbox` control.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["checkbox", "label"],
+			"files": [
+				{
+					"path": "registry/easy-forms/checkbox-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/checkbox-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "checkbox-list",
+			"type": "registry:component",
+			"title": "Checkbox list renderer",
+			"description": "Renderer for the `checkboxList` control (multi-checkbox group).",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["checkbox", "label", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/checkbox-list-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/checkbox-list-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "radio-group",
+			"type": "registry:component",
+			"title": "Radio group renderer",
+			"description": "Renderer for the `radioGroup` control.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["radio-group", "label", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/radio-group-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/radio-group-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "date",
+			"type": "registry:component",
+			"title": "Date renderer",
+			"description": "Renderer for the `date` control (native date input with min/max).",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["input", "@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/date-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/date-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "file",
+			"type": "registry:component",
+			"title": "File renderer",
+			"description": "Renderer for the `file` control.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/file-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/file-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "custom",
+			"type": "registry:component",
+			"title": "Custom renderer",
+			"description": "Renderer for the `custom` control — delegates to a user component.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/custom-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/custom-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "registry",
+			"type": "registry:lib",
+			"title": "Renderer registry",
+			"description": "Assembled control -> renderer map consumed by <EasyForm>. Pulls every renderer.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": [
+				"@easy-forms/text",
+				"@easy-forms/email",
+				"@easy-forms/number",
+				"@easy-forms/textarea",
+				"@easy-forms/select",
+				"@easy-forms/multiselect",
+				"@easy-forms/checkbox",
+				"@easy-forms/checkbox-list",
+				"@easy-forms/radio-group",
+				"@easy-forms/date",
+				"@easy-forms/file",
+				"@easy-forms/custom"
+			],
+			"files": [
+				{
+					"path": "registry/easy-forms/registry.ts",
+					"type": "registry:lib",
+					"target": "components/easy-forms/registry.ts"
+				}
+			]
+		},
+		{
+			"name": "easy-form",
+			"type": "registry:component",
+			"title": "EasyForm",
+			"description": "Pre-wired <EasyForm> wrapper + form-chrome styles. One-shot install of the whole kit.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["@easy-forms/registry"],
+			"files": [
+				{
+					"path": "registry/easy-forms/easy-form.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/easy-form.tsx"
+				},
+				{
+					"path": "registry/easy-forms/easy-forms.css",
+					"type": "registry:file",
+					"target": "components/easy-forms/easy-forms.css"
+				}
+			]
+		}
+	]
+}
