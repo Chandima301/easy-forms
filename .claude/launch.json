@@ -2,10 +2,28 @@
 	"version": "0.0.1",
 	"configurations": [
 		{
+			"name": "playground",
+			"runtimeExecutable": "cmd",
+			"runtimeArgs": [
+				"/c",
+				"cd apps\\playground && node node_modules/vite/bin/vite.js --port 5173"
+			],
+			"port": 5173
+		},
+		{
 			"name": "docs",
 			"runtimeExecutable": "cmd",
 			"runtimeArgs": ["/c", "cd apps\\docs && node node_modules/next/dist/bin/next dev -p 3942"],
 			"port": 3942
+		},
+		{
+			"name": "conformance",
+			"runtimeExecutable": "cmd",
+			"runtimeArgs": [
+				"/c",
+				"cd /d C:\\Work\\saas-projects\\easy-forms-conformance && node node_modules/vite/bin/vite.js --config vite.playground.config.ts --port 3950"
+			],
+			"port": 3950
 		}
 	]
 }

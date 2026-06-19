@@ -1,0 +1,15 @@
+{
+	"name": "@easy-forms/registry",
+	"version": "0.0.0",
+	"private": true,
+	"description": "Source of truth for the @easy-forms shadcn-compatible component registry. Not published to npm; built to public/r and served as a namespaced registry.",
+	"type": "module",
+	"scripts": {
+		"registry:build": "shadcn build",
+		"clean": "rimraf public/r .turbo"
+	},
+	"devDependencies": {
+		"rimraf": "^6.0.1",
+		"shadcn": "^2.4.0"
+	}
+}
