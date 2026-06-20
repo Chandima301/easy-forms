@@ -28,9 +28,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"sideEffects": [
-		"**/*.css"
-	],
+	"sideEffects": ["**/*.css"],
 	"type": "module",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.js",
@@ -44,12 +42,7 @@
 		"./styles.css": "./styles.css",
 		"./package.json": "./package.json"
 	},
-	"files": [
-		"dist",
-		"styles.css",
-		"README.md",
-		"LICENSE"
-	],
+	"files": ["dist", "styles.css", "README.md", "LICENSE"],
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",

@@ -34,7 +34,10 @@ jobs:
       - name: Create Release PR or publish
         uses: changesets/action@v1
         with:
-          version: pnpm changeset version
+          # `changeset version` re-serializes package.json and expands short
+          # arrays (files/sideEffects); `pnpm format` re-applies biome formatting
+          # so the "Version Packages" commit stays lint-clean.
+          version: pnpm changeset version && pnpm format
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
