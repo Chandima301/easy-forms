@@ -8,12 +8,12 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"build": "turbo run build",
+		"build": "turbo run build --filter=!docs",
 		"test": "turbo run test",
 		"lint": "biome check .",
 		"format": "biome format --write .",
-		"typecheck": "turbo run typecheck",
-		"dev": "turbo run dev --parallel",
+		"typecheck": "turbo run typecheck --filter=!docs",
+		"dev": "turbo run dev --parallel --filter=!docs",
 		"clean": "turbo run clean && rimraf node_modules",
 		"changeset": "changeset",
 		"version": "changeset version",

@@ -37,8 +37,8 @@ pnpm dev                          # turbo: watch-builds core, runs playground
 pnpm --filter playground dev      # playground only (see dist gotcha below)
 pnpm test                         # core tests (58)
 pnpm --filter @easy-forms/core test
-pnpm typecheck                    # per-package tsc (apps/docs currently FAILS — see table)
-pnpm build                        # core dist (apps/docs build FAILS until refactored)
+pnpm typecheck                    # per-package tsc (apps/docs excluded via --filter=!docs)
+pnpm build                        # core + playground (apps/docs excluded until refactored)
 pnpm lint                         # biome
 pnpm --filter @easy-forms/registry registry:build   # build the shadcn registry JSON
 ```
