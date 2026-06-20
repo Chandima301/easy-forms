@@ -1,6 +1,8 @@
 # playground
 
-Local Vite + React sandbox for `@easy-forms/core` and `@easy-forms/shadcn`.
+Local Vite + React sandbox for `@easy-forms/core`. A representative shadcn
+consumer: the renderers in `src/components/easy-forms/` are the ejected
+`@easy-forms` registry components, used via the `<EasyForm>` wrapper.
 
 ```sh
 pnpm --filter playground dev
