@@ -18,7 +18,7 @@ the `@easy-forms` namespace to your `components.json`:
 ```jsonc
 {
   "registries": {
-    "@easy-forms": "https://<registry-host>/r/{name}.json"
+    "@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json"
   }
 }
 ```

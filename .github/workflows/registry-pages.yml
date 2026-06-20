@@ -1,0 +1,63 @@
+name: Deploy registry to GitHub Pages
+
+# Builds the @easy-forms shadcn registry (packages/registry → public/r/*.json)
+# and publishes it to GitHub Pages, so consumers can resolve
+#   "@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json"
+#
+# One-time setup: repo Settings → Pages → Build and deployment → Source:
+# "GitHub Actions". After the first run, the live URL is shown in the deploy step.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/registry/**'
+      - '.github/workflows/registry-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; don't cancel an in-progress one.
+concurrency:
+  group: registry-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build registry JSON
+        run: pnpm --filter @easy-forms/registry registry:build
+
+      # Static artifact, not a Jekyll site.
+      - run: touch packages/registry/public/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/registry/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

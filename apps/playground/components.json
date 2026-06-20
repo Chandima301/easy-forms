@@ -19,6 +19,6 @@
 	},
 	"iconLibrary": "lucide",
 	"registries": {
-		"@easy-forms": "http://localhost:8420/r/{name}.json"
+		"@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json"
 	}
 }
