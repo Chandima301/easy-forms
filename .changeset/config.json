@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["playground", "docs", "@easy-forms/shadcn"]
+  "ignore": ["playground", "docs"]
 }

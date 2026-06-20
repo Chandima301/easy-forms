@@ -4,16 +4,25 @@ A higher-level React form library. Hand it an **array of question objects**; it 
 
 No `useForm`. No `register()`. No `Controller`. The schema is the source of truth.
 
-## Packages
+## Packages & distribution
 
-- **`@easy-forms/core`** — types, state engine, hooks, headless components, dependency engine, wizard, plugin lifecycle. Zero UI dependencies. ([Docs](packages/core/README.md))
-- **`@easy-forms/shadcn`** — default renderer registry. Built on Radix UI primitives + Tailwind CSS, with vendored shadcn-style component source. ([Docs](packages/shadcn/README.md))
+- **`@easy-forms/core`** — types, state engine, hooks, headless components, dependency engine, wizard, plugin lifecycle. Zero UI dependencies. The only npm package. ([Docs](packages/core/README.md))
+- **The UI ships as an own-the-code shadcn registry** (`@easy-forms/*`), not an npm package. In a shadcn project, add the namespace to `components.json` and pull the components with the shadcn CLI:
+
+```jsonc
+// components.json
+{ "registries": { "@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json" } }
+```
+```sh
+npm install @easy-forms/core
+pnpm dlx shadcn@latest add @easy-forms/easy-form   # all renderers + a pre-wired <EasyForm>
+```
 
 ## Quick start
 
 ```tsx
-import { Form, type FormSchema } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
+import type { FormSchema } from '@easy-forms/core';
+import { EasyForm } from '@/components/easy-forms/easy-form'; // scaffolded by `shadcn add`
 
 const schema: FormSchema = {
   title: 'Sign up',
@@ -33,9 +42,8 @@ const schema: FormSchema = {
 
 export default function App() {
   return (
-    <Form
+    <EasyForm
       schema={schema}
-      registry={shadcnRegistry}
       initialValues={{ email: '', password: '' }}
       onSubmit={async (values) => { /* ... */ }}
     />
@@ -59,16 +67,17 @@ export default function App() {
 - **Custom state engine** built on `useSyncExternalStore` — only the changed field's subscribers re-render
 - **Async validators with race protection** — stale results discarded if the value changed before they resolved
 - **Cycle detection** in dev — field↔field, field↔group, group↔group dep loops fail loudly
-- **Renderer registry** — every control's UI is swappable; default registry from `@easy-forms/shadcn`
+- **Renderer registry** — every control's UI is swappable; default renderers come from the `@easy-forms` shadcn registry (copied into your repo, fully editable)
 
 ## Repo layout
 
 ```
 packages/
-  core/         @easy-forms/core      (engine, types, hooks)
-  shadcn/       @easy-forms/shadcn    (default renderers)
+  core/         @easy-forms/core   (engine, types, hooks — the npm package)
+  registry/     (private)          (shadcn registry source: renderers + <EasyForm> + chrome CSS)
 apps/
-  playground/   local Vite dev sandbox
+  playground/   local Vite dev sandbox (shadcn consumer)
+  docs/         Fumadocs site (refactor onto the registry pending)
 ```
 
 ## Development
@@ -76,15 +85,14 @@ apps/
 ```sh
 pnpm install
 pnpm --filter playground dev   # interactive sandbox at http://localhost:5173
-pnpm test                       # 54 tests across core
-pnpm typecheck                  # 5 workspace tasks
-pnpm build                      # ESM + CJS + .d.ts for both packages
+pnpm test                       # 58 tests across core
+pnpm --filter @easy-forms/registry registry:build   # build the registry JSON
 pnpm lint                       # biome
 ```
 
 ## Status
 
-Pre-release. Phases 1–6 of the roadmap have landed: monorepo scaffold, type system, custom state engine, renderer registry with 12 controls, dependency engine with 7 built-in kinds, multi-step wizard with persistence, plugin lifecycle, and docs.
+`@easy-forms/core@0.1.1` is on npm. The UI is distributed as the `@easy-forms` shadcn registry (`packages/registry`, hosted on GitHub Pages). The former `@easy-forms/shadcn` package has been removed. `apps/docs` is mid-migration and does not currently build.
 
 ## License
 

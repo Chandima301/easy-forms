@@ -11,13 +11,14 @@ wizard navigation, and submission. It is a higher-level alternative to
 react-hook-form — there is **no `useForm` / `register` / `Controller`** exposed;
 the schema is the source of truth.
 
-Two publishable packages + a dev sandbox:
+One published package + a registry source + dev apps:
 
 | Path | Package | Role |
 |---|---|---|
-| `packages/core` | `@easy-forms/core` | Headless engine: types, custom store, hooks, components, dependency engine, wizard, plugins. Zero UI deps. |
-| `packages/shadcn` | `@easy-forms/shadcn` | Default renderer registry (Radix + Tailwind) **and** the plain-CSS form chrome (`styles.css`). |
-| `apps/playground` | `playground` (private) | Vite sandbox. Dogfoods the packages like a real consumer. |
+| `packages/core` | `@easy-forms/core` | Headless engine: types, custom store, hooks, components, dependency engine, wizard, plugins. Zero UI deps. **The only npm-published package.** |
+| `packages/registry` | (private) | Source of the `@easy-forms` **shadcn registry**: ejectable renderers + `field-shell` + the pre-wired `<EasyForm>` wrapper + re-tokenized chrome CSS (`easy-forms.css`). Built with `shadcn build` → `public/r/*.json`, hosted on GitHub Pages. Consumers install with `shadcn add @easy-forms/*`. |
+| `apps/playground` | `playground` (private) | Vite sandbox; a representative shadcn consumer using the ejected components + `<EasyForm>`. |
+| `apps/docs` | `docs` (private) | Fumadocs site. **Currently does not build** — it still imports the removed `@easy-forms/shadcn`. A full docs refactor onto the registry is pending; until then, treat docs as out of scope. |
 
 ## Monorepo / tooling
 
@@ -32,13 +33,14 @@ quotes). Versioning: **changesets**.
 
 ```sh
 pnpm install
-pnpm dev                          # turbo: watch-builds core + shadcn, runs playground
+pnpm dev                          # turbo: watch-builds core, runs playground
 pnpm --filter playground dev      # playground only (see dist gotcha below)
-pnpm test                         # all package tests (58 in core)
+pnpm test                         # core tests (58)
 pnpm --filter @easy-forms/core test
-pnpm typecheck                    # 5 workspace tasks
-pnpm build                        # ESM + CJS + .d.ts for both packages
+pnpm typecheck                    # per-package tsc (apps/docs currently FAILS — see table)
+pnpm build                        # core dist (apps/docs build FAILS until refactored)
 pnpm lint                         # biome
+pnpm --filter @easy-forms/registry registry:build   # build the shadcn registry JSON
 ```
 
 ## Architecture (mental model)
@@ -54,7 +56,9 @@ pnpm lint                         # biome
   `useEffect`, which runs *after* all children's effects — so the engine sees
   every registered field on first run.
 - **Renderer registry**: `<Field>` reads `question.control` and dispatches to a
-  renderer component. UI is fully swappable; default registry is `shadcnRegistry`.
+  renderer component. UI is fully swappable; the default renderers are the
+  ejectable components in `packages/registry/registry/easy-forms/*`, assembled
+  into `easyFormsRegistry` and wired by the scaffolded `<EasyForm>` wrapper.
 
 ### Dependencies — 3 categorical kinds (recent redesign — important)
 
@@ -124,21 +128,22 @@ side `required`/`readOnly` props on `RendererProps`.
    `pnpm dev` from the root (turbo watch-builds it). **Tests are unaffected** —
    vitest imports from `src`, so logic changes are validated by tests even
    without a rebuild.
-2. **Tailwind is split two ways.** shadcn *renderers* (Input, Select, etc.) use
-   inline Tailwind utility classes → consumers must add
-   `@easy-forms/shadcn/dist` to their Tailwind `content`. Form *chrome*
-   (container, footer, buttons, group titles, grid, wizard nav) ships as **plain
-   CSS** in `packages/shadcn/styles.css`, imported via
-   `import '@easy-forms/shadcn/styles.css'`. **Do NOT** put chrome classes in a
-   Tailwind `@layer components` block — Tailwind purges them when the class names
-   aren't found in the scanned source (this broke the playground once).
+2. **Renderers ship as an own-the-code shadcn registry, not a built package.**
+   Source is in `packages/registry/registry/easy-forms/*`; consumers run
+   `shadcn add @easy-forms/*` to copy them into their repo. The renderers use
+   shadcn theme-token utilities (`border-input`, `bg-background`,
+   `text-muted-foreground`, `ring-ring`, `text-destructive`) and depend on the
+   consumer's canonical shadcn primitives in `@/components/ui/*`. Form *chrome*
+   (container, footer, group grid, wizard nav) is rendered by core and styled by
+   the re-tokenized `easy-forms.css` shipped via the registry. Keep the theme-token
+   blocks (`:root` / `.dark`) **OUTSIDE** `@layer base` so Tailwind doesn't
+   tree-shake the `.dark` rule (it did, in the playground), and don't put chrome
+   classes in a Tailwind `@layer components` block.
 3. **Two Tailwind versions** (v3 + v4) are installed in the workspace; the
-   playground resolves **v3**.
+   playground resolves **v3**, `apps/docs` uses **v4**.
 4. **Group layout class goes on the inner content `<div>`, not the
    `<section>`.** If the grid class is on the section, the group title becomes
    the first grid cell and misaligns every field. See `GroupRenderer.tsx`.
-5. **`@easy-forms/shadcn` `package.json` has `"sideEffects": ["**/*.css"]`** so
-   bundlers don't tree-shake the CSS import away.
 
 ## File map — "to change X, edit Y"
 
@@ -153,11 +158,15 @@ side `required`/`readOnly` props on `RendererProps`.
 | Form / Field / Group / Wizard | `components/{Form,Field,GroupRenderer,Wizard}.tsx` |
 | Hooks | `hooks/{useField,useGroup,useFormState,useFormValues,useWatch}.ts` |
 | Plugins | `plugins/` |
-| Control renderers (visual) | `packages/shadcn/src/renderers/*.tsx` |
-| Form chrome styling | `packages/shadcn/styles.css` |
+| Control renderers (visual) | `packages/registry/registry/easy-forms/*-renderer.tsx` |
+| Form chrome styling | `packages/registry/registry/easy-forms/easy-forms.css` |
+| Registry manifest / items + `<EasyForm>` | `packages/registry/registry.json`, `packages/registry/registry/easy-forms/{registry.ts,easy-form.tsx}` |
 
 ## Status
 
-Pre-release. All 6 build phases + the dependency-system redesign are complete.
-**58 core tests pass**; `pnpm typecheck` is green (5 tasks). Not yet published to
-npm (changesets configured, no release run).
+`@easy-forms/core@0.1.1` is published to npm. UI ships via the `@easy-forms`
+shadcn registry (`packages/registry`), hosted on GitHub Pages; consumers
+`shadcn add @easy-forms/easy-form`. The old `@easy-forms/shadcn` package has been
+removed (deleted from the repo and unpublished from npm). **58 core tests pass**;
+core + playground typecheck/lint are green. **`apps/docs` does not currently build**
+(still references the removed package) and awaits a full refactor onto the registry.
