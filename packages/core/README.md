@@ -4,17 +4,45 @@ Headless React form library. Hand it an array of question objects; it owns rende
 
 No `register()`. No `Controller`. No `useForm` boilerplate. The schema is the source of truth.
 
+## Install
+
 ```sh
-pnpm add @easy-forms/core
-# plus a renderer kit:
-pnpm add @easy-forms/shadcn
+npm install @easy-forms/core
 ```
+
+`@easy-forms/core` is headless. The default UI ships as an **own-the-code shadcn
+registry** — you pull the renderers into your project with the shadcn CLI and they
+live in your repo, fully editable (no black-box UI package). In a shadcn project, add
+the `@easy-forms` namespace to your `components.json`:
+
+```jsonc
+{
+  "registries": {
+    "@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json"
+  }
+}
+```
+
+Then add the components:
+
+```sh
+# the whole kit: every renderer + a pre-wired <EasyForm> wrapper
+pnpm dlx shadcn@latest add @easy-forms/easy-form
+
+# …or just the controls you need
+pnpm dlx shadcn@latest add @easy-forms/text @easy-forms/select
+```
+
+This copies the renderers into `@/components/easy-forms/` and pulls the canonical
+shadcn primitives they use (`input`, `select`, …) into `@/components/ui/`. Want a
+different UI entirely? Skip the registry and pass your own `registry` to `<Form>`
+(see [Renderer registry](#renderer-registry)).
 
 ## Hello world
 
 ```tsx
-import { Form, type FormSchema } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
+import type { FormSchema } from '@easy-forms/core';
+import { EasyForm } from '@/components/easy-forms/easy-form';
 
 interface Data extends Record<string, unknown> {
   email: string;
@@ -37,15 +65,18 @@ const schema: FormSchema<Data> = {
 
 export function App() {
   return (
-    <Form<Data>
+    <EasyForm<Data>
       schema={schema}
-      registry={shadcnRegistry}
       initialValues={{ email: '', password: '' }}
       onSubmit={async (values) => { await fetch('/login', { method: 'POST', body: JSON.stringify(values) }); }}
     />
   );
 }
 ```
+
+`<EasyForm>` is the pre-wired wrapper the registry scaffolds for you — it's `<Form>`
+with the local renderer registry + chrome styles baked in, so there's no `registry`
+prop to pass.
 
 ## What's included
 
@@ -54,7 +85,7 @@ export function App() {
 - **Group-level dependencies** with CSS-hide that preserves descendant field state across show/hide
 - **Multi-step wizard** with per-step validation, step-level visibility, and resumable state via `localStorage`
 - **Plugin lifecycle** (`onInit / onChange / onSubmit / onDestroy`) with built-in `loggerPlugin` and `autosavePlugin`
-- **Renderer registry** — every control's UI is swappable; default registry from `@easy-forms/shadcn`
+- **Renderer registry** — every control's UI is swappable; default renderers come from the `@easy-forms` shadcn registry (own-the-code; copied into your repo)
 - **Custom external store + `useSyncExternalStore`** — only the changed field's subscribers re-render
 - **Async validators with race protection** — stale results are dropped if the value changed before they resolved
 - **Cycle detection** in dev — field↔field, field↔group, group↔group dep loops fail loudly
@@ -201,9 +232,8 @@ const myDep: DependencyHandler<MyConfig> = {
   },
 };
 
-<Form
+<EasyForm
   schema={schema}
-  registry={shadcnRegistry}
   dependencyHandlers={{ myDep }}
   onSubmit={save}
 />
@@ -229,7 +259,7 @@ const schema: FormSchema = {
 
 - All fields from every step are registered up-front; cross-step `valueDependsOn` works.
 - `goNext` validates only the current step.
-- Step-level `visibilityDependsOn` skips hidden steps in navigation.
+- Step-level `propsDependsOn` (emitting `{ hidden: true }`) skips hidden steps in navigation.
 - On successful submit, the `persistKey` is cleared.
 
 Use the `useWizard()` hook inside the form tree for custom navigation UI.
@@ -237,16 +267,16 @@ Use the `useWizard()` hook inside the form tree for custom navigation UI.
 ## Plugins
 
 ```tsx
-import { Form, loggerPlugin, autosavePlugin, definePlugin } from '@easy-forms/core';
+import { loggerPlugin, autosavePlugin, definePlugin } from '@easy-forms/core';
+import { EasyForm } from '@/components/easy-forms/easy-form';
 
 const analyticsPlugin = definePlugin({
   name: 'analytics',
   onSubmit: (_ctx, values) => track('form-submitted', values),
 });
 
-<Form
+<EasyForm
   schema={schema}
-  registry={shadcnRegistry}
   plugins={[
     loggerPlugin(),
     autosavePlugin({ key: 'draft' }),
@@ -260,10 +290,15 @@ Lifecycle hooks: `onInit`, `onChange(key, value)`, `onSubmit(values)`, `onDestro
 
 ## Renderer registry
 
-Every control type maps to a renderer in the registry. Override individual controls:
+Every control type maps to a renderer in the registry. Because the default renderers
+are scaffolded into your repo, the usual way to change one is to **edit its file in
+place** (or point a control at your own component in `@/components/easy-forms/registry.ts`).
+You can also override at the call site with `<Form>`:
 
 ```tsx
-<Form registry={{ ...shadcnRegistry, dropdown: MyFancyDropdown }} ... />
+import { easyFormsRegistry } from '@/components/easy-forms/registry';
+
+<Form registry={{ ...easyFormsRegistry, dropdown: MyFancyDropdown }} ... />
 ```
 
 A renderer is a React component with this prop shape:
@@ -275,15 +310,21 @@ function MyTextRenderer(props: RendererProps<TextQuestion>) {
   return (
     <input
       value={props.value ?? ''}
+      placeholder={props.question.placeholder}
+      readOnly={!!props.question.readOnly}
       onChange={(e) => props.onChange(e.target.value)}
       onBlur={props.onBlur}
-      aria-invalid={props.touched && !!props.error || undefined}
+      aria-invalid={(props.touched && !!props.error) || undefined}
     />
   );
 }
 ```
 
-`props.required` reflects static `validators.required` OR dynamic `requiredDependsOn`. `props.readOnly` likewise. `props.computed` exposes anything the dependency engine wrote (options, minDate, maxDate, etc.).
+Renderers read everything from `props.question` — the **effective** question with any
+dynamic runtime overrides already merged in (`options`, `required`, `readOnly`,
+`disabled`, `minDate`, `placeholder`, …). There is no separate `computed` map and no
+side `required` / `readOnly` props; a `propsDependsOn` rule that emits `{ required: true }`
+shows up as `props.question.required`.
 
 ## Hooks
 
