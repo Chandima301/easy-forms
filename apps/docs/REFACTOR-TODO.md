@@ -19,6 +19,24 @@ registry; all install/usage content reflects `shadcn add @easy-forms/*` + `<Easy
 migration section. The `content/docs/migration/` folder, its nav entry, and the landing
 footer link were deleted. Do NOT add migration content, pages, or links.
 
+## Verification protocol — verify in the running docs site (web preview)
+
+The loop must **see the rendered docs in a browser**, not only typecheck them. The docs dev
+server is preconfigured in `.claude/launch.json` as **`docs`** (Next dev → `http://localhost:3942`).
+
+Every iteration that touches a page/component (after Phase 0 makes docs compile):
+1. Load the preview tools if deferred (ToolSearch `mcp__Claude_Preview__preview_*`), then `preview_start` with name **`docs`** (reuses the server if already running).
+2. Navigate to the page you changed: `preview_eval` → `window.location.href = 'http://localhost:3942/docs/<slug>'` (or reload; HMR usually picks up MDX/TSX edits).
+3. `preview_console_logs` (level `error`) must be clean; `preview_snapshot` to confirm the expected headings/text/components rendered.
+4. For live demos (`LiveForm`, `SchemaStudio`, `SchemaFormSync`): `preview_click` / `preview_fill` / `preview_eval` to exercise a control, then `preview_snapshot` / `preview_screenshot` to confirm it actually works (e.g. country→region options, order total, dark mode via `preview_resize`).
+5. If broken: read source → fix → re-check from step 2. `preview_screenshot` the finished page as proof before committing.
+
+**Prerequisite & ordering:** the site only renders **after Phase 0** (eject registry + fix
+`layout.tsx` CSS import + migrate the demo components). So do **Phase 0 first** to get a
+running docs server; until then verification is limited to `pnpm --filter docs typecheck` +
+MDX sanity. From Phase 0 onward, web-preview verification is **required** for every
+content/demo iteration, and the docs server should be kept running across iterations.
+
 ---
 
 ## Phase 0 — Make docs a shadcn consumer (UNBLOCKS THE BUILD)
@@ -100,6 +118,7 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 ## Loop progress log
 - 2026-06-22 — branch `docs/refactor` created off main; REFACTOR-TODO committed as ledger; **installation.mdx** rewritten to the registry model (criterion #1). Registry confirmed live at `https://chandima301.github.io/easy-forms/r/`.
 - 2026-06-22 — **migration removed** (no users yet): deleted `content/docs/migration/*`, dropped it from root `meta.json` nav + landing footer link. Migration is now out of scope.
+- 2026-06-22 — added the **web-preview verification protocol** (run the `docs` server via .claude/launch.json + `preview_*` tools to verify rendered pages each iteration; requires Phase 0 first).
 
 ### Quick reference — every file with a shadcn hit (from the sweep)
 Code/config: `app/layout.tsx`, `app/global.css`, `next.config.mjs`, `package.json` (dep already
