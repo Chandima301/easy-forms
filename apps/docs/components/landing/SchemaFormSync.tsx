@@ -2,9 +2,9 @@
 
 import { CodePane } from '@/components/code/CodePane';
 import { DemoFrame, LiveBadge } from '@/components/demo/DemoFrame';
+import { EasyForm } from '@/components/easy-forms/easy-form';
 import { demoPresets, getPreset } from '@/lib/demo-schemas';
-import { Form, type FormStore, createFormStore } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
+import { type FormStore, createFormStore } from '@easy-forms/core';
 import { Pause, Play } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -201,11 +201,10 @@ export function SchemaFormSync() {
 						className="not-prose ef-demo-surface transition-[clip-path] duration-100"
 						style={{ clipPath: `inset(0 0 ${(1 - reveal) * 100}% 0)` }}
 					>
-						<Form
+						<EasyForm
 							key={`${preset.id}-${cycle}`}
 							store={store}
 							schema={preset.schema}
-							registry={shadcnRegistry}
 							initialValues={preset.initialValues}
 							onSubmit={async () => {}}
 							submitLabel="Submit"

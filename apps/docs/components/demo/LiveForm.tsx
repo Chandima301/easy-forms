@@ -1,7 +1,7 @@
 'use client';
 
-import { Form, type FormSchema } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
+import { EasyForm } from '@/components/easy-forms/easy-form';
+import type { FormSchema } from '@easy-forms/core';
 import { useState } from 'react';
 import { DemoFrame, LiveBadge } from './DemoFrame';
 
@@ -32,9 +32,8 @@ export function LiveForm({
 
 	const form = (
 		<div className="not-prose ef-demo-surface">
-			<Form
+			<EasyForm
 				schema={schema}
-				registry={shadcnRegistry}
 				initialValues={initialValues}
 				showReset={showReset}
 				onSubmit={async (values) => setSubmitted(values)}
