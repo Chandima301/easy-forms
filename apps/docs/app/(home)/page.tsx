@@ -462,7 +462,6 @@ function Footer() {
 				{ label: 'Quick start', href: '/docs/quick-start' },
 				{ label: 'Core concepts', href: '/docs/concepts' },
 				{ label: 'API reference', href: '/docs/api' },
-				{ label: 'Migration', href: '/docs/migration' },
 			],
 		},
 		{

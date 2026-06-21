@@ -15,6 +15,10 @@ hooks/plugins/validation pages had **no** stale-token hits in the sweep. Audit, 
 registry; all install/usage content reflects `shadcn add @easy-forms/*` + `<EasyForm>`;
 `--filter=!docs` removed so docs rejoins CI.
 
+**Out of scope — migration guides.** The library has no users yet, so there is **no**
+migration section. The `content/docs/migration/` folder, its nav entry, and the landing
+footer link were deleted. Do NOT add migration content, pages, or links.
+
 ---
 
 ## Phase 0 — Make docs a shadcn consumer (UNBLOCKS THE BUILD)
@@ -62,11 +66,10 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 - [ ] **`content/docs/api/hooks.mdx`, `api/store.mdx`, `api/types.mdx`, `api/plugins.mdx`** — audit for `<Form registry>` snippets (plugins.mdx lines 29/39 use `<Form plugins>` which is fine) and confirm types/hooks match `packages/core/src` (RendererProps, RendererRegistry, EasyFormProps).
 - [ ] **`content/docs/index.mdx`** — line 58 package table row for `@easy-forms/shadcn`; line 16 `<Form>` mention. Update the package/distribution table to core + registry.
 
-## Phase 4 — Concepts, migration, examples, landing
+## Phase 4 — Concepts, examples, landing
 
 - [ ] **`content/docs/concepts/lifecycle.mdx`** (lines 30-32) & **`concepts/store-rendering.mdx`** (line 69): `<Form registry={shadcnRegistry}>` → `<EasyForm>` (or `<Form registry={easyFormsRegistry}>` where the store prop is being shown).
 - [ ] **`content/docs/concepts/index.mdx`** — line 13 data-flow diagram & line 39 mention reference “registry”; verify wording still accurate (renderer comes from the ejected registry).
-- [ ] **`content/docs/migration/from-react-hook-form.mdx`** (lines 14, 44), **`from-formik.mdx`** (lines 11, 22, 47), **`from-handrolled.mdx`** (line 44): swap `<Form registry={shadcnRegistry}>` snippets to `<EasyForm>` and fix the mapping tables (`useForm()` → `<EasyForm>`).
 - [ ] **`content/docs/wizard.mdx`** (line 7) + **`examples/*.mdx`** — confirm snippets use `<EasyForm>`/current API; examples are schema-driven so mostly fine, but check any `registry=` usage.
 - [ ] **`app/(home)/page.tsx`** — audit the landing install copy/CTA for `@easy-forms/shadcn` (it renders `<SchemaFormSync>` + likely an install command).
 
@@ -96,6 +99,7 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 
 ## Loop progress log
 - 2026-06-22 — branch `docs/refactor` created off main; REFACTOR-TODO committed as ledger; **installation.mdx** rewritten to the registry model (criterion #1). Registry confirmed live at `https://chandima301.github.io/easy-forms/r/`.
+- 2026-06-22 — **migration removed** (no users yet): deleted `content/docs/migration/*`, dropped it from root `meta.json` nav + landing footer link. Migration is now out of scope.
 
 ### Quick reference — every file with a shadcn hit (from the sweep)
 Code/config: `app/layout.tsx`, `app/global.css`, `next.config.mjs`, `package.json` (dep already
@@ -103,5 +107,4 @@ removed), `components/demo/LiveForm.tsx`, `components/demo/SchemaStudio.tsx`,
 `components/landing/SchemaFormSync.tsx`, `components/mdx/PackageInstall.tsx`,
 `components/ui/CopyButton.tsx`, `README.md`.
 Content: `content/docs/{index, installation, quick-start, theming, troubleshooting}.mdx`,
-`content/docs/api/{index, form, shadcn}.mdx`, `content/docs/concepts/{index, lifecycle, store-rendering}.mdx`,
-`content/docs/migration/{from-react-hook-form, from-formik, from-handrolled}.mdx`.
+`content/docs/api/{index, form, shadcn}.mdx`, `content/docs/concepts/{index, lifecycle, store-rendering}.mdx`.
