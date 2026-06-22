@@ -81,13 +81,13 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 - [x] **`content/docs/api/shadcn.mdx` → `api/registry.mdx`** — DONE: replaced with a "Registry & EasyForm" page (namespace install, item table, `<EasyForm>` = Omit<FormProps,'registry'>, `easyFormsRegistry`, files-you-own). Renamed file, updated `api/meta.json` slug shadcn→registry. Verified renders; sidebar no longer shows "@easy-forms/shadcn".
 - [x] **`content/docs/api/index.mdx`** — DONE: description now "…and the @easy-forms registry"; the `@easy-forms/shadcn` card repointed to `/docs/api/registry` ("Registry & EasyForm", covers `<EasyForm>` + `easyFormsRegistry`).
 - [x] **`content/docs/api/form.mdx`** — DONE: `registry` prop description → `easyFormsRegistry` (+ "<EasyForm> supplies this"); added a top Callout documenting `<EasyForm>` = `Omit<FormProps,'registry'>` as the default entry, linking /docs/api/registry. Verified renders.
-- [ ] **`content/docs/api/hooks.mdx`, `api/store.mdx`, `api/types.mdx`, `api/plugins.mdx`** — audit for `<Form registry>` snippets (plugins.mdx lines 29/39 use `<Form plugins>` which is fine) and confirm types/hooks match `packages/core/src` (RendererProps, RendererRegistry, EasyFormProps).
+- [x] **`content/docs/api/hooks.mdx`, `api/store.mdx`, `api/types.mdx`, `api/plugins.mdx`** — AUDITED CLEAN: grep found no `shadcnRegistry`/`registry={`/`props.computed`/stale dep-handler names. They document `<Form>`/hooks/types accurately against `packages/core/src`. (Phase 3 complete.)
 - [x] **`content/docs/index.mdx`** — DONE: "How it fits together" table → `@easy-forms/core` (npm) + `@easy-forms` shadcn registry; "first taste" caption no longer says "default shadcn registry". Verified `/docs` renders (no old package row, live form works).
 
 ## Phase 4 — Concepts, examples, landing
 
-- [ ] **`content/docs/concepts/lifecycle.mdx`** (lines 30-32) & **`concepts/store-rendering.mdx`** (line 69): `<Form registry={shadcnRegistry}>` → `<EasyForm>` (or `<Form registry={easyFormsRegistry}>` where the store prop is being shown).
-- [ ] **`content/docs/concepts/index.mdx`** — line 13 data-flow diagram & line 39 mention reference “registry”; verify wording still accurate (renderer comes from the ejected registry).
+- [x] **`content/docs/concepts/lifecycle.mdx`** & **`concepts/store-rendering.mdx`** — DONE: submission snippet + "bring your own store" snippet → `<EasyForm>` (store passes through). Verified both render, no `shadcnRegistry`.
+- [x] **`content/docs/concepts/index.mdx`** — verified accurate as-is: the data-flow diagram + lifecycle prose reference `<Form>`/"renderer from registry" as engine internals (correct; `<EasyForm>` wraps `<Form>`). No change needed.
 - [ ] **`content/docs/wizard.mdx`** (line 7) + **`examples/*.mdx`** — confirm snippets use `<EasyForm>`/current API; examples are schema-driven so mostly fine, but check any `registry=` usage.
 - [ ] **`app/(home)/page.tsx`** — audit the landing install copy/CTA for `@easy-forms/shadcn` (it renders `<SchemaFormSync>` + likely an install command).
 
@@ -128,6 +128,7 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 - 2026-06-22 — **troubleshooting.mdx** fixed (unstyled→tokens, chrome→`<EasyForm>`); **Phase 2 content complete**. Verified renders. (Note: the literal "@easy-forms/shadcn" still appears in the sidebar = the api/shadcn page's frontmatter title — fix in Phase 3.) Next: Phase 3 — convert api/shadcn.mdx → a Registry/`<EasyForm>` page (+ update meta.json slug), api/index, api/form (document `<EasyForm>`), index.mdx package table.
 - 2026-06-22 — Phase 3 started: **api/shadcn.mdx → api/registry.mdx** (Registry & EasyForm page) + api/index card/description repointed; meta.json slug updated. Verified renders, sidebar fixed. Next: api/form.mdx (document `<EasyForm>` + registry prop), index.mdx package table, then audit api/hooks/store/types/plugins.
 - 2026-06-22 — **api/form.mdx** (EasyForm callout + registry prop) and **index.mdx** (package table → core + registry; caption) done; verified both render. Next: audit api/hooks/store/types/plugins for stale `<Form registry={shadcnRegistry}>` snippets, then Phase 4 (concepts/examples/landing + home install copy).
+- 2026-06-22 — **Phase 3 complete** (api/hooks/store/types/plugins audited clean) + Phase 4 started: concepts/lifecycle + store-rendering snippets → `<EasyForm>`, concepts/index verified accurate. Both render. Next: examples/*.mdx + wizard.mdx (confirm current API), app/(home)/page.tsx landing install copy, then Phase 5 (PackageInstall/CopyButton defaults, docs README).
 
 ### Quick reference — every file with a shadcn hit (from the sweep)
 Code/config: `app/layout.tsx`, `app/global.css`, `next.config.mjs`, `package.json` (dep already

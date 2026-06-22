@@ -57,16 +57,17 @@ interface FieldState {
 
 ## Bring your own store
 
-`<Form>` creates a store for you. For advanced cases (driving values
+`<EasyForm>` creates a store for you. For advanced cases (driving values
 programmatically, sharing one store across components), create one yourself and pass it in:
 
 ```tsx
-import { createFormStore, Form } from '@easy-forms/core';
+import { createFormStore } from '@easy-forms/core';
+import { EasyForm } from '@/components/easy-forms/easy-form';
 
 const store = createFormStore({ initialValues: { qty: 1 } });
 store.setValue('qty', 5);
 
-<Form store={store} schema={schema} registry={shadcnRegistry} onSubmit={...} />;
+<EasyForm store={store} schema={schema} onSubmit={...} />;
 ```
 
 This is exactly how the homepage animation drives its "interaction beat".

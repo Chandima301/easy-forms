@@ -27,9 +27,8 @@ When a value changes:
 ## Submission
 
 ```tsx
-<Form
+<EasyForm
 	schema={schema}
-	registry={shadcnRegistry}
 	onSubmit={async (values) => {
 		// values: only visible, non-hidden fields
 		await save(values);
