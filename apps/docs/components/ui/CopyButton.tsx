@@ -26,7 +26,7 @@ export function CopyButton({ value, className }: { value: string; className?: st
 
 /** Terminal-style install chip with one-click copy. */
 export function InstallChip({
-	command = 'npm i @easy-forms/core @easy-forms/shadcn',
+	command = 'npm i @easy-forms/core',
 	className,
 }: {
 	command?: string;

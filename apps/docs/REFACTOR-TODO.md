@@ -88,13 +88,13 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 
 - [x] **`content/docs/concepts/lifecycle.mdx`** & **`concepts/store-rendering.mdx`** — DONE: submission snippet + "bring your own store" snippet → `<EasyForm>` (store passes through). Verified both render, no `shadcnRegistry`.
 - [x] **`content/docs/concepts/index.mdx`** — verified accurate as-is: the data-flow diagram + lifecycle prose reference `<Form>`/"renderer from registry" as engine internals (correct; `<EasyForm>` wraps `<Form>`). No change needed.
-- [ ] **`content/docs/wizard.mdx`** (line 7) + **`examples/*.mdx`** — confirm snippets use `<EasyForm>`/current API; examples are schema-driven so mostly fine, but check any `registry=` usage.
-- [ ] **`app/(home)/page.tsx`** — audit the landing install copy/CTA for `@easy-forms/shadcn` (it renders `<SchemaFormSync>` + likely an install command).
+- [x] **`content/docs/wizard.mdx`** + **`examples/*.mdx`** — DONE: wizard.mdx intro `<Form>`→`<EasyForm>`; examples/*.mdx grepped clean (no shadcnRegistry/registry=, they use `<LiveForm>`).
+- [x] **`app/(home)/page.tsx`** — DONE (via shared component): the landing renders `<InstallChip />`; fixing its default removed the `@easy-forms/shadcn` install string. Verified the hero chip now shows `npm i @easy-forms/core`. (Subtitle/feature copy mentioning "shadcn registry" is accurate, kept.)
 
 ## Phase 5 — Shared MDX components & docs README
 
-- [ ] **`components/mdx/PackageInstall.tsx`** line 24 default `'@easy-forms/core @easy-forms/shadcn'` → `'@easy-forms/core'`; consider a new `<RegistryInstall>` component that renders the `shadcn add @easy-forms/easy-form` block + the `components.json` snippet (reused across pages).
-- [ ] **`components/ui/CopyButton.tsx`** line 29 default `'npm i @easy-forms/core @easy-forms/shadcn'` → `'npm i @easy-forms/core'`.
+- [x] **`components/mdx/PackageInstall.tsx`** — DONE: default packages → `'@easy-forms/core'` (+ JSDoc usage). (A dedicated `<RegistryInstall>` component is optional polish; installation.mdx already shows the `shadcn add` + components.json flow inline.)
+- [x] **`components/ui/CopyButton.tsx`** — DONE: `InstallChip` default command → `'npm i @easy-forms/core'`. typecheck green.
 - [ ] **`apps/docs/README.md`** lines 5, 15 — drop `@easy-forms/shadcn` / `pnpm --filter @easy-forms/shadcn build`; describe the registry-consumer setup.
 
 ## Phase 6 — Accuracy audit (verify vs `packages/core/src`)
@@ -129,6 +129,7 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 - 2026-06-22 — Phase 3 started: **api/shadcn.mdx → api/registry.mdx** (Registry & EasyForm page) + api/index card/description repointed; meta.json slug updated. Verified renders, sidebar fixed. Next: api/form.mdx (document `<EasyForm>` + registry prop), index.mdx package table, then audit api/hooks/store/types/plugins.
 - 2026-06-22 — **api/form.mdx** (EasyForm callout + registry prop) and **index.mdx** (package table → core + registry; caption) done; verified both render. Next: audit api/hooks/store/types/plugins for stale `<Form registry={shadcnRegistry}>` snippets, then Phase 4 (concepts/examples/landing + home install copy).
 - 2026-06-22 — **Phase 3 complete** (api/hooks/store/types/plugins audited clean) + Phase 4 started: concepts/lifecycle + store-rendering snippets → `<EasyForm>`, concepts/index verified accurate. Both render. Next: examples/*.mdx + wizard.mdx (confirm current API), app/(home)/page.tsx landing install copy, then Phase 5 (PackageInstall/CopyButton defaults, docs README).
+- 2026-06-22 — **Phase 4 done** (wizard intro→EasyForm, examples clean, landing InstallChip fixed) + **Phase 5 component defaults done** (PackageInstall + CopyButton/InstallChip → core-only). Verified landing chip = `npm i @easy-forms/core`, docs typecheck green. Remaining: Phase 5 apps/docs/README.md; Phase 6 accuracy audit (components/*.mdx + dynamic/*.mdx); Phase 7 remove `--filter=!docs` + full green.
 
 ### Quick reference — every file with a shadcn hit (from the sweep)
 Code/config: `app/layout.tsx`, `app/global.css`, `next.config.mjs`, `package.json` (dep already
