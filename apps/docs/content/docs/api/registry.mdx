@@ -1,0 +1,73 @@
+---
+title: Registry & EasyForm
+description: The @easy-forms shadcn registry, the files it ejects, easyFormsRegistry, and the EasyForm wrapper.
+icon: Palette
+---
+
+The UI ships as a shadcn **registry**, not an npm package. You add components with the
+shadcn CLI and they're copied into your repo under `@/components/easy-forms/` — you own them.
+
+## Install
+
+Add the `@easy-forms` namespace to `components.json`, then add the kit:
+
+```json title="components.json"
+{
+	"registries": {
+		"@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json"
+	}
+}
+```
+
+```bash
+npx shadcn@latest add @easy-forms/easy-form
+```
+
+See [Installation](/docs/installation) for the full setup.
+
+## Registry items
+
+| Item | What you get |
+| --- | --- |
+| `@easy-forms/easy-form` | The whole kit: every renderer + `registry.ts` + the `<EasyForm>` wrapper + `easy-forms.css`. |
+| `@easy-forms/registry` | `registry.ts` — the assembled `easyFormsRegistry` (pulls all renderers). |
+| `@easy-forms/field-shell` | `FieldShell` — the shared label + description + inline-error wrapper. |
+| `@easy-forms/text`, `…/email`, `…/number`, `…/textarea`, `…/select`, `…/multiselect`, `…/checkbox`, `…/checkbox-list`, `…/radio-group`, `…/date`, `…/file`, `…/custom` | One renderer per control. Each pulls `field-shell` + the canonical shadcn primitives it needs. |
+
+Add the whole kit (`@easy-forms/easy-form`) or just the controls you need
+(`npx shadcn@latest add @easy-forms/select`).
+
+## `<EasyForm>`
+
+The pre-wired wrapper scaffolded at `@/components/easy-forms/easy-form.tsx` — it's `<Form>`
+with the renderer registry and chrome styles baked in, so there's no `registry` prop:
+
+```ts
+type EasyFormProps<TFormData> = Omit<FormProps<TFormData>, 'registry'>;
+```
+
+```tsx
+import { EasyForm } from '@/components/easy-forms/easy-form';
+
+<EasyForm schema={schema} initialValues={initialValues} onSubmit={onSubmit} />;
+```
+
+It accepts everything [`<Form>`](/docs/api/form) does except `registry`.
+
+## `easyFormsRegistry`
+
+The assembled control → renderer map at `@/components/easy-forms/registry.ts`. It's what
+`<EasyForm>` passes to `<Form>`. Edit it to add a control or point one at your own renderer
+— see [Theming & customization](/docs/theming).
+
+## Files you own
+
+`shadcn add @easy-forms/easy-form` writes into your repo:
+
+- `components/easy-forms/*-renderer.tsx` — one per control (e.g. `text-renderer.tsx`, `dropdown-renderer.tsx`).
+- `components/easy-forms/field-shell.tsx`, `registry.ts`, `easy-form.tsx`, `easy-forms.css`.
+- `components/ui/*` — the canonical shadcn primitives the renderers use (`input`, `select`, `checkbox`, `radio-group`, `popover`, `label`, `textarea`).
+
+All of it is editable. Each renderer is a React component typed `RendererProps<TQuestion>`
+(`question`, `value`, `onChange`, `onBlur`, `error`, `errors`, `touched`, `dirty`); see
+[Theming](/docs/theming) for how to build or swap one.

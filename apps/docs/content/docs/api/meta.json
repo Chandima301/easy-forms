@@ -1,5 +1,5 @@
 {
 	"title": "API reference",
 	"icon": "Braces",
-	"pages": ["index", "form", "hooks", "store", "types", "plugins", "shadcn"]
+	"pages": ["index", "form", "hooks", "store", "types", "plugins", "registry"]
 }
