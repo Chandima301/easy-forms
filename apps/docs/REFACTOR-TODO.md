@@ -72,7 +72,7 @@ The core message everywhere: install `@easy-forms/core` from npm + add the UI vi
 shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + use `<EasyForm>`.
 
 - [x] **`content/docs/installation.mdx`** — DONE: rewritten to the registry model (install core, `shadcn init`, register `@easy-forms` namespace, `shadcn add @easy-forms/easy-form`, peer deps, you-own-the-files callout). Old shadcn package/styles.css/`@source` content removed.
-- [ ] **`content/docs/quick-start.mdx`** — lines 50-62, 123: `import { shadcnRegistry }` + `<Form registry={shadcnRegistry}>` → `import { EasyForm }` + `<EasyForm>`.
+- [x] **`content/docs/quick-start.mdx`** — DONE: render step + "Type your form data" snippets now use `<EasyForm>` (no registry prop); added a Callout noting `<Form registry>` is the lower-level path. Verified `/docs/quick-start` renders the live form, no console errors.
 - [ ] **`content/docs/theming.mdx`** — rewrite (lines 18-19, 26-31, 36-40, 61). Old story = override `shadcnRegistry` + import primitives from `@easy-forms/shadcn` + chrome CSS in `@easy-forms/shadcn/styles.css`. New story = you OWN the files: edit `components/easy-forms/*-renderer.tsx`, theme via shadcn CSS tokens (`--primary`, `--ring`, dark mode), chrome via the ejected `easy-forms.css`. Replace the primitives-import section.
 - [ ] **`content/docs/troubleshooting.mdx`** — line 23: the `import '@easy-forms/shadcn/styles.css'` fix → the ejected `easy-forms.css` / `<EasyForm>`.
 
@@ -121,6 +121,7 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 - 2026-06-22 — added the **web-preview verification protocol** (run the `docs` server via .claude/launch.json + `preview_*` tools to verify rendered pages each iteration; requires Phase 0 first).
 - 2026-06-22 — **Phase 0 + Phase 1 DONE.** Ejected the registry into apps/docs via the REAL CLI against the live Pages registry: `shadcn init` (v4, wrote components.json + lib/utils + tokens in global.css) + `shadcn add @easy-forms/easy-form` (23 files: 7 `components/ui/*` primitives + 16 `components/easy-forms/*`). Registered the `@easy-forms` namespace in components.json. Removed dead refs: `layout.tsx` shadcn styles.css import, `next.config.mjs` transpilePackages, `global.css` `@source` shadcn dist. Migrated all 3 demos (LiveForm, SchemaStudio, SchemaFormSync) to `<EasyForm>`. Added `**/components/ui/**` to biome ignore (vendored). **Verified:** `pnpm --filter docs typecheck` ✅, `pnpm lint` ✅, docs dev server renders the live form on `/` (13 controls, no console errors). Web-preview verification now available for all remaining iterations.
 - **Remaining:** Phase 2 (quick-start/theming/troubleshooting; installation done), Phase 3 (API pages incl. api/shadcn→registry), Phase 4 (concepts/examples/landing snippets + home install copy), Phase 5 (PackageInstall/CopyButton defaults, docs README), Phase 6 (accuracy audit), Phase 7 (remove `--filter=!docs`, full green).
+- 2026-06-22 — **quick-start.mdx** migrated to `<EasyForm>` (render step + typed-data snippet); verified `/docs/quick-start` renders the live form, console clean. Next: theming.mdx, troubleshooting.mdx.
 
 ### Quick reference — every file with a shadcn hit (from the sweep)
 Code/config: `app/layout.tsx`, `app/global.css`, `next.config.mjs`, `package.json` (dep already
