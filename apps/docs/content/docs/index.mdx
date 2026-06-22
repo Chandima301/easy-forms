@@ -21,7 +21,7 @@ It is a *higher-level* alternative to libraries like React Hook Form. There is n
 ## A first taste
 
 The form below is **live** — it is the genuine `@easy-forms/core` engine rendering the
-schema beside it, with the default shadcn renderer registry.
+schema beside it, with the `@easy-forms` renderer registry.
 
 <LiveForm
 	schema={{
@@ -50,15 +50,15 @@ schema beside it, with the default shadcn renderer registry.
 
 ## How it fits together
 
-There are two publishable packages:
+There's one published package plus the UI registry:
 
-| Package | Role |
+| Piece | Role |
 | --- | --- |
-| `@easy-forms/core` | The headless engine: types, the form store, hooks, components, the dependency engine, the wizard, and plugins. Zero UI dependencies. |
-| `@easy-forms/shadcn` | The default renderer registry (Radix + Tailwind) and the plain-CSS form chrome. Fully swappable. |
+| `@easy-forms/core` (npm) | The headless engine: types, the form store, hooks, components, the dependency engine, the wizard, and plugins. Zero UI dependencies. |
+| `@easy-forms` shadcn registry | The default renderers + the pre-wired `<EasyForm>` wrapper + form chrome — added with `shadcn add @easy-forms/*` and copied into your repo, fully editable. |
 
-You can use the shadcn registry as-is, override individual renderers, or provide your
-own registry to match any design system.
+Use the renderers as-is, edit them in place, or point a control at your own to match any
+design system — see [Theming](/docs/theming).
 
 ## Where to next
 
