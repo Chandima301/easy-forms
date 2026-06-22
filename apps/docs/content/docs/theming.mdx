@@ -1,72 +1,117 @@
 ---
 title: Theming & customization
-description: Swap the renderer registry, override single controls, and style the form chrome.
+description: Theme with shadcn tokens, edit the renderers you own, swap a control, and style the chrome.
 icon: Palette
 ---
 
-Easy Forms separates the **engine** (headless) from the **renderers** (UI). You control
-the look at three levels: the whole registry, individual renderers, and the form chrome.
+Because you add the renderers with `shadcn add @easy-forms/*`, they live in **your** repo
+(`@/components/easy-forms/`) and you own them. Customize at four levels, cheapest first:
+**theme tokens**, **a single renderer**, **the registry**, and **the form chrome**.
 
-## The renderer registry
+## Theme tokens (the fastest knob)
 
-A registry maps a control name to a React component:
+The renderers and chrome are built on your shadcn theme tokens — `--primary`, `--ring`,
+`--border`, `--background`, `--foreground`, `--destructive`, `--radius`, … — set up by
+`shadcn init`. Change those CSS variables (light + `.dark`) and the whole form restyles, no
+component edits:
 
-```ts
-type RendererRegistry = Record<string, ComponentType<RendererProps>>;
+```css title="globals.css"
+:root {
+	--primary: oklch(0.55 0.2 264);   /* brand → buttons, focus rings, checkmarks */
+	--radius: 0.5rem;                  /* corner rounding across inputs & buttons */
+}
 ```
 
-`shadcnRegistry` is the default. To use a different design system, provide your own
-registry to `<Form registry={...}>`.
+## Edit a renderer (you own it)
 
-## Override a single control
+Each control's UI is a file in `@/components/easy-forms/`. To change how, say, the text
+input looks, open `text-renderer.tsx` and edit the markup/classes — it's your code.
+Renderers read everything from the **effective** `question` (with any dynamic
+`propsDependsOn` overrides already merged), plus `value`, `onChange`, `onBlur`, `error`,
+`touched`:
 
-Start from the shadcn registry and replace just the renderers you want:
+```tsx title="components/easy-forms/text-renderer.tsx"
+import type { RendererProps, TextQuestion } from '@easy-forms/core';
+import { FieldShell } from '@/components/easy-forms/field-shell';
+import { Input } from '@/components/ui/input';
 
-```tsx
-import { shadcnRegistry } from '@easy-forms/shadcn';
-import { MyFancySelect } from './MyFancySelect';
-
-const registry = { ...shadcnRegistry, dropdown: MyFancySelect };
-
-<Form schema={schema} registry={registry} onSubmit={...} />;
-```
-
-## Compose from primitives
-
-`@easy-forms/shadcn` exports its primitives (`Input`, `Select`, `Checkbox`, `Label`,
-`FieldShell`, `Button`, …) so you can build a renderer that matches the others:
-
-```tsx
-import { FieldShell, Input } from '@easy-forms/shadcn';
-
-function PhoneRenderer(props) {
+export function TextRenderer({ question, value, onChange, onBlur, error, touched }: RendererProps<TextQuestion>) {
+	const showError = touched && !!error;
 	return (
-		<FieldShell question={props.question} error={props.error}>
-			<Input {...} />
+		<FieldShell
+			id={question.key}
+			label={question.label}
+			description={question.description}
+			error={showError ? error : null}
+			required={!!question.required}
+		>
+			<Input id={question.key} value={value ?? ''} onChange={(e) => onChange(e.target.value)} onBlur={onBlur} />
 		</FieldShell>
 	);
 }
 ```
 
-Renderers read everything from the effective `question` (including dynamic overrides from
-`propsDependsOn`). There is no separate `computed` map.
+## Swap a control's renderer
 
-## Tailwind vs. plain CSS
+The control → component map lives in `@/components/easy-forms/registry.ts`. Point a key at
+your own component:
 
-The split is deliberate:
+```ts title="components/easy-forms/registry.ts"
+import { MyFancySelect } from '@/components/easy-forms/my-fancy-select';
 
-| Layer | Styling |
-| --- | --- |
-| Renderers (Input, Select, …) | Inline **Tailwind** utility classes — add the shadcn `dist` to your Tailwind `content`. |
-| Chrome (container, footer, buttons, grid, wizard nav) | Plain **CSS** in `@easy-forms/shadcn/styles.css`. |
+export const easyFormsRegistry: RendererRegistry = {
+	// …
+	dropdown: MyFancySelect, // was DropdownRenderer
+};
+```
 
-<Callout type="warn">
-	Don't move chrome classes into a Tailwind `@layer components` block — Tailwind will purge
-	them when it can't find the class names in your scanned source.
-</Callout>
+`<EasyForm>` uses that registry. For a one-off override at the call site, drop to the
+lower-level `<Form>` and spread the registry:
+
+```tsx
+import { Form } from '@easy-forms/core';
+import { easyFormsRegistry } from '@/components/easy-forms/registry';
+
+<Form schema={schema} registry={{ ...easyFormsRegistry, dropdown: MyFancySelect }} onSubmit={onSubmit} />;
+```
+
+## Build a renderer from primitives
+
+Renderers compose the shared `FieldShell` (label + description + inline error) with the
+canonical shadcn primitives in `@/components/ui/*`:
+
+```tsx
+import type { RendererProps, TextQuestion } from '@easy-forms/core';
+import { FieldShell } from '@/components/easy-forms/field-shell';
+import { Input } from '@/components/ui/input';
+
+function PhoneRenderer({ question, value, onChange, onBlur, error, touched }: RendererProps<TextQuestion>) {
+	return (
+		<FieldShell id={question.key} label={question.label} error={touched ? error : null} required={!!question.required}>
+			<Input id={question.key} type="tel" value={value ?? ''} onChange={(e) => onChange(e.target.value)} onBlur={onBlur} />
+		</FieldShell>
+	);
+}
+```
+
+`FieldShell` props: `id`, `label`, `description?`, `error?`, `required?`, `className?`,
+`children`. There is no separate `computed` map — everything dynamic is on `question`.
+
+## Style the form chrome
+
+The container, footer, group grid, and wizard navigation are rendered by
+`@easy-forms/core` and styled by `easy-forms.css`, added next to your renderers at
+`@/components/easy-forms/easy-forms.css` and imported by `<EasyForm>`. It's plain CSS keyed
+to `easy-forms*` classes and driven by your shadcn tokens (`var(--primary)`,
+`var(--border)`, …) — edit it freely:
+
+```css title="components/easy-forms/easy-forms.css"
+.easy-forms { border-radius: var(--radius); border: 1px solid var(--border); }
+.easy-forms__submit { background-color: var(--primary); color: var(--primary-foreground); }
+```
 
 ## Dark mode
 
-The shadcn renderers and chrome respond to your app's color scheme. Drive dark mode the way
-you already do (a `dark` class or `data-theme`); the renderers inherit the surrounding
-tokens.
+Everything — renderers and chrome — is token-driven, so toggling the `.dark` class on a
+parent (the standard shadcn/Tailwind approach) reskins the whole form. There are no
+per-component dark styles to maintain.
