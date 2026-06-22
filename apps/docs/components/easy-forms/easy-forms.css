@@ -6,8 +6,9 @@
  * wizard navigation). Field controls are styled by the renderer components +
  * the shadcn primitives they depend on.
  *
- * This is plain CSS driven by your shadcn theme tokens (--background, --border,
- * --primary, --ring, …), so the whole form follows your theme and dark mode.
+ * Plain CSS driven by your shadcn theme tokens, referenced directly as
+ * `var(--token)` so it works with the full-color (oklch) tokens that
+ * `shadcn init` writes. The whole form follows your theme and dark mode.
  * Edit any rule to re-theme — you own this file.
  */
 
@@ -18,9 +19,9 @@
 	flex-direction: column;
 	gap: 1.5rem;
 	border-radius: var(--radius, 0.5rem);
-	border: 1px solid hsl(var(--border));
-	background-color: hsl(var(--card));
-	color: hsl(var(--card-foreground));
+	border: 1px solid var(--border);
+	background-color: var(--card);
+	color: var(--card-foreground);
 	padding: 1.5rem;
 	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
@@ -33,12 +34,12 @@
 	font-size: 1.25rem;
 	line-height: 1.75rem;
 	font-weight: 600;
-	color: hsl(var(--foreground));
+	color: var(--foreground);
 }
 .easy-forms__description {
 	font-size: 0.875rem;
 	line-height: 1.25rem;
-	color: hsl(var(--muted-foreground));
+	color: var(--muted-foreground);
 }
 .easy-forms__body {
 	display: flex;
@@ -49,7 +50,7 @@
 	display: flex;
 	justify-content: flex-end;
 	gap: 0.5rem;
-	border-top: 1px solid hsl(var(--border));
+	border-top: 1px solid var(--border);
 	padding-top: 1rem;
 }
 
@@ -71,26 +72,26 @@
 	transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 .easy-forms__submit {
-	background-color: hsl(var(--primary));
-	color: hsl(var(--primary-foreground));
+	background-color: var(--primary);
+	color: var(--primary-foreground);
 	border: 1px solid transparent;
 }
 .easy-forms__submit:hover {
-	background-color: hsl(var(--primary) / 0.9);
+	background-color: color-mix(in oklab, var(--primary) 90%, transparent);
 }
 .easy-forms__reset {
-	border: 1px solid hsl(var(--border));
-	background-color: hsl(var(--background));
-	color: hsl(var(--foreground));
+	border: 1px solid var(--border);
+	background-color: var(--background);
+	color: var(--foreground);
 }
 .easy-forms__reset:hover {
-	background-color: hsl(var(--accent));
-	color: hsl(var(--accent-foreground));
+	background-color: var(--accent);
+	color: var(--accent-foreground);
 }
 .easy-forms__submit:focus-visible,
 .easy-forms__reset:focus-visible {
 	outline: none;
-	box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+	box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 .easy-forms__submit:disabled,
 .easy-forms__reset:disabled {
@@ -116,12 +117,12 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.025em;
-	color: hsl(var(--foreground));
+	color: var(--foreground);
 }
 .easy-forms-group__description {
 	font-size: 0.75rem;
 	line-height: 1rem;
-	color: hsl(var(--muted-foreground));
+	color: var(--muted-foreground);
 }
 
 /* ----------------------------------------------------------- Layout */
@@ -177,7 +178,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.5rem;
-	border-bottom: 1px solid hsl(var(--border));
+	border-bottom: 1px solid var(--border);
 	padding-bottom: 0.75rem;
 	margin: 0;
 	padding-left: 0;
@@ -185,27 +186,27 @@
 }
 .easy-forms-wizard__nav-item button {
 	border-radius: 9999px;
-	border: 1px solid hsl(var(--border));
-	background-color: hsl(var(--background));
+	border: 1px solid var(--border);
+	background-color: var(--background);
 	padding: 0.25rem 0.75rem;
 	font-size: 0.75rem;
 	line-height: 1rem;
 	font-weight: 500;
-	color: hsl(var(--foreground));
+	color: var(--foreground);
 	cursor: pointer;
 }
 .easy-forms-wizard__nav-item button:hover {
-	background-color: hsl(var(--accent));
-	color: hsl(var(--accent-foreground));
+	background-color: var(--accent);
+	color: var(--accent-foreground);
 }
 .easy-forms-wizard__nav-item button:disabled {
 	cursor: not-allowed;
 	opacity: 0.5;
 }
 .easy-forms-wizard__nav-item--active button {
-	border-color: hsl(var(--primary));
-	background-color: hsl(var(--primary));
-	color: hsl(var(--primary-foreground));
+	border-color: var(--primary);
+	background-color: var(--primary);
+	color: var(--primary-foreground);
 }
 .easy-forms-wizard__nav-item--visited:not(.easy-forms-wizard__nav-item--active) button {
 	border-color: #059669;
@@ -220,7 +221,7 @@
 	display: flex;
 	justify-content: space-between;
 	gap: 0.5rem;
-	border-top: 1px solid hsl(var(--border));
+	border-top: 1px solid var(--border);
 	padding-top: 1rem;
 }
 .easy-forms-wizard__previous,
@@ -243,7 +244,7 @@
 .easy-forms-wizard__next:focus-visible,
 .easy-forms-wizard__submit:focus-visible {
 	outline: none;
-	box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+	box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 .easy-forms-wizard__previous:disabled,
 .easy-forms-wizard__next:disabled,
@@ -252,21 +253,21 @@
 	opacity: 0.5;
 }
 .easy-forms-wizard__previous {
-	border: 1px solid hsl(var(--border));
-	background-color: hsl(var(--background));
-	color: hsl(var(--foreground));
+	border: 1px solid var(--border);
+	background-color: var(--background);
+	color: var(--foreground);
 }
 .easy-forms-wizard__previous:hover {
-	background-color: hsl(var(--accent));
-	color: hsl(var(--accent-foreground));
+	background-color: var(--accent);
+	color: var(--accent-foreground);
 }
 .easy-forms-wizard__next,
 .easy-forms-wizard__submit {
-	background-color: hsl(var(--primary));
-	color: hsl(var(--primary-foreground));
+	background-color: var(--primary);
+	color: var(--primary-foreground);
 	border: 1px solid transparent;
 }
 .easy-forms-wizard__next:hover,
 .easy-forms-wizard__submit:hover {
-	background-color: hsl(var(--primary) / 0.9);
+	background-color: color-mix(in oklab, var(--primary) 90%, transparent);
 }
