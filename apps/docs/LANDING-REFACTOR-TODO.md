@@ -43,7 +43,7 @@ Keep the docs server running across iterations.
 - [x] Register in `mdx-components.tsx`.
 
 ## Phase 2 — Retrofit demos to Preview/Code tabs
-- [ ] Landing `CodeShowcase` (`components/landing/CodeShowcase.tsx`) → `<ComponentPreview>`
+- [x] Landing `CodeShowcase` (`components/landing/CodeShowcase.tsx`) → `<ComponentPreview>`
   tabs (keep the presets bar).
 - [ ] 12 component docs (`content/docs/components/*.mdx`) + `dynamic/*` + example demos:
   wrap each `<LiveForm>`/named demo in `<ComponentPreview>` with an explicit `code`
@@ -105,3 +105,8 @@ Keep the docs server running across iterations.
   and registered it in `mdx-components.tsx`. Verified live via a throwaway `/preview-test`
   page (basic preset): both tabs render, toggle works, console clean, `docs` typecheck
   green; temp page removed. Next: Phase 2 — retrofit `CodeShowcase` + demos to the tabs.
+- 2026-06-27 — Phase 2 (landing `CodeShowcase`) done. Refactored it to render the active
+  preset through `<ComponentPreview>` (keyed by preset id) while keeping the presets bar;
+  dropped the side-by-side twin `DemoFrame`s. Verified on `/`: presets switch, Preview tab
+  shows the live form + Live badge, Code tab shows `schema.tsx` + copy, console clean,
+  `docs` typecheck green. Next: Phase 2 — wrap the 12 component docs + dynamic/example demos.
