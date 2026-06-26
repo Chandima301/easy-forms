@@ -12,7 +12,8 @@
 			".turbo/**",
 			"coverage/**",
 			".next/**",
-			".changeset/**"
+			".changeset/**",
+			"**/components/ui/**"
 		]
 	},
 	"organizeImports": {

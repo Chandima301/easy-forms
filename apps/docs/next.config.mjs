@@ -5,7 +5,7 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
 	reactStrictMode: true,
-	transpilePackages: ['@easy-forms/core', '@easy-forms/shadcn'],
+	transpilePackages: ['@easy-forms/core'],
 };
 
 export default withMDX(config);

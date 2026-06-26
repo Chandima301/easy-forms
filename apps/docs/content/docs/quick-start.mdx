@@ -47,19 +47,19 @@ const schema: FormSchema = {
 
 <Step>
 
-### Render it with `<Form>`
+### Render it with `<EasyForm>`
 
-Pass the schema, a renderer registry, optional `initialValues`, and an `onSubmit` handler.
+Pass the schema, optional `initialValues`, and an `onSubmit` handler. `<EasyForm>` — added
+to your repo by `shadcn add @easy-forms/easy-form` — wires the renderer registry and form
+chrome for you, so there's no `registry` prop.
 
 ```tsx title="signup-form.tsx"
-import { Form } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
+import { EasyForm } from '@/components/easy-forms/easy-form';
 
 export function SignupForm() {
 	return (
-		<Form
+		<EasyForm
 			schema={schema}
-			registry={shadcnRegistry}
 			initialValues={{ firstName: '', lastName: '', email: '', plan: null }}
 			onSubmit={async (values) => {
 				await fetch('/api/signup', { method: 'POST', body: JSON.stringify(values) });
@@ -68,6 +68,11 @@ export function SignupForm() {
 	);
 }
 ```
+
+<Callout type="info">
+	Prefer to keep the lower-level component or bring your own UI? Use `<Form>` from
+	`@easy-forms/core` with a `registry` prop — `<EasyForm>` is just a thin wrapper around it.
+</Callout>
 
 </Step>
 
@@ -104,7 +109,7 @@ empty fields, then fill them in.
 
 ## Type your form data
 
-Pass a type argument to `Form` (and `FormSchema`) to get autocomplete and type-checking
+Pass a type argument to `EasyForm` (and `FormSchema`) to get autocomplete and type-checking
 on field keys, derived values, and dependency sources.
 
 ```tsx
@@ -120,7 +125,7 @@ const schema: FormSchema<SignupData> = {
 	groups: [],
 };
 
-<Form<SignupData> schema={schema} registry={shadcnRegistry} onSubmit={(values) => {
+<EasyForm<SignupData> schema={schema} onSubmit={(values) => {
 	// values is typed as SignupData
 }} />
 ```

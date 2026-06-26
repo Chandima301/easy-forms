@@ -8,11 +8,18 @@ icon: SquareCode
 import { Form } from '@easy-forms/core';
 ```
 
+<Callout type="info">
+	Most apps use **`<EasyForm>`** instead — the pre-wired wrapper
+	(`Omit<FormProps, 'registry'>`) scaffolded by `shadcn add @easy-forms/easy-form`, which
+	supplies the renderer registry and chrome for you. Reach for `<Form>` directly when you
+	want to pass your own `registry`. See [Registry & EasyForm](/docs/api/registry).
+</Callout>
+
 ## Props
 
 <PropsTable rows={[
 	{ name: 'schema', type: 'FormSchema<TFormData>', required: true, description: 'The form definition.' },
-	{ name: 'registry', type: 'RendererRegistry', required: true, description: 'Maps control names to renderer components (e.g. shadcnRegistry).' },
+	{ name: 'registry', type: 'RendererRegistry', required: true, description: 'Maps control names to renderer components (e.g. easyFormsRegistry). <EasyForm> supplies this for you.' },
 	{ name: 'onSubmit', type: '(values: TFormData) => void | Promise<void>', required: true, description: 'Called with the validated, visible values on submit.' },
 	{ name: 'initialValues', type: 'Partial<TFormData>', description: 'Initial field values.' },
 	{ name: 'store', type: 'FormStore', description: 'Provide an external store instead of creating one internally.' },

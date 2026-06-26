@@ -8,20 +8,25 @@ icon: LifeBuoy
 
 **Symptom:** inputs and selects render without their Tailwind styles.
 
-**Cause:** Tailwind isn't scanning the shadcn renderer bundles, so their utility classes
-aren't generated.
+**Cause:** your shadcn theme tokens aren't set up — the renderers use token utilities
+(`border-input`, `bg-background`, `text-muted-foreground`, …) that resolve to nothing
+without them.
 
-**Fix:** add the shadcn `dist` to your Tailwind `content` (v3) or add an `@source` directive
-(v4). See [Installation](/docs/installation).
+**Fix:** run `npx shadcn@latest init` (it writes the theme tokens + Tailwind setup), then
+`npx shadcn@latest add @easy-forms/easy-form`. Tailwind scans your `components/` directory
+automatically. See [Installation](/docs/installation).
 
 ## The form chrome is missing
 
 **Symptom:** the container, footer, and buttons have no styling.
 
-**Cause:** the chrome stylesheet isn't imported.
+**Cause:** the ejected chrome stylesheet (`easy-forms.css`) isn't loaded, or your theme
+tokens (`--primary`, `--border`, `--card`, …) aren't defined.
 
-**Fix:** `import '@easy-forms/shadcn/styles.css'` once near your app root. Don't move those
-classes into a Tailwind `@layer components` block — they'll be purged.
+**Fix:** render with `<EasyForm>` — it imports `components/easy-forms/easy-forms.css` for
+you. (Using `<Form>` directly? Import that file yourself.) The chrome reads `var(--primary)`
+etc., so make sure `shadcn init` wrote your theme tokens. Don't move the `easy-forms*`
+classes into a Tailwind `@layer components` block.
 
 ## A group's fields are misaligned
 

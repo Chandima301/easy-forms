@@ -1,9 +1,9 @@
 'use client';
 
 import { DemoFrame, LiveBadge } from '@/components/demo/DemoFrame';
+import { EasyForm } from '@/components/easy-forms/easy-form';
 import { studioPresets } from '@/lib/studio-presets';
-import { Form, type FormSchema } from '@easy-forms/core';
-import { shadcnRegistry } from '@easy-forms/shadcn';
+import type { FormSchema } from '@easy-forms/core';
 import { AlertTriangle, RotateCcw, Share2 } from 'lucide-react';
 import { Highlight } from 'prism-react-renderer';
 import { useEffect, useMemo, useState } from 'react';
@@ -143,10 +143,9 @@ export function SchemaStudio() {
 			>
 				{parsed.schema ? (
 					<div className="not-prose ef-demo-surface">
-						<Form
+						<EasyForm
 							key={code.length}
 							schema={parsed.schema}
-							registry={shadcnRegistry}
 							initialValues={initialValues}
 							showReset
 							onSubmit={async (v) => setSubmitted(v)}

@@ -1,84 +1,79 @@
 ---
 title: Installation
-description: Install Easy Forms, wire up Tailwind for the shadcn renderers, and import the form chrome stylesheet.
+description: Install @easy-forms/core and add the UI from the @easy-forms shadcn registry.
 icon: Download
 ---
 
-Easy Forms ships as two packages. Install both to get the engine plus the default
-shadcn renderer registry.
+Easy Forms is two pieces: the headless engine (`@easy-forms/core`, an npm package) and the
+UI, which you **add to your own project with the shadcn CLI** from the `@easy-forms` registry.
+The renderer components are copied into your repo — you own them and can edit them freely.
 
-<PackageInstall packages="@easy-forms/core @easy-forms/shadcn" />
+## 1. Install the engine
+
+<PackageInstall packages="@easy-forms/core" />
 
 <Callout type="info">
-	`@easy-forms/core` is headless and has zero UI dependencies. If you provide your own
-	renderer registry, you can use it without `@easy-forms/shadcn`.
+	`@easy-forms/core` is headless with zero UI dependencies. The renderers you add in the next
+	step import it.
+</Callout>
+
+## 2. Make sure you have a shadcn project
+
+The renderers are shadcn components, so your app needs Tailwind and a `components.json`. If you
+don't have one yet, run shadcn's init once:
+
+```bash
+npx shadcn@latest init
+```
+
+This configures Tailwind theme tokens, `@/lib/utils`, and `components.json`. Anything shadcn
+supports works — Vite, Next.js, Remix, Astro.
+
+## 3. Register the `@easy-forms` namespace
+
+Add the registry to the `registries` field of your `components.json`:
+
+```json title="components.json"
+{
+	"registries": {
+		"@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json"
+	}
+}
+```
+
+## 4. Add the components
+
+Pull the whole kit — every renderer, the assembled registry, and the pre-wired `<EasyForm>`
+wrapper — in one command:
+
+```bash
+npx shadcn@latest add @easy-forms/easy-form
+```
+
+Or add just the controls you need and wire your own registry:
+
+```bash
+npx shadcn@latest add @easy-forms/text @easy-forms/select
+```
+
+Either way, the renderers land in `@/components/easy-forms/` and the canonical shadcn primitives
+they use (`input`, `select`, `checkbox`, `radio-group`, `popover`, `label`, `textarea`) are
+pulled into `@/components/ui/`.
+
+<Callout type="info" title="You own these files">
+	The renderers and the `<EasyForm>` wrapper now live in your repo. Restyle them, point a
+	control at your own renderer, or edit the chrome stylesheet (`easy-forms.css`) — see
+	[Theming](/docs/theming) and [Custom controls](/docs/components/custom-controls).
 </Callout>
 
 ## Peer dependencies
-
-The packages expect React 18+ in your app:
 
 | Dependency | Version |
 | --- | --- |
 | `react` | `>= 18` |
 | `react-dom` | `>= 18` |
-| `tailwindcss` | `>= 3.4` (only for `@easy-forms/shadcn`) |
-
-## Import the form chrome stylesheet
-
-The shadcn package ships its container, footer, buttons, grid, and wizard navigation
-as **plain CSS**. Import it once, near your app root:
-
-```ts title="app/layout.tsx"
-import '@easy-forms/shadcn/styles.css';
-```
-
-## Configure Tailwind
-
-The shadcn **renderers** (inputs, selects, etc.) use Tailwind utility classes. Tailwind
-must scan the package's compiled output so those classes are generated.
-
-<Tabs items={["Tailwind v3", "Tailwind v4"]}>
-	<Tab value="Tailwind v3">
-
-```js title="tailwind.config.js"
-export default {
-	content: [
-		'./src/**/*.{ts,tsx}',
-		// Scan the shadcn renderer bundles:
-		'./node_modules/@easy-forms/shadcn/dist/**/*.{js,cjs}',
-	],
-};
-```
-
-	</Tab>
-	<Tab value="Tailwind v4">
-
-```css title="globals.css"
-@import 'tailwindcss';
-
-/* Scan the shadcn renderer bundles so their utility classes are generated. */
-@source '../node_modules/@easy-forms/shadcn/dist/**/*.js';
-```
-
-	</Tab>
-</Tabs>
-
-<Callout type="warn" title="Don't put chrome classes in @layer components">
-	The form chrome ships as plain CSS on purpose. If you re-declare those class names inside
-	a Tailwind `@layer components` block, Tailwind may purge them when it can't find the class
-	names in your scanned source.
-</Callout>
-
-## Framework notes
-
-<Cards>
-	<Card title="Next.js" description="Import styles.css in your root layout. If you consume the packages from source in a monorepo, add them to transpilePackages." />
-	<Card title="Vite" description="Import styles.css in main.tsx and add the shadcn dist path to your Tailwind content array." />
-	<Card title="Remix" description="Import the stylesheet via a links() export or a global CSS import, then configure Tailwind content as above." />
-</Cards>
+| `tailwindcss` | `>= 3.4` — your shadcn setup; the renderers use its theme tokens (`--background`, `--primary`, `--ring`, …) |
 
 ## Verify it works
 
-Continue to the [Quick start](/docs/quick-start) to render your first form and confirm
-your styles are wired up correctly.
+Continue to the [Quick start](/docs/quick-start) to render your first form with `<EasyForm>`.

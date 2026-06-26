@@ -1,8 +1,10 @@
 import './global.css';
-import '@easy-forms/shadcn/styles.css';
+import { cn } from '@/lib/utils';
 import { RootProvider } from 'fumadocs-ui/provider';
-import { Inter } from 'next/font/google';
+import { Geist, Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,7 +36,11 @@ export const metadata = {
 
 export default function Layout({ children }: { children: ReactNode }) {
 	return (
-		<html lang="en" className={inter.className} suppressHydrationWarning>
+		<html
+			lang="en"
+			className={cn(inter.className, 'font-sans', geist.variable)}
+			suppressHydrationWarning
+		>
 			<body className="flex flex-col min-h-screen">
 				<RootProvider>{children}</RootProvider>
 			</body>
