@@ -45,10 +45,17 @@ Keep the docs server running across iterations.
 ## Phase 2 — Retrofit demos to Preview/Code tabs
 - [x] Landing `CodeShowcase` (`components/landing/CodeShowcase.tsx`) → `<ComponentPreview>`
   tabs (keep the presets bar).
-- [ ] 12 component docs (`content/docs/components/*.mdx`) + `dynamic/*` + example demos:
-  wrap each `<LiveForm>`/named demo in `<ComponentPreview>` with an explicit `code`
-  snippet. (Function-bearing schemas = named client demos in `components/demo/examples.tsx`;
-  inline-schema pages like `text.mdx` get a hand-authored `code` string.)
+- [x] `dynamic/*` + example/wizard demos → Preview/Code tabs. Each named client demo in
+  `components/demo/examples.tsx` now **self-wraps** in `<ComponentPreview>` with a
+  co-located `code` snippet, so every `<XDemo />` usage (examples, dynamic, wizard) gets
+  the tabs from one edit. Removed the now-redundant full-schema block under
+  `examples/signup.mdx`.
+  **Scope change:** field-level component docs (`content/docs/components/*.mdx`)
+  **intentionally stay plain `<LiveForm>` previews**, not Preview/Code tabs. Their inline
+  schemas are trivial, fully serializable, and already documented by the adjacent
+  `<PropsTable>`; a hand-authored `code` string would duplicate the schema in-file with no
+  single source of truth → drift risk (see loop log). `CheckboxRequiredDemo` (used only in
+  the checkbox component doc) likewise renders plain.
 
 ## Phase 3 — Examples gallery redesign + 6 new examples
 - [ ] Replace `<Cards>` in `content/docs/examples/index.mdx` with a visual gallery
@@ -110,3 +117,15 @@ Keep the docs server running across iterations.
   dropped the side-by-side twin `DemoFrame`s. Verified on `/`: presets switch, Preview tab
   shows the live form + Live badge, Code tab shows `schema.tsx` + copy, console clean,
   `docs` typecheck green. Next: Phase 2 — wrap the 12 component docs + dynamic/example demos.
+- 2026-06-27 — Phase 2 (demo retrofit) done, with a **deliberate scope reduction** after a
+  design discussion. Made every named client demo in `examples.tsx` self-wrap in
+  `<ComponentPreview>` (co-located `code` const next to its schema), upgrading all example +
+  dynamic + wizard `<XDemo />` usages to Preview/Code tabs in one edit; dropped the
+  redundant code block in `examples/signup.mdx`. **Did NOT** wrap the field-level component
+  docs (`components/*.mdx`): forcing a `code` prop there means hand-writing the inline schema
+  a second time as a string in the same file (Preview needs the live object, Code needs a
+  string) with nothing keeping them in sync — silent drift, and those pages already document
+  the API via `<PropsTable>`. So component docs keep plain `<LiveForm>` previews;
+  `CheckboxRequiredDemo` reverted to plain too. Verified live: signup + props-depends-on show
+  tabs, checkbox shows a plain preview, console clean, `docs` typecheck green. Next: Phase 3
+  — examples gallery redesign + 6 new examples.
