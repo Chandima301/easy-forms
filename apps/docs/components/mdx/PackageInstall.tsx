@@ -20,9 +20,7 @@ function command(mgr: Manager, pkg: string): string {
 }
 
 /** Package-manager tabbed install block. Usage in MDX: <PackageInstall packages="@easy-forms/core" /> */
-export function PackageInstall({
-	packages = '@easy-forms/core',
-}: { packages?: string }) {
+export function PackageInstall({ packages = '@easy-forms/core' }: { packages?: string }) {
 	const [mgr, setMgr] = useState<Manager>('pnpm');
 	const cmd = command(mgr, packages);
 	return (
