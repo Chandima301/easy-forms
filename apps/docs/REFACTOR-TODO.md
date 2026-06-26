@@ -95,7 +95,7 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 
 - [x] **`components/mdx/PackageInstall.tsx`** — DONE: default packages → `'@easy-forms/core'` (+ JSDoc usage). (A dedicated `<RegistryInstall>` component is optional polish; installation.mdx already shows the `shadcn add` + components.json flow inline.)
 - [x] **`components/ui/CopyButton.tsx`** — DONE: `InstallChip` default command → `'npm i @easy-forms/core'`. typecheck green.
-- [ ] **`apps/docs/README.md`** lines 5, 15 — drop `@easy-forms/shadcn` / `pnpm --filter @easy-forms/shadcn build`; describe the registry-consumer setup.
+- [x] **`apps/docs/README.md`** — DONE: demos run core + the ejected `@easy-forms` renderers; Develop section builds only `@easy-forms/core` (dropped the shadcn build step); Notes describe Tailwind v4 auto-scanning the ejected components (no `@source` for shadcn dist). Grep clean. (Phase 5 complete.)
 
 ## Phase 6 — Accuracy audit (verify vs `packages/core/src`)
 
@@ -130,6 +130,7 @@ shadcn registry (`components.json` namespace → `shadcn add @easy-forms/*`) + u
 - 2026-06-22 — **api/form.mdx** (EasyForm callout + registry prop) and **index.mdx** (package table → core + registry; caption) done; verified both render. Next: audit api/hooks/store/types/plugins for stale `<Form registry={shadcnRegistry}>` snippets, then Phase 4 (concepts/examples/landing + home install copy).
 - 2026-06-22 — **Phase 3 complete** (api/hooks/store/types/plugins audited clean) + Phase 4 started: concepts/lifecycle + store-rendering snippets → `<EasyForm>`, concepts/index verified accurate. Both render. Next: examples/*.mdx + wizard.mdx (confirm current API), app/(home)/page.tsx landing install copy, then Phase 5 (PackageInstall/CopyButton defaults, docs README).
 - 2026-06-22 — **Phase 4 done** (wizard intro→EasyForm, examples clean, landing InstallChip fixed) + **Phase 5 component defaults done** (PackageInstall + CopyButton/InstallChip → core-only). Verified landing chip = `npm i @easy-forms/core`, docs typecheck green. Remaining: Phase 5 apps/docs/README.md; Phase 6 accuracy audit (components/*.mdx + dynamic/*.mdx); Phase 7 remove `--filter=!docs` + full green.
+- 2026-06-22 — **apps/docs/README.md** updated (core-only build, ejected renderers, v4 auto-scan); **Phase 5 complete**. Next: Phase 6 accuracy audit (grep components/*.mdx + dynamic/*.mdx for stale tokens; verify dep kinds=3, controls=12, RendererProps), then Phase 7 (remove `--filter=!docs`, full build/typecheck/lint green = DONE).
 
 ### Quick reference — every file with a shadcn hit (from the sweep)
 Code/config: `app/layout.tsx`, `app/global.css`, `next.config.mjs`, `package.json` (dep already

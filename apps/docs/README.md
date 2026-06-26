@@ -1,18 +1,18 @@
 # Easy Forms — Documentation site
 
 The marketing + documentation site for Easy Forms, built with **Next.js (App Router)** and
-**Fumadocs**. Every live demo runs the genuine `@easy-forms/core` engine with the
-`@easy-forms/shadcn` renderer registry.
+**Fumadocs**. Every live demo runs the genuine `@easy-forms/core` engine with the ejected
+`@easy-forms` renderers (added to this app via `shadcn add`, under `components/easy-forms/`).
 
 ## Develop
 
-The docs consume the **built** `dist` of the workspace packages (via `transpilePackages`),
-so build them first:
+The docs consume the **built** `dist` of `@easy-forms/core` (via `transpilePackages`), so
+build it first. The UI lives in this app as ejected components (`components/easy-forms/` +
+`components/ui/`), so there's nothing else to build:
 
 ```sh
 # from the repo root
 pnpm --filter @easy-forms/core build
-pnpm --filter @easy-forms/shadcn build
 pnpm --filter docs dev          # http://localhost:3000
 ```
 
@@ -41,6 +41,6 @@ pnpm --filter docs build
 - **Live demos with functions** (custom validators, dependency `compute`) must live in
   client components (`components/demo/examples.tsx`) — functions can't be serialized across
   the RSC boundary from server-rendered MDX.
-- **Tailwind v4** scans the shadcn renderer bundles via an `@source` directive in
-  `app/global.css` so the renderers' utility classes are generated.
+- **Tailwind v4** auto-scans the app source, so the ejected renderers' utility classes
+  (`components/easy-forms/`, `components/ui/`) are generated without extra `@source` config.
 - Set `NEXT_PUBLIC_SITE_URL` for correct absolute URLs in metadata, sitemap, and robots.
