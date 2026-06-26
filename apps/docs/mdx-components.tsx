@@ -1,3 +1,4 @@
+import { ComponentPreview } from '@/components/demo/ComponentPreview';
 import { LiveForm } from '@/components/demo/LiveForm';
 import {
 	CheckboxRequiredDemo,
@@ -33,6 +34,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 		Accordions,
 		Callout,
 		// Easy Forms doc components
+		ComponentPreview,
 		LiveForm,
 		PackageInstall,
 		PropsTable,
