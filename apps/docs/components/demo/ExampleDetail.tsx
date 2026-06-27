@@ -4,8 +4,8 @@ import { getExampleMeta } from '@/lib/examples-meta';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { ComponentPreview } from './ComponentPreview';
-import { getExample } from './example-registry';
 import { LiveForm } from './LiveForm';
+import { getExample } from './example-registry';
 
 /** Full-width example detail: heading, intro, Preview/Code shell, optional link. */
 export function ExampleDetail({ slug }: { slug: string }) {

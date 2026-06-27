@@ -36,7 +36,12 @@ export const examples: ExampleEntry[] = [
 							control: 'text',
 							validators: { required: true, minLength: 2 },
 						},
-						{ key: 'lastName', label: 'Last name', control: 'text', validators: { required: true } },
+						{
+							key: 'lastName',
+							label: 'Last name',
+							control: 'text',
+							validators: { required: true },
+						},
 					],
 				},
 				{
@@ -811,8 +816,7 @@ const schema: FormSchema = {
 							inputType: 'password',
 							validators: {
 								required: true,
-								custom: (v, all) =>
-									v === all.newPassword ? null : 'Passwords must match',
+								custom: (v, all) => (v === all.newPassword ? null : 'Passwords must match'),
 							},
 						},
 					],

@@ -12,13 +12,7 @@ export const baseOptions: BaseLayoutProps = {
 				    several nav variants, and an inline <linearGradient> with a fixed
 				    id collides across the hidden/visible copies, painting the tile
 				    transparent. An <img> scopes the gradient to its own document. */}
-				<img
-					src="/easy-forms-icon.svg"
-					alt=""
-					width={24}
-					height={24}
-					className="h-6 w-6"
-				/>
+				<img src="/easy-forms-icon.svg" alt="" width={24} height={24} className="h-6 w-6" />
 				<span className="text-[15px] tracking-tight">
 					easy-
 					<span

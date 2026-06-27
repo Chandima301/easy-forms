@@ -6,8 +6,7 @@ export default function NotFound() {
 			<p className="font-mono text-sm font-semibold text-fd-primary">404</p>
 			<h1 className="mt-3 text-3xl font-bold tracking-tight">This page took a different path</h1>
 			<p className="mt-3 max-w-md text-fd-muted-foreground">
-				The page you're looking for doesn't exist. Try the documentation, or browse the
-				examples.
+				The page you're looking for doesn't exist. Try the documentation, or browse the examples.
 			</p>
 			<div className="mt-7 flex flex-wrap justify-center gap-3">
 				<Link
