@@ -37,6 +37,7 @@ export function PerformanceGrid() {
 		>
 			{Array.from({ length: 24 }).map((_, i) => (
 				<div
+					// biome-ignore lint/suspicious/noArrayIndexKey: fixed-length decorative grid, never reordered
 					key={`cell-${i}`}
 					style={{ transitionDelay: shown ? `${i * 25}ms` : '0ms' }}
 					className={[

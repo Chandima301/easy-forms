@@ -121,10 +121,19 @@ Keep the docs server running across iterations.
   `prefers-reduced-motion`** (reveals immediately).
 
 ## Phase 7 — Verify + finish
-- [ ] Full preview pass: `/`, `/docs/examples`, an example detail, 2–3 component pages;
-  dark mode + responsive; console clean.
-- [ ] `pnpm --filter docs typecheck` + `pnpm --filter docs build` + `pnpm lint` green.
-- [ ] Update the Loop progress log; finish the branch (PR).
+- [x] Full preview pass: `/` (hero stagger + scroll-reveal + perf pulse), `/examples`,
+  `/examples/job-application`, `/docs/components/date`, `/docs/dynamic/props-depends-on`;
+  light mode + mobile (375px); console clean. Fixed a mobile nit: gallery card title now
+  `shrink-0 whitespace-nowrap` so it doesn't wrap (description truncates instead).
+- [x] `pnpm --filter docs typecheck` ✅ + `pnpm --filter docs build` ✅ (**docs builds now** —
+  66 static pages incl. `/examples` static + all 10 `/examples/[slug]` SSG; docs tree free of
+  the old examples). `pnpm lint`: **`apps/docs` is clean** (0 errors, 7 style warnings; fixed
+  my `PerformanceGrid` array-index-key). The 4 workspace `biome check .` errors are
+  **pre-existing in `packages/core`** (e.g. `delete errors._manual` at
+  `store/createFormStore.ts:137`) — present on `main`, untouched by this branch (diff =
+  `apps/docs` + `.claude/launch.json` only). Out of scope for the docs refactor.
+- [ ] Update the Loop progress log; finish the branch (PR) — **paused for user: confirm PR +
+  decide whether to also fix the pre-existing core lint errors**.
 
 ## Deferred refactors (post-landing)
 - [ ] **Auto-derive Code tab for field-level component docs.** Field-doc schemas
@@ -250,3 +259,13 @@ Keep the docs server running across iterations.
   circuit), pulse disabled. Verified on 3850: 24 cells start hidden (opacity 0), all reach
   opacity 1 after scroll-in, cell 9 runs `ef-pulse` (screenshot shows the glow); console clean;
   `docs` typecheck green. Next: **Phase 7** — full preview pass + `build` + `lint` + finish (PR).
+- 2026-06-27 — Phase 7 verification (PR step paused for the user). Full preview pass clean
+  across `/`, `/examples`, an example detail, a component page + a dynamic page; light mode +
+  mobile good; fixed a gallery-card title wrap on mobile (`shrink-0 whitespace-nowrap`).
+  **`pnpm --filter docs build` succeeds** — the headline: docs was previously non-building, and
+  it now produces 66 static pages including `/examples` (static) + 10 `/examples/[slug]` (SSG),
+  with the docs tree free of the removed examples. `docs` typecheck green; `apps/docs` lint
+  clean (fixed my `PerformanceGrid` index-key; 7 style warnings remain). Root `pnpm lint`
+  (`biome check .`) still reports 4 errors, all **pre-existing in `packages/core` on `main`**
+  (e.g. `delete errors._manual`), which this branch never touches. **Paused before the PR** to
+  confirm with the user + decide whether the pre-existing core lint errors are in scope.

@@ -27,7 +27,9 @@ function GalleryCard({ meta }: { meta: ExampleMeta }) {
 	return (
 		<Link href={`/examples/${meta.slug}`} className="group mb-5 block break-inside-avoid">
 			<div className="mb-2 flex items-center gap-2 px-1">
-				<span className="font-medium text-sm text-fd-foreground">{meta.title}</span>
+				<span className="shrink-0 whitespace-nowrap font-medium text-sm text-fd-foreground">
+					{meta.title}
+				</span>
 				<span className="truncate text-xs text-fd-muted-foreground">{meta.description}</span>
 				<ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-fd-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:text-fd-primary" />
 			</div>
