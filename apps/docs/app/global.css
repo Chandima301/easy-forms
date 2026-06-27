@@ -122,6 +122,21 @@
 	animation-delay: 0.45s;
 }
 
+/* Continuous glow pulse for the highlighted performance cell. Uses currentColor
+   so the cell's text color (set to the primary) drives the glow. */
+@keyframes ef-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 10px 0 color-mix(in srgb, currentColor 35%, transparent);
+	}
+	50% {
+		box-shadow: 0 0 22px 2px color-mix(in srgb, currentColor 60%, transparent);
+	}
+}
+.ef-pulse {
+	animation: ef-pulse 2.2s ease-in-out infinite;
+}
+
 /* One-shot scroll reveal, toggled by an IntersectionObserver adding .is-visible. */
 .ef-reveal {
 	opacity: 0;
@@ -144,6 +159,9 @@
 		opacity: 1;
 		transform: none;
 		transition: none;
+	}
+	.ef-pulse {
+		animation: none;
 	}
 }
 

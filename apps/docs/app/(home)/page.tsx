@@ -1,4 +1,5 @@
 import { CodeShowcase } from '@/components/landing/CodeShowcase';
+import { PerformanceGrid } from '@/components/landing/PerformanceGrid';
 import { Reveal } from '@/components/landing/Reveal';
 import { SchemaFormSync } from '@/components/landing/SchemaFormSync';
 import { InstallChip } from '@/components/ui/CopyButton';
@@ -317,22 +318,7 @@ function Performance() {
 						<ArrowRight className="h-4 w-4" />
 					</Link>
 				</div>
-				<div className="grid grid-cols-4 gap-2 rounded-xl border border-fd-border bg-fd-card p-5 sm:grid-cols-6">
-					{Array.from({ length: 24 }).map((_, i) => (
-						<div
-							key={`cell-${i}`}
-							className={[
-								'aspect-square rounded-md border',
-								i === 9
-									? 'border-fd-primary bg-fd-primary/20 shadow-[0_0_16px] shadow-fd-primary/40'
-									: 'border-fd-border bg-fd-muted/40',
-							].join(' ')}
-						/>
-					))}
-					<p className="col-span-full mt-1 text-center text-xs text-fd-muted-foreground">
-						24 fields rendered — editing one repaints just the highlighted cell.
-					</p>
-				</div>
+				<PerformanceGrid />
 			</div>
 		</section>
 	);

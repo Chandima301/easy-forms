@@ -111,7 +111,10 @@ Keep the docs server running across iterations.
   pills). Added an `.ef-stagger` utility in `global.css` that animates direct children with
   `ef-fade-up` + incremental `nth-child` delays (`backwards` fill); applied to the hero
   content div. CSS-only, reduced-motion-disabled.
-- [ ] Performance: animate the 24-cell grid in; pulse the highlighted cell.
+- [x] Performance: extracted the grid into `components/landing/PerformanceGrid.tsx` (client).
+  The 24 cells stagger in on scroll-in (IntersectionObserver → per-cell `transitionDelay`,
+  opacity/scale), and the highlighted cell (index 9) pulses via a new `.ef-pulse` keyframe
+  (currentColor glow). Reduced-motion: cells show immediately (`motion-reduce` + JS), pulse off.
 - [x] Shared scroll-reveal for Features + Comparison. Added an `.ef-reveal`/`.is-visible`
   utility + a `components/landing/Reveal.tsx` client wrapper (IntersectionObserver, one-shot,
   unobserves after reveal); wrapped `<Features />` + `<Comparison />`. **Respects
@@ -239,3 +242,11 @@ Keep the docs server running across iterations.
   3850: all 6 hero children animate `ef-fade-up` with staggered delays and settle to opacity 1;
   both reveal sections start at opacity 0 and become visible on scroll-in; console clean;
   `docs` typecheck green. Next: Phase 6 last item — Performance grid animate-in + pulse.
+- 2026-06-27 — **Phase 6 complete** — Performance grid. Extracted the 24-cell grid into
+  `components/landing/PerformanceGrid.tsx` (client): cells stagger in on scroll
+  (IntersectionObserver → `shown` state → per-cell `transitionDelay` + opacity/scale), and the
+  highlighted cell (index 9) pulses via a new `.ef-pulse` keyframe (currentColor glow, the cell
+  is `text-fd-primary`). Reduced-motion: cells reveal immediately (`motion-reduce:` + JS short
+  circuit), pulse disabled. Verified on 3850: 24 cells start hidden (opacity 0), all reach
+  opacity 1 after scroll-in, cell 9 runs `ef-pulse` (screenshot shows the glow); console clean;
+  `docs` typecheck green. Next: **Phase 7** — full preview pass + `build` + `lint` + finish (PR).
