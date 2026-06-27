@@ -100,10 +100,11 @@ Keep the docs server running across iterations.
   `studio-presets` refs outside the historical `*REFACTOR-TODO.md` ledgers.
 
 ## Phase 5 — Alignment fixes
-- [ ] `SchemaFormSync.tsx`: equal-height columns (full schema visible — drop/raise the
-  `max-h-[460px]` clip) + **vertically center** the form in the preview card.
-- [ ] Comparison `Cell` in `app/(home)/page.tsx`: center the "manual" partial
-  (`text-center` on the `<td>`s / match the icon centering).
+- [x] `SchemaFormSync.tsx`: both panes now `h-[500px]` (equal-height columns); code pane
+  `overflow-auto` so the full schema is reachable (was `max-h-[460px] overflow-hidden`);
+  preview body `flex flex-col justify-center` to **vertically center** the form.
+- [x] Comparison `Cell` in `app/(home)/page.tsx`: added `text-center` to the four value
+  `<td>`s so the amber "manual" label centers like the check/dash icons + the headers.
 
 ## Phase 6 — Animations (make it "more live")
 - [ ] Hero: staggered reveal (badge → headline → subtitle → CTAs → install chip);
@@ -217,3 +218,12 @@ Keep the docs server running across iterations.
   `/examples`, `/playground` → 404, console clean, `docs` typecheck green; grep confirms no
   lingering refs outside the historical ledgers. Next: Phase 5 — alignment fixes
   (`SchemaFormSync` equal-height/centering; comparison "manual" cell centering).
+- 2026-06-27 — **Phase 5 complete** — alignment fixes. `SchemaFormSync`: both panes set to
+  `h-[500px]` (equal-height columns, measured 538 vs 547px incl. title bars), code pane
+  switched to `overflow-auto` so the full schema scrolls (was `max-h-[460px] overflow-hidden`
+  which clipped longer presets), and the preview body is now `flex flex-col justify-center`
+  to vertically center the form. Comparison table: added `text-center` to the four value
+  `<td>`s so the amber "manual" label centers like the ✓/– icons + the column headers
+  (computed `text-align: center` confirmed). Verified on 3850 at 1280px: equal columns side by
+  side, "manual" cells centered, console clean, `docs` typecheck green. Next: Phase 6 —
+  animations (hero stagger, performance grid, shared scroll-reveal).

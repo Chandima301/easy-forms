@@ -265,16 +265,16 @@ function Comparison() {
 						{COMPARE.map((row, i) => (
 							<tr key={row.feature} className={i % 2 ? 'bg-fd-muted/20' : ''}>
 								<td className="px-4 py-3 text-left">{row.feature}</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.ef} />
 								</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.rhf} />
 								</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.formik} />
 								</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.hand} />
 								</td>
 							</tr>
