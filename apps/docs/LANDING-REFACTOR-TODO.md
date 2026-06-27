@@ -79,14 +79,14 @@ Keep the docs server running across iterations.
   + root `content/docs/meta.json`. Regenerated fumadocs `.source` after the deletions.
 - [x] Existing 4 (`signup`, `checkout-wizard`, `dependent-dropdowns`, `order-calculator`)
   ported to the registry; verified order-calculator's `valueDependsOn` total = 19.99.
-- [ ] Add 6 new (each = `examples-meta` entry + `example-registry` entry {schema, code}; the
-  gallery card + `/examples/{slug}` detail page are then automatic — total = 10):
+- [x] Add 6 new (each = `examples-meta` entry + `example-registry` entry {schema, code}; the
+  gallery card + `/examples/{slug}` detail page are then automatic — **total = 10**):
   - [x] **Contact form** — text + email + textarea + required.
-  - [ ] **Async username check** — custom **async** validator (availability).
-  - [ ] **Survey / feedback** — `radioGroup` + `multiselect` + conditional "Other → text" via `propsDependsOn`.
-  - [ ] **Job application** — `file` upload + `date` + grouped layout + validation.
+  - [x] **Async username check** — custom **async** validator (availability).
+  - [x] **Survey / feedback** — `radioGroup` + `multiselect` + conditional "Other → text" via `propsDependsOn`.
+  - [x] **Job application** — `file` upload + `date` + grouped layout + validation.
   - [x] **Newsletter preferences** — conditional **groups** (adapt `ConditionalGroupsDemo`).
-  - [ ] **Change password** — custom cross-field "passwords must match" + `minLength`.
+  - [x] **Change password** — custom cross-field "passwords must match" + `minLength`.
 
 ## Phase 4 — Remove Playground / Schema Studio (everywhere)
 - [ ] Delete `app/(home)/playground/page.tsx`, `components/demo/SchemaStudio.tsx`,
@@ -192,3 +192,15 @@ Keep the docs server running across iterations.
   reveals Frequency + Topics, console clean, `docs` typecheck green. Next: remaining 4 new
   examples (async username check, survey/feedback, job application, change password) — these
   need an API check first (async-validator shape, file/date controls, cross-field validator).
+- 2026-06-27 — Added the final **4 new examples** → **Phase 3 complete (10 examples)**. Checked
+  the core APIs first: `custom: (value, allValues) => result | Promise` covers both **async**
+  (return a Promise) and **cross-field** (read `allValues`); `file` takes `accept`/`maxSizeMB`,
+  `date` takes `minDate`/`maxDate`. Implemented as meta + registry entries: **Async username
+  check** (async availability validator), **Survey/feedback** (`radioGroup` + `multiselect` +
+  conditional "Other → text" via `propsDependsOn`), **Job application** (`file` PDF upload +
+  `date` not-in-past via `minDate` fn + grouped layout), **Change password** (cross-field
+  "passwords must match" reading `allValues.newPassword` + `minLength`). Verified on 3850 by
+  driving each form: gallery = 10 cards; `ada` → "already taken" (async fires); mismatched
+  confirm → "Passwords must match"; job-application renders the file + date controls in grouped
+  sections; survey reveals "Tell us more" on picking Other; console clean; `docs` typecheck
+  green. Next: Phase 4 — remove Playground / Schema Studio.

@@ -63,6 +63,38 @@ export const exampleMeta: ExampleMeta[] = [
 			'A whole section of preferences appears only after the visitor opts in. The group is CSS-hidden while collapsed, so its field state survives toggling.',
 		seeAlso: { text: 'Conditional groups', href: '/docs/dynamic/conditional-groups' },
 	},
+	{
+		slug: 'async-username',
+		title: 'Async username check',
+		description: 'A custom async validator checks availability.',
+		intro:
+			'The username field runs a custom async validator that simulates a backend availability check. Try "ada" or "admin" — both are taken.',
+		seeAlso: { text: 'Custom & async validation', href: '/docs/validation/custom-async' },
+	},
+	{
+		slug: 'survey',
+		title: 'Survey / feedback',
+		description: 'Radios, multi-select, and a conditional "Other" field.',
+		intro:
+			'A feedback survey mixing a radio group, a multi-select, and a text field that appears (and becomes required) only when you choose "Other".',
+		seeAlso: { text: 'propsDependsOn', href: '/docs/dynamic/props-depends-on' },
+	},
+	{
+		slug: 'job-application',
+		title: 'Job application',
+		description: 'File upload, a date, grouped layout, and validation.',
+		intro:
+			'A grouped application form: applicant details, a résumé upload (PDF, max 5 MB), and an availability date that cannot be in the past.',
+		seeAlso: { text: 'File control', href: '/docs/components/file' },
+	},
+	{
+		slug: 'change-password',
+		title: 'Change password',
+		description: 'Cross-field "passwords must match" validation.',
+		intro:
+			'The confirmation field runs a custom validator against the new-password field — a classic cross-field rule — and the new password requires a minimum length.',
+		seeAlso: { text: 'Custom & async validation', href: '/docs/validation/custom-async' },
+	},
 ];
 
 export function getExampleMeta(slug: string): ExampleMeta {

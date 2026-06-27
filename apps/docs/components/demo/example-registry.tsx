@@ -511,6 +511,337 @@ export const examples: ExampleEntry[] = [
 	],
 };`,
 	},
+	{
+		slug: 'async-username',
+		initialValues: { username: '' },
+		schema: {
+			groups: [
+				{
+					questions: [
+						{
+							key: 'username',
+							label: 'Username',
+							control: 'text',
+							placeholder: 'pick a handle',
+							prefix: '@',
+							validators: {
+								required: true,
+								minLength: 3,
+								custom: async (v) => {
+									if (!v) return null;
+									await new Promise((resolve) => setTimeout(resolve, 500));
+									const taken = ['admin', 'ada', 'root', 'easyforms'];
+									return taken.includes(String(v).toLowerCase())
+										? 'That username is already taken'
+										: null;
+								},
+							},
+						},
+					],
+				},
+			],
+		},
+		code: `const TAKEN = ['admin', 'ada', 'root', 'easyforms'];
+
+const schema: FormSchema = {
+	groups: [
+		{
+			questions: [
+				{
+					key: 'username',
+					label: 'Username',
+					control: 'text',
+					prefix: '@',
+					validators: {
+						required: true,
+						minLength: 3,
+						// Async custom validators just return a Promise.
+						custom: async (v) => {
+							if (!v) return null;
+							await fakeApiDelay();
+							return TAKEN.includes(String(v).toLowerCase())
+								? 'That username is already taken'
+								: null;
+						},
+					},
+				},
+			],
+		},
+	],
+};`,
+	},
+	{
+		slug: 'survey',
+		initialValues: { recommend: null, channels: [], reason: null, reasonOther: '' },
+		schema: {
+			groups: [
+				{
+					questions: [
+						{
+							key: 'recommend',
+							label: 'How likely are you to recommend us?',
+							control: 'radioGroup',
+							options: [
+								{ value: 'high', label: 'Very likely' },
+								{ value: 'medium', label: 'Maybe' },
+								{ value: 'low', label: 'Unlikely' },
+							],
+						},
+						{
+							key: 'channels',
+							label: 'Where did you hear about us?',
+							control: 'multiselect',
+							placeholder: 'Select all that apply',
+							options: [
+								{ value: 'search', label: 'Search' },
+								{ value: 'social', label: 'Social media' },
+								{ value: 'friend', label: 'A friend' },
+								{ value: 'other', label: 'Other' },
+							],
+						},
+						{
+							key: 'reason',
+							label: 'Primary reason for your score',
+							control: 'radioGroup',
+							options: [
+								{ value: 'features', label: 'Features' },
+								{ value: 'price', label: 'Price' },
+								{ value: 'support', label: 'Support' },
+								{ value: 'other', label: 'Other' },
+							],
+						},
+						{
+							key: 'reasonOther',
+							label: 'Tell us more',
+							control: 'text',
+							placeholder: 'Your reason',
+							clearWhenHidden: true,
+							dependents: {
+								propsDependsOn: [
+									{
+										fieldNames: ['reason'],
+										compute: (v) => ({
+											hidden: v.reason !== 'other',
+											required: v.reason === 'other',
+										}),
+									},
+								],
+							},
+						},
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	groups: [
+		{
+			questions: [
+				{
+					key: 'recommend',
+					label: 'How likely are you to recommend us?',
+					control: 'radioGroup',
+					options: [
+						{ value: 'high', label: 'Very likely' },
+						{ value: 'medium', label: 'Maybe' },
+						{ value: 'low', label: 'Unlikely' },
+					],
+				},
+				{
+					key: 'channels',
+					label: 'Where did you hear about us?',
+					control: 'multiselect',
+					placeholder: 'Select all that apply',
+					options: [
+						{ value: 'search', label: 'Search' },
+						{ value: 'social', label: 'Social media' },
+						{ value: 'friend', label: 'A friend' },
+						{ value: 'other', label: 'Other' },
+					],
+				},
+				{
+					key: 'reason',
+					label: 'Primary reason for your score',
+					control: 'radioGroup',
+					options: [
+						{ value: 'features', label: 'Features' },
+						{ value: 'price', label: 'Price' },
+						{ value: 'support', label: 'Support' },
+						{ value: 'other', label: 'Other' },
+					],
+				},
+				{
+					key: 'reasonOther',
+					label: 'Tell us more',
+					control: 'text',
+					clearWhenHidden: true,
+					dependents: {
+						propsDependsOn: [
+							{
+								fieldNames: ['reason'],
+								compute: (v) => ({ hidden: v.reason !== 'other', required: v.reason === 'other' }),
+							},
+						],
+					},
+				},
+			],
+		},
+	],
+};`,
+	},
+	{
+		slug: 'job-application',
+		initialValues: {
+			fullName: '',
+			email: '',
+			resume: null,
+			availableFrom: null,
+			coverLetter: '',
+		},
+		schema: {
+			title: 'Job application',
+			groups: [
+				{
+					id: 'applicant',
+					title: 'Applicant',
+					layout: 'grid',
+					gridCols: 2,
+					questions: [
+						{
+							key: 'fullName',
+							label: 'Full name',
+							control: 'text',
+							validators: { required: true },
+						},
+						{
+							key: 'email',
+							label: 'Email',
+							control: 'email',
+							validators: { required: true, email: true },
+						},
+					],
+				},
+				{
+					id: 'role',
+					title: 'Application',
+					questions: [
+						{
+							key: 'resume',
+							label: 'Résumé (PDF, max 5 MB)',
+							control: 'file',
+							accept: { 'application/pdf': ['.pdf'] },
+							maxSizeMB: 5,
+							validators: { required: true },
+						},
+						{
+							key: 'availableFrom',
+							label: 'Available from',
+							control: 'date',
+							minDate: () => new Date().toISOString().slice(0, 10),
+							validators: { required: true },
+						},
+						{ key: 'coverLetter', label: 'Cover letter', control: 'textarea', rows: 4 },
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	title: 'Job application',
+	groups: [
+		{
+			id: 'applicant',
+			title: 'Applicant',
+			layout: 'grid',
+			gridCols: 2,
+			questions: [
+				{ key: 'fullName', label: 'Full name', control: 'text', validators: { required: true } },
+				{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true } },
+			],
+		},
+		{
+			id: 'role',
+			title: 'Application',
+			questions: [
+				{
+					key: 'resume',
+					label: 'Résumé (PDF, max 5 MB)',
+					control: 'file',
+					accept: { 'application/pdf': ['.pdf'] },
+					maxSizeMB: 5,
+					validators: { required: true },
+				},
+				{
+					key: 'availableFrom',
+					label: 'Available from',
+					control: 'date',
+					minDate: () => new Date().toISOString().slice(0, 10),
+					validators: { required: true },
+				},
+				{ key: 'coverLetter', label: 'Cover letter', control: 'textarea', rows: 4 },
+			],
+		},
+	],
+};`,
+	},
+	{
+		slug: 'change-password',
+		initialValues: { current: '', newPassword: '', confirm: '' },
+		schema: {
+			title: 'Change password',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'current',
+							label: 'Current password',
+							control: 'text',
+							inputType: 'password',
+							validators: { required: true },
+						},
+						{
+							key: 'newPassword',
+							label: 'New password',
+							control: 'text',
+							inputType: 'password',
+							validators: { required: true, minLength: 8 },
+						},
+						{
+							key: 'confirm',
+							label: 'Confirm new password',
+							control: 'text',
+							inputType: 'password',
+							validators: {
+								required: true,
+								custom: (v, all) =>
+									v === all.newPassword ? null : 'Passwords must match',
+							},
+						},
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	title: 'Change password',
+	groups: [
+		{
+			questions: [
+				{ key: 'current', label: 'Current password', control: 'text', inputType: 'password', validators: { required: true } },
+				{ key: 'newPassword', label: 'New password', control: 'text', inputType: 'password', validators: { required: true, minLength: 8 } },
+				{
+					key: 'confirm',
+					label: 'Confirm new password',
+					control: 'text',
+					inputType: 'password',
+					validators: {
+						required: true,
+						// The second arg is all form values — read another field here.
+						custom: (v, all) => (v === all.newPassword ? null : 'Passwords must match'),
+					},
+				},
+			],
+		},
+	],
+};`,
+	},
 ];
 
 export function getExample(slug: string): ExampleEntry {
