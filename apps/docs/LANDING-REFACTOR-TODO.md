@@ -132,8 +132,10 @@ Keep the docs server running across iterations.
   **pre-existing in `packages/core`** (e.g. `delete errors._manual` at
   `store/createFormStore.ts:137`) — present on `main`, untouched by this branch (diff =
   `apps/docs` + `.claude/launch.json` only). Out of scope for the docs refactor.
-- [ ] Update the Loop progress log; finish the branch (PR) — **paused for user: confirm PR +
-  decide whether to also fix the pre-existing core lint errors**.
+- [x] Update the Loop progress log; finish the branch. **User decided: stay local** — all work
+  committed on `docs/landing-refactor`, **no push / no PR** (user will handle integration). The
+  4 pre-existing `packages/core` lint errors are **left out of scope** (this branch stays
+  docs-only) per user. Refactor is complete locally.
 
 ## Deferred refactors (post-landing)
 - [ ] **Auto-derive Code tab for field-level component docs.** Field-doc schemas
@@ -269,3 +271,10 @@ Keep the docs server running across iterations.
   (`biome check .`) still reports 4 errors, all **pre-existing in `packages/core` on `main`**
   (e.g. `delete errors._manual`), which this branch never touches. **Paused before the PR** to
   confirm with the user + decide whether the pre-existing core lint errors are in scope.
+- 2026-06-27 — **Loop complete.** User chose **stay local** (no push, no PR — they'll integrate)
+  and **leave the pre-existing core lint errors out of scope** (branch stays docs-only). All
+  Phases 0–7 done; the docs landing refactor is finished locally on `docs/landing-refactor`.
+  Summary of the run: `<ComponentPreview>` primitive → retrofitted demos → **full-width masonry
+  examples gallery** (`/examples` + 10 SSG detail pages, registry-driven) → removed Playground/
+  Schema Studio → alignment fixes → animations (hero stagger, scroll-reveal, perf grid pulse;
+  reduced-motion-aware) → **docs now builds (66 pages)**. Loop stopped (no further wakeups).
