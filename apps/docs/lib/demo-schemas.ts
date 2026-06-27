@@ -1,7 +1,7 @@
-// Shared demo schemas — the single source of truth for the landing-page
-// animation, the Schema Studio playground, and inline doc examples. Each preset
-// pairs the *live* schema object (real `compute` functions and all) with a
-// hand-authored `code` string for the code pane, plus sensible initial values.
+// Shared demo schemas — the source of truth for the landing-page animation
+// (`SchemaFormSync`) and the landing code showcase. Each preset pairs the *live*
+// schema object (real `compute` functions and all) with a hand-authored `code`
+// string for the code pane, plus sensible initial values.
 
 import type { FormSchema } from '@easy-forms/core';
 

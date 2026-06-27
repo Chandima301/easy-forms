@@ -8,17 +8,36 @@ export const baseOptions: BaseLayoutProps = {
 	nav: {
 		title: (
 			<span className="inline-flex items-center gap-2 font-semibold">
-				<span className="grid h-6 w-6 place-items-center rounded-md bg-fd-primary text-fd-primary-foreground text-[13px] font-bold">
-					E
+				{/* Static asset (not inline SVG): fumadocs renders this title in
+				    several nav variants, and an inline <linearGradient> with a fixed
+				    id collides across the hidden/visible copies, painting the tile
+				    transparent. An <img> scopes the gradient to its own document. */}
+				<img
+					src="/easy-forms-icon.svg"
+					alt=""
+					width={24}
+					height={24}
+					className="h-6 w-6"
+				/>
+				<span className="text-[15px] tracking-tight">
+					easy-
+					<span
+						style={{
+							background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+							WebkitBackgroundClip: 'text',
+							backgroundClip: 'text',
+							color: 'transparent',
+						}}
+					>
+						forms
+					</span>
 				</span>
-				<span>Easy Forms</span>
 			</span>
 		),
 	},
 	links: [
 		{ text: 'Docs', url: '/docs', active: 'nested-url' },
-		{ text: 'Playground', url: '/playground' },
-		{ text: 'Examples', url: '/docs/examples' },
+		{ text: 'Examples', url: '/examples' },
 		{ text: 'Enterprise', url: '/enterprise' },
 	],
 	githubUrl: 'https://github.com/Chandima301/easy-forms',

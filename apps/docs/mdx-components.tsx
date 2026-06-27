@@ -1,12 +1,9 @@
+import { ComponentPreview } from '@/components/demo/ComponentPreview';
 import { LiveForm } from '@/components/demo/LiveForm';
 import {
 	CheckboxRequiredDemo,
-	CheckoutWizardDemo,
 	ConditionalGroupsDemo,
-	DependentDropdownsDemo,
-	OrderCalculatorDemo,
 	PropsDependsOnDemo,
-	SignupDemo,
 	ValueDependsOnDemo,
 	WizardDemo,
 } from '@/components/demo/examples';
@@ -33,6 +30,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 		Accordions,
 		Callout,
 		// Easy Forms doc components
+		ComponentPreview,
 		LiveForm,
 		PackageInstall,
 		PropsTable,
@@ -42,10 +40,6 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 		ValueDependsOnDemo,
 		ConditionalGroupsDemo,
 		WizardDemo,
-		SignupDemo,
-		CheckoutWizardDemo,
-		DependentDropdownsDemo,
-		OrderCalculatorDemo,
 		...components,
 	};
 }

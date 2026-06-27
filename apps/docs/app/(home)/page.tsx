@@ -1,4 +1,6 @@
 import { CodeShowcase } from '@/components/landing/CodeShowcase';
+import { PerformanceGrid } from '@/components/landing/PerformanceGrid';
+import { Reveal } from '@/components/landing/Reveal';
 import { SchemaFormSync } from '@/components/landing/SchemaFormSync';
 import { InstallChip } from '@/components/ui/CopyButton';
 import {
@@ -31,8 +33,12 @@ export default function HomePage() {
 			>
 				<SchemaFormSync />
 			</Section>
-			<Features />
-			<Comparison />
+			<Reveal>
+				<Features />
+			</Reveal>
+			<Reveal>
+				<Comparison />
+			</Reveal>
 			<Section
 				eyebrow="Real, interactive"
 				title="Every example is a working form"
@@ -55,7 +61,7 @@ function Hero() {
 		<section className="relative overflow-hidden border-b border-fd-border">
 			<div className="pointer-events-none absolute inset-0 ef-grid-bg" />
 			<div className="pointer-events-none absolute inset-x-0 top-0 h-[480px] ef-hero-glow" />
-			<div className="relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:py-28">
+			<div className="ef-stagger relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:py-28">
 				<span className="inline-flex items-center gap-1.5 rounded-full border border-fd-border bg-fd-card/70 px-3 py-1 text-xs font-medium text-fd-muted-foreground backdrop-blur">
 					<Sparkles className="h-3.5 w-3.5 text-fd-primary" />
 					Schema-driven forms for React
@@ -76,10 +82,10 @@ function Hero() {
 						<ArrowRight className="h-4 w-4" />
 					</Link>
 					<Link
-						href="/playground"
+						href="/examples"
 						className="inline-flex items-center gap-1.5 rounded-lg border border-fd-border bg-fd-card px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-fd-accent"
 					>
-						Open the playground
+						Browse examples
 					</Link>
 				</div>
 				<div className="mt-8">
@@ -265,16 +271,16 @@ function Comparison() {
 						{COMPARE.map((row, i) => (
 							<tr key={row.feature} className={i % 2 ? 'bg-fd-muted/20' : ''}>
 								<td className="px-4 py-3 text-left">{row.feature}</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.ef} />
 								</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.rhf} />
 								</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.formik} />
 								</td>
-								<td className="px-4 py-3">
+								<td className="px-4 py-3 text-center">
 									<Cell v={row.hand} />
 								</td>
 							</tr>
@@ -312,22 +318,7 @@ function Performance() {
 						<ArrowRight className="h-4 w-4" />
 					</Link>
 				</div>
-				<div className="grid grid-cols-4 gap-2 rounded-xl border border-fd-border bg-fd-card p-5 sm:grid-cols-6">
-					{Array.from({ length: 24 }).map((_, i) => (
-						<div
-							key={`cell-${i}`}
-							className={[
-								'aspect-square rounded-md border',
-								i === 9
-									? 'border-fd-primary bg-fd-primary/20 shadow-[0_0_16px] shadow-fd-primary/40'
-									: 'border-fd-border bg-fd-muted/40',
-							].join(' ')}
-						/>
-					))}
-					<p className="col-span-full mt-1 text-center text-xs text-fd-muted-foreground">
-						24 fields rendered — editing one repaints just the highlighted cell.
-					</p>
-				</div>
+				<PerformanceGrid />
 			</div>
 		</section>
 	);
@@ -433,7 +424,7 @@ function FinalCta() {
 							Quick start
 						</Link>
 						<Link
-							href="/docs/examples"
+							href="/examples"
 							className="inline-flex items-center gap-1.5 rounded-lg border border-fd-border px-5 py-2.5 text-sm font-semibold"
 						>
 							Browse examples
@@ -451,8 +442,7 @@ function Footer() {
 			title: 'Product',
 			links: [
 				{ label: 'Documentation', href: '/docs' },
-				{ label: 'Playground', href: '/playground' },
-				{ label: 'Examples', href: '/docs/examples' },
+				{ label: 'Examples', href: '/examples' },
 				{ label: 'Enterprise', href: '/enterprise' },
 			],
 		},
@@ -479,9 +469,13 @@ function Footer() {
 			<div className="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
 				<div>
 					<span className="inline-flex items-center gap-2 font-semibold">
-						<span className="grid h-6 w-6 place-items-center rounded-md bg-fd-primary text-fd-primary-foreground text-[13px] font-bold">
-							E
-						</span>
+						<img
+							src="/easy-forms-icon.svg"
+							alt=""
+							width={24}
+							height={24}
+							className="h-6 w-6"
+						/>
 						Easy Forms
 					</span>
 					<p className="mt-3 flex items-center gap-1.5 text-sm text-fd-muted-foreground">

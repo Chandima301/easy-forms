@@ -179,8 +179,8 @@ export function SchemaFormSync() {
 				{/* Code pane */}
 				<DemoFrame
 					title="schema.ts"
-					className="bg-[#0d1117]"
-					bodyClassName="relative max-h-[460px] overflow-hidden"
+					className="bg-[var(--ef-code-bg)]"
+					bodyClassName="relative h-[500px] overflow-auto bg-[var(--ef-code-bg)]"
 				>
 					<div
 						style={{ clipPath: `inset(0 0 ${(1 - reveal) * 100}% 0)` }}
@@ -195,10 +195,10 @@ export function SchemaFormSync() {
 				<DemoFrame
 					title="Preview"
 					accent={<LiveBadge />}
-					bodyClassName="relative max-h-[460px] overflow-auto p-5"
+					bodyClassName="relative flex h-[500px] flex-col justify-center overflow-auto p-5"
 				>
 					<div
-						className="not-prose ef-demo-surface transition-[clip-path] duration-100"
+						className="not-prose ef-demo-surface w-full transition-[clip-path] duration-100"
 						style={{ clipPath: `inset(0 0 ${(1 - reveal) * 100}% 0)` }}
 					>
 						<EasyForm

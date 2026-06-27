@@ -25,7 +25,7 @@ export function DemoFrame({
 				className ?? '',
 			].join(' ')}
 		>
-			<div className="flex items-center gap-2 border-b border-fd-border bg-fd-muted/40 px-4 py-2.5">
+			<div className="flex h-11 items-center gap-2 border-b border-fd-border bg-fd-muted/40 px-4">
 				<div className="flex gap-1.5">
 					<span className="h-3 w-3 rounded-full bg-red-400/80" />
 					<span className="h-3 w-3 rounded-full bg-amber-400/80" />

@@ -13,8 +13,8 @@
 		{
 			"name": "docs",
 			"runtimeExecutable": "cmd",
-			"runtimeArgs": ["/c", "cd apps\\docs && node node_modules/next/dist/bin/next dev -p 3942"],
-			"port": 3942
+			"runtimeArgs": ["/c", "cd apps\\docs && node node_modules/next/dist/bin/next dev -p 3850"],
+			"port": 3850
 		},
 		{
 			"name": "conformance",
