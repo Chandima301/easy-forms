@@ -81,11 +81,11 @@ Keep the docs server running across iterations.
   ported to the registry; verified order-calculator's `valueDependsOn` total = 19.99.
 - [ ] Add 6 new (each = `examples-meta` entry + `example-registry` entry {schema, code}; the
   gallery card + `/examples/{slug}` detail page are then automatic — total = 10):
-  - [ ] **Contact form** — text + email + textarea + required.
+  - [x] **Contact form** — text + email + textarea + required.
   - [ ] **Async username check** — custom **async** validator (availability).
   - [ ] **Survey / feedback** — `radioGroup` + `multiselect` + conditional "Other → text" via `propsDependsOn`.
   - [ ] **Job application** — `file` upload + `date` + grouped layout + validation.
-  - [ ] **Newsletter preferences** — conditional **groups** (adapt `ConditionalGroupsDemo`).
+  - [x] **Newsletter preferences** — conditional **groups** (adapt `ConditionalGroupsDemo`).
   - [ ] **Change password** — custom cross-field "passwords must match" + `minLength`.
 
 ## Phase 4 — Remove Playground / Schema Studio (everywhere)
@@ -182,3 +182,13 @@ Keep the docs server running across iterations.
   gallery (no `<aside>`), 4 compact masonry cards, detail page tabs + derived total 19.99,
   `/docs/examples/signup` → 404, console clean, `docs` typecheck green. Next: add the 6 new
   examples (Contact form first).
+- 2026-06-27 — Added 2 of the 6 new examples: **Contact form** (text + email + textarea +
+  required) and **Newsletter preferences** (conditional group revealed by a subscribe
+  checkbox; `radioGroup` frequency + `checkboxList` topics). Each was *just* an
+  `examples-meta` entry + an `example-registry` entry — no other wiring — which validated the
+  new architecture: the gallery now shows **6** cards and `/examples/{contact,
+  newsletter-preferences}` detail pages exist automatically. Verified on 3850: 6 masonry cards
+  (3 cols at 1280px), newsletter detail hides the prefs group until subscribe is checked then
+  reveals Frequency + Topics, console clean, `docs` typecheck green. Next: remaining 4 new
+  examples (async username check, survey/feedback, job application, change password) — these
+  need an API check first (async-validator shape, file/date controls, cross-field validator).

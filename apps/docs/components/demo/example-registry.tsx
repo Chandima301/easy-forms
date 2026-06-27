@@ -369,6 +369,148 @@ export const examples: ExampleEntry[] = [
 	],
 };`,
 	},
+	{
+		slug: 'contact',
+		initialValues: { name: '', email: '', message: '' },
+		schema: {
+			title: 'Get in touch',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'name',
+							label: 'Name',
+							control: 'text',
+							placeholder: 'Ada Lovelace',
+							validators: { required: true },
+						},
+						{
+							key: 'email',
+							label: 'Email',
+							control: 'email',
+							placeholder: 'you@example.com',
+							validators: { required: true, email: true },
+						},
+						{
+							key: 'message',
+							label: 'Message',
+							control: 'textarea',
+							rows: 4,
+							placeholder: 'How can we help?',
+							validators: { required: true, minLength: 10 },
+						},
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	title: 'Get in touch',
+	groups: [
+		{
+			questions: [
+				{ key: 'name', label: 'Name', control: 'text', placeholder: 'Ada Lovelace', validators: { required: true } },
+				{ key: 'email', label: 'Email', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
+				{ key: 'message', label: 'Message', control: 'textarea', rows: 4, placeholder: 'How can we help?', validators: { required: true, minLength: 10 } },
+			],
+		},
+	],
+};`,
+	},
+	{
+		slug: 'newsletter-preferences',
+		initialValues: { email: '', subscribe: false, frequency: null, topics: [] },
+		schema: {
+			groups: [
+				{
+					questions: [
+						{
+							key: 'email',
+							label: 'Email',
+							control: 'email',
+							placeholder: 'you@example.com',
+							validators: { required: true, email: true },
+						},
+						{
+							key: 'subscribe',
+							label: 'Subscribe',
+							control: 'checkbox',
+							checkboxLabel: 'Send me the newsletter',
+						},
+					],
+				},
+				{
+					id: 'prefs',
+					title: 'Newsletter preferences',
+					dependents: {
+						propsDependsOn: [
+							{ fieldNames: ['subscribe'], compute: (v) => ({ hidden: v.subscribe !== true }) },
+						],
+					},
+					questions: [
+						{
+							key: 'frequency',
+							label: 'Frequency',
+							control: 'radioGroup',
+							options: [
+								{ value: 'weekly', label: 'Weekly' },
+								{ value: 'monthly', label: 'Monthly' },
+							],
+						},
+						{
+							key: 'topics',
+							label: 'Topics',
+							control: 'checkboxList',
+							options: [
+								{ value: 'product', label: 'Product updates' },
+								{ value: 'engineering', label: 'Engineering deep-dives' },
+								{ value: 'events', label: 'Events' },
+							],
+						},
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	groups: [
+		{
+			questions: [
+				{ key: 'email', label: 'Email', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
+				{ key: 'subscribe', label: 'Subscribe', control: 'checkbox', checkboxLabel: 'Send me the newsletter' },
+			],
+		},
+		{
+			id: 'prefs',
+			title: 'Newsletter preferences',
+			dependents: {
+				propsDependsOn: [
+					{ fieldNames: ['subscribe'], compute: (v) => ({ hidden: v.subscribe !== true }) },
+				],
+			},
+			questions: [
+				{
+					key: 'frequency',
+					label: 'Frequency',
+					control: 'radioGroup',
+					options: [
+						{ value: 'weekly', label: 'Weekly' },
+						{ value: 'monthly', label: 'Monthly' },
+					],
+				},
+				{
+					key: 'topics',
+					label: 'Topics',
+					control: 'checkboxList',
+					options: [
+						{ value: 'product', label: 'Product updates' },
+						{ value: 'engineering', label: 'Engineering deep-dives' },
+						{ value: 'events', label: 'Events' },
+					],
+				},
+			],
+		},
+	],
+};`,
+	},
 ];
 
 export function getExample(slug: string): ExampleEntry {

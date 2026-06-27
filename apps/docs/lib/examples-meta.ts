@@ -48,6 +48,21 @@ export const exampleMeta: ExampleMeta[] = [
 			'Edit quantity or unit price — the total recomputes instantly and never marks the form dirty on its own.',
 		seeAlso: { text: 'valueDependsOn', href: '/docs/dynamic/value-depends-on' },
 	},
+	{
+		slug: 'contact',
+		title: 'Contact form',
+		description: 'Name, email, and a required message.',
+		intro:
+			'The classic contact form — name, email, and a required message, each with inline validation.',
+	},
+	{
+		slug: 'newsletter-preferences',
+		title: 'Newsletter preferences',
+		description: 'Conditional groups — preferences appear once you subscribe.',
+		intro:
+			'A whole section of preferences appears only after the visitor opts in. The group is CSS-hidden while collapsed, so its field state survives toggling.',
+		seeAlso: { text: 'Conditional groups', href: '/docs/dynamic/conditional-groups' },
+	},
 ];
 
 export function getExampleMeta(slug: string): ExampleMeta {
