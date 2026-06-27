@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 	}));
 
 	const examplePaths = ['/examples', ...exampleMeta.map((m) => `/examples/${m.slug}`)];
-	const staticPages = ['', '/playground', '/enterprise', ...examplePaths].map((path) => ({
+	const staticPages = ['', '/enterprise', ...examplePaths].map((path) => ({
 		url: `${SITE_URL}${path}`,
 		changeFrequency: 'weekly' as const,
 		priority: path === '' ? 1 : 0.8,

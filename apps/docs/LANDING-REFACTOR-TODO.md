@@ -89,14 +89,15 @@ Keep the docs server running across iterations.
   - [x] **Change password** — custom cross-field "passwords must match" + `minLength`.
 
 ## Phase 4 — Remove Playground / Schema Studio (everywhere)
-- [ ] Delete `app/(home)/playground/page.tsx`, `components/demo/SchemaStudio.tsx`,
+- [x] Delete `app/(home)/playground/page.tsx`, `components/demo/SchemaStudio.tsx`,
   `lib/studio-presets.ts`.
-- [ ] Strip links: `app/layout.config.tsx` nav ("Playground"); Hero "Open the playground" CTA
-  in `app/(home)/page.tsx`; Footer + `FinalCta` links; `app/sitemap.ts` (`/playground`);
-  `app/not-found.tsx`; `content/docs/index.mdx` mention. (NB: the examples-index "Schema
-  Studio" line + `/docs/examples` links were already removed/repointed to `/examples` in
-  Phase 3.)
-- [ ] `pnpm --filter docs typecheck` — no dead imports / broken routes.
+- [x] Strip links: `app/layout.config.tsx` nav ("Playground"); Hero CTA in `app/(home)/page.tsx`
+  → "Browse examples" `/examples`; Footer link removed; `app/sitemap.ts` (`/playground`);
+  `app/not-found.tsx` (reworded → examples); `content/docs/index.mdx` card → Examples;
+  `content/docs/concepts/schema.mdx` Playground link reworded; `lib/demo-schemas.ts` + docs
+  `README.md` comments updated. Old `/playground` now **404s (no redirect)**.
+- [x] `pnpm --filter docs typecheck` — green; grep confirms no `playground`/`SchemaStudio`/
+  `studio-presets` refs outside the historical `*REFACTOR-TODO.md` ledgers.
 
 ## Phase 5 — Alignment fixes
 - [ ] `SchemaFormSync.tsx`: equal-height columns (full schema visible — drop/raise the
@@ -204,3 +205,15 @@ Keep the docs server running across iterations.
   confirm → "Passwords must match"; job-application renders the file + date controls in grouped
   sections; survey reveals "Tell us more" on picking Other; console clean; `docs` typecheck
   green. Next: Phase 4 — remove Playground / Schema Studio.
+- 2026-06-27 — **Phase 4 complete** — removed the Playground / Schema Studio everywhere.
+  Deleted `app/(home)/playground/page.tsx`, `components/demo/SchemaStudio.tsx`,
+  `lib/studio-presets.ts`. Stripped the `/playground` nav link, repointed the hero CTA to
+  "Browse examples" `/examples`, removed the footer link, dropped `/playground` from
+  `sitemap.ts`, reworded `not-found.tsx` + `concepts/schema.mdx`, swapped the docs-index
+  Playground card for an Examples card, and fixed stale comments in `demo-schemas.ts` +
+  `README.md`. Old `/playground` now **404s (no redirect, consistent with the dropped example
+  URLs)**. `demo-schemas.ts` stays (still feeds `SchemaFormSync` + the landing code showcase).
+  Verified on 3850: nav = Docs · Examples · Enterprise (no Playground), hero + footer →
+  `/examples`, `/playground` → 404, console clean, `docs` typecheck green; grep confirms no
+  lingering refs outside the historical ledgers. Next: Phase 5 — alignment fixes
+  (`SchemaFormSync` equal-height/centering; comparison "manual" cell centering).

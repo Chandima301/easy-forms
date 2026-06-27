@@ -28,11 +28,11 @@ pnpm --filter docs build
 
 | Path | What |
 | --- | --- |
-| `app/(home)/` | Landing page, `/playground` (Schema Studio), `/enterprise` |
+| `app/(home)/` | Landing page, `/examples` (gallery + detail pages), `/enterprise` |
 | `app/docs/` | Fumadocs docs layout + MDX renderer |
 | `content/docs/` | All documentation as MDX (the IA lives in `meta.json` files) |
 | `components/landing/` | Hero, the animated `SchemaFormSync`, code showcase |
-| `components/demo/` | `LiveForm`, `SchemaStudio`, and the client-side example demos |
+| `components/demo/` | `LiveForm`, `ComponentPreview`, `ExampleGallery`, and the example registry |
 | `components/mdx/` | `PackageInstall`, `PropsTable` |
 | `lib/source.ts` | Fumadocs loader (with a core/mdx version-bridge adapter) |
 

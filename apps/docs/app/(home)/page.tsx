@@ -76,10 +76,10 @@ function Hero() {
 						<ArrowRight className="h-4 w-4" />
 					</Link>
 					<Link
-						href="/playground"
+						href="/examples"
 						className="inline-flex items-center gap-1.5 rounded-lg border border-fd-border bg-fd-card px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-fd-accent"
 					>
-						Open the playground
+						Browse examples
 					</Link>
 				</div>
 				<div className="mt-8">
@@ -451,7 +451,6 @@ function Footer() {
 			title: 'Product',
 			links: [
 				{ label: 'Documentation', href: '/docs' },
-				{ label: 'Playground', href: '/playground' },
 				{ label: 'Examples', href: '/examples' },
 				{ label: 'Enterprise', href: '/enterprise' },
 			],
