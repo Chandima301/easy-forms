@@ -179,8 +179,8 @@ export function SchemaFormSync() {
 				{/* Code pane */}
 				<DemoFrame
 					title="schema.ts"
-					className="bg-[#0d1117]"
-					bodyClassName="relative h-[500px] overflow-auto"
+					className="bg-[var(--ef-code-bg)]"
+					bodyClassName="relative h-[500px] overflow-auto bg-[var(--ef-code-bg)]"
 				>
 					<div
 						style={{ clipPath: `inset(0 0 ${(1 - reveal) * 100}% 0)` }}

@@ -842,6 +842,178 @@ const schema: FormSchema = {
 	],
 };`,
 	},
+	{
+		slug: 'login',
+		initialValues: { email: '', password: '', remember: false },
+		schema: {
+			title: 'Sign in',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'email',
+							label: 'Email',
+							control: 'email',
+							placeholder: 'you@example.com',
+							validators: { required: true, email: true },
+						},
+						{
+							key: 'password',
+							label: 'Password',
+							control: 'text',
+							inputType: 'password',
+							validators: { required: true },
+						},
+						{
+							key: 'remember',
+							label: 'Remember',
+							control: 'checkbox',
+							checkboxLabel: 'Remember me on this device',
+						},
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	title: 'Sign in',
+	groups: [
+		{
+			questions: [
+				{ key: 'email', label: 'Email', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
+				{ key: 'password', label: 'Password', control: 'text', inputType: 'password', validators: { required: true } },
+				{ key: 'remember', label: 'Remember', control: 'checkbox', checkboxLabel: 'Remember me on this device' },
+			],
+		},
+	],
+};`,
+	},
+	{
+		slug: 'event-rsvp',
+		initialValues: { name: '', attending: null, guests: 0, dietary: [] },
+		schema: {
+			title: 'Event RSVP',
+			groups: [
+				{
+					questions: [
+						{ key: 'name', label: 'Your name', control: 'text', validators: { required: true } },
+						{
+							key: 'attending',
+							label: 'Will you attend?',
+							control: 'radioGroup',
+							options: [
+								{ value: 'yes', label: 'Yes, count me in' },
+								{ value: 'no', label: 'Unfortunately not' },
+							],
+							validators: { required: true },
+						},
+						{
+							key: 'guests',
+							label: 'Additional guests',
+							control: 'number',
+							validators: { min: 0, max: 5 },
+						},
+						{
+							key: 'dietary',
+							label: 'Dietary requirements',
+							control: 'multiselect',
+							placeholder: 'Select any that apply',
+							options: [
+								{ value: 'veg', label: 'Vegetarian' },
+								{ value: 'vegan', label: 'Vegan' },
+								{ value: 'gf', label: 'Gluten-free' },
+								{ value: 'none', label: 'No restrictions' },
+							],
+						},
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	title: 'Event RSVP',
+	groups: [
+		{
+			questions: [
+				{ key: 'name', label: 'Your name', control: 'text', validators: { required: true } },
+				{
+					key: 'attending',
+					label: 'Will you attend?',
+					control: 'radioGroup',
+					options: [
+						{ value: 'yes', label: 'Yes, count me in' },
+						{ value: 'no', label: 'Unfortunately not' },
+					],
+					validators: { required: true },
+				},
+				{ key: 'guests', label: 'Additional guests', control: 'number', validators: { min: 0, max: 5 } },
+				{
+					key: 'dietary',
+					label: 'Dietary requirements',
+					control: 'multiselect',
+					placeholder: 'Select any that apply',
+					options: [
+						{ value: 'veg', label: 'Vegetarian' },
+						{ value: 'vegan', label: 'Vegan' },
+						{ value: 'gf', label: 'Gluten-free' },
+						{ value: 'none', label: 'No restrictions' },
+					],
+				},
+			],
+		},
+	],
+};`,
+	},
+	{
+		slug: 'feedback',
+		initialValues: { rating: null, comment: '' },
+		schema: {
+			title: 'Quick feedback',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'rating',
+							label: 'How was your experience?',
+							control: 'radioGroup',
+							options: [
+								{ value: 'great', label: 'Great' },
+								{ value: 'ok', label: 'Okay' },
+								{ value: 'bad', label: 'Not good' },
+							],
+							validators: { required: true },
+						},
+						{
+							key: 'comment',
+							label: 'Anything to add?',
+							control: 'textarea',
+							rows: 3,
+							placeholder: 'Optional comment',
+						},
+					],
+				},
+			],
+		},
+		code: `const schema: FormSchema = {
+	title: 'Quick feedback',
+	groups: [
+		{
+			questions: [
+				{
+					key: 'rating',
+					label: 'How was your experience?',
+					control: 'radioGroup',
+					options: [
+						{ value: 'great', label: 'Great' },
+						{ value: 'ok', label: 'Okay' },
+						{ value: 'bad', label: 'Not good' },
+					],
+					validators: { required: true },
+				},
+				{ key: 'comment', label: 'Anything to add?', control: 'textarea', rows: 3, placeholder: 'Optional comment' },
+			],
+		},
+	],
+};`,
+	},
 ];
 
 export function getExample(slug: string): ExampleEntry {

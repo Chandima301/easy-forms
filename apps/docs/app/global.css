@@ -55,6 +55,32 @@
 	--color-fd-primary-foreground: hsl(var(--ef-brand-foreground));
 }
 
+/* Syntax-highlight palette for the landing/demo code panes — GitHub light in
+   light mode, GitHub dark in dark mode. Consumed by CodePane's prism theme via
+   `var()` inline styles, and by the panes' background. */
+:root {
+	--ef-code-bg: #f6f8fa;
+	--ef-code-plain: #24292e;
+	--ef-code-comment: #6a737d;
+	--ef-code-keyword: #d73a49;
+	--ef-code-string: #032f62;
+	--ef-code-number: #005cc5;
+	--ef-code-function: #6f42c1;
+	--ef-code-property: #22863a;
+	--ef-code-class: #e36209;
+}
+.dark {
+	--ef-code-bg: #0d1117;
+	--ef-code-plain: #c9d1d9;
+	--ef-code-comment: #8b949e;
+	--ef-code-keyword: #ff7b72;
+	--ef-code-string: #a5d6ff;
+	--ef-code-number: #79c0ff;
+	--ef-code-function: #d2a8ff;
+	--ef-code-property: #7ee787;
+	--ef-code-class: #ffa657;
+}
+
 /* Premium landing-page helpers ------------------------------------------- */
 .ef-grid-bg {
 	background-image: linear-gradient(
@@ -85,6 +111,23 @@
 }
 .ef-demo-surface .easy-forms__header {
 	margin-bottom: 0.75rem;
+}
+
+/* Bottom-weighted shade so gallery cards lift off the page in light mode.
+   Dark mode already has enough contrast, so it carries no shadow. */
+.ef-gallery-card {
+	box-shadow:
+		0 12px 28px -10px rgb(0 0 0 / 0.22),
+		0 4px 12px -6px rgb(0 0 0 / 0.14);
+}
+.group:hover .ef-gallery-card {
+	box-shadow:
+		0 18px 36px -12px rgb(0 0 0 / 0.26),
+		0 6px 16px -6px rgb(0 0 0 / 0.16);
+}
+.dark .ef-gallery-card,
+.dark .group:hover .ef-gallery-card {
+	box-shadow: none;
 }
 
 @keyframes ef-fade-up {

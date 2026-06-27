@@ -95,6 +95,27 @@ export const exampleMeta: ExampleMeta[] = [
 			'The confirmation field runs a custom validator against the new-password field — a classic cross-field rule — and the new password requires a minimum length.',
 		seeAlso: { text: 'Custom & async validation', href: '/docs/validation/custom-async' },
 	},
+	{
+		slug: 'login',
+		title: 'Sign in',
+		description: 'Email, password, and a remember-me checkbox.',
+		intro:
+			'A minimal sign-in form — email and password with inline validation, plus a remember-me checkbox.',
+	},
+	{
+		slug: 'event-rsvp',
+		title: 'Event RSVP',
+		description: 'Attendance radio, guest count, and dietary needs.',
+		intro:
+			'An RSVP form: confirm attendance, set a guest count, and pick any dietary requirements from a multi-select.',
+	},
+	{
+		slug: 'feedback',
+		title: 'Quick feedback',
+		description: 'A rating radio group and an optional comment.',
+		intro:
+			'A compact feedback widget — a required satisfaction rating and an optional free-text comment.',
+	},
 ];
 
 export function getExampleMeta(slug: string): ExampleMeta {

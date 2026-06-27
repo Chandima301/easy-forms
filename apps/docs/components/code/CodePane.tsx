@@ -2,18 +2,22 @@
 
 import { Highlight, type PrismTheme } from 'prism-react-renderer';
 
-/** Tuned theme that reads well on the Fumadocs card surface in both modes. */
+/**
+ * Theme-aware palette: token colors resolve from CSS variables (defined in
+ * `global.css`), so the same theme reads as GitHub-light on the light surface
+ * and GitHub-dark on the dark surface — no per-mode theme swap needed.
+ */
 const efTheme: PrismTheme = {
-	plain: { color: '#c9d1d9', backgroundColor: 'transparent' },
+	plain: { color: 'var(--ef-code-plain)', backgroundColor: 'transparent' },
 	styles: [
-		{ types: ['comment'], style: { color: '#8b949e', fontStyle: 'italic' } },
-		{ types: ['keyword', 'builtin'], style: { color: '#ff7b72' } },
-		{ types: ['string', 'char', 'attr-value'], style: { color: '#a5d6ff' } },
-		{ types: ['number', 'boolean'], style: { color: '#79c0ff' } },
-		{ types: ['function', 'method'], style: { color: '#d2a8ff' } },
-		{ types: ['property', 'attr-name'], style: { color: '#7ee787' } },
-		{ types: ['punctuation', 'operator'], style: { color: '#c9d1d9' } },
-		{ types: ['class-name', 'maybe-class-name'], style: { color: '#ffa657' } },
+		{ types: ['comment'], style: { color: 'var(--ef-code-comment)', fontStyle: 'italic' } },
+		{ types: ['keyword', 'builtin'], style: { color: 'var(--ef-code-keyword)' } },
+		{ types: ['string', 'char', 'attr-value'], style: { color: 'var(--ef-code-string)' } },
+		{ types: ['number', 'boolean'], style: { color: 'var(--ef-code-number)' } },
+		{ types: ['function', 'method'], style: { color: 'var(--ef-code-function)' } },
+		{ types: ['property', 'attr-name'], style: { color: 'var(--ef-code-property)' } },
+		{ types: ['punctuation', 'operator'], style: { color: 'var(--ef-code-plain)' } },
+		{ types: ['class-name', 'maybe-class-name'], style: { color: 'var(--ef-code-class)' } },
 	],
 };
 

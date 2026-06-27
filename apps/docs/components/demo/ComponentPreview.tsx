@@ -61,14 +61,14 @@ export function ComponentPreview({
 			) : (
 				<DemoFrame
 					title={filename}
-					className="bg-[#0d1117]"
+					className="bg-[var(--ef-code-bg)]"
 					accent={
 						<CopyButton
 							value={code}
 							className="text-fd-muted-foreground hover:text-fd-foreground"
 						/>
 					}
-					bodyClassName="max-h-[480px] overflow-auto"
+					bodyClassName="max-h-[480px] overflow-auto bg-[var(--ef-code-bg)]"
 				>
 					<CodePane code={code} language={language} />
 				</DemoFrame>
