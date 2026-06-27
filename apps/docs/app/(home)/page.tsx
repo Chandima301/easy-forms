@@ -1,4 +1,5 @@
 import { CodeShowcase } from '@/components/landing/CodeShowcase';
+import { Reveal } from '@/components/landing/Reveal';
 import { SchemaFormSync } from '@/components/landing/SchemaFormSync';
 import { InstallChip } from '@/components/ui/CopyButton';
 import {
@@ -31,8 +32,12 @@ export default function HomePage() {
 			>
 				<SchemaFormSync />
 			</Section>
-			<Features />
-			<Comparison />
+			<Reveal>
+				<Features />
+			</Reveal>
+			<Reveal>
+				<Comparison />
+			</Reveal>
 			<Section
 				eyebrow="Real, interactive"
 				title="Every example is a working form"
@@ -55,7 +60,7 @@ function Hero() {
 		<section className="relative overflow-hidden border-b border-fd-border">
 			<div className="pointer-events-none absolute inset-0 ef-grid-bg" />
 			<div className="pointer-events-none absolute inset-x-0 top-0 h-[480px] ef-hero-glow" />
-			<div className="relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:py-28">
+			<div className="ef-stagger relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:py-28">
 				<span className="inline-flex items-center gap-1.5 rounded-full border border-fd-border bg-fd-card/70 px-3 py-1 text-xs font-medium text-fd-muted-foreground backdrop-blur">
 					<Sparkles className="h-3.5 w-3.5 text-fd-primary" />
 					Schema-driven forms for React

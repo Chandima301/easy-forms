@@ -107,11 +107,15 @@ Keep the docs server running across iterations.
   `<td>`s so the amber "manual" label centers like the check/dash icons + the headers.
 
 ## Phase 6 — Animations (make it "more live")
-- [ ] Hero: staggered reveal (badge → headline → subtitle → CTAs → install chip);
-  reuse the unused `ef-fade-up` keyframe in `app/global.css`.
+- [x] Hero: staggered reveal (badge → headline → subtitle → CTAs → install chip + feature
+  pills). Added an `.ef-stagger` utility in `global.css` that animates direct children with
+  `ef-fade-up` + incremental `nth-child` delays (`backwards` fill); applied to the hero
+  content div. CSS-only, reduced-motion-disabled.
 - [ ] Performance: animate the 24-cell grid in; pulse the highlighted cell.
-- [ ] Shared scroll-reveal for Features + Comparison (IntersectionObserver /
-  `tw-animate-css`). **Respect `prefers-reduced-motion`** (pattern in `SchemaFormSync.tsx`).
+- [x] Shared scroll-reveal for Features + Comparison. Added an `.ef-reveal`/`.is-visible`
+  utility + a `components/landing/Reveal.tsx` client wrapper (IntersectionObserver, one-shot,
+  unobserves after reveal); wrapped `<Features />` + `<Comparison />`. **Respects
+  `prefers-reduced-motion`** (reveals immediately).
 
 ## Phase 7 — Verify + finish
 - [ ] Full preview pass: `/`, `/docs/examples`, an example detail, 2–3 component pages;
@@ -227,3 +231,11 @@ Keep the docs server running across iterations.
   (computed `text-align: center` confirmed). Verified on 3850 at 1280px: equal columns side by
   side, "manual" cells centered, console clean, `docs` typecheck green. Next: Phase 6 —
   animations (hero stagger, performance grid, shared scroll-reveal).
+- 2026-06-27 — Phase 6 (2 of 3): **hero stagger** + **shared scroll-reveal**. Added two
+  reduced-motion-aware utilities to `global.css`: `.ef-stagger` (reuses the previously-unused
+  `ef-fade-up` keyframe; `nth-child` delays 0.05→0.45s, `backwards` fill) applied to the hero
+  content div, and `.ef-reveal`/`.is-visible` driven by a new `components/landing/Reveal.tsx`
+  (IntersectionObserver, one-shot) wrapping `<Features />` + `<Comparison />`. Verified on
+  3850: all 6 hero children animate `ef-fade-up` with staggered delays and settle to opacity 1;
+  both reveal sections start at opacity 0 and become visible on scroll-in; console clean;
+  `docs` typecheck green. Next: Phase 6 last item — Performance grid animate-in + pulse.
