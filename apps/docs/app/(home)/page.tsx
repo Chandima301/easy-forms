@@ -469,13 +469,7 @@ function Footer() {
 			<div className="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
 				<div>
 					<span className="inline-flex items-center gap-2 font-semibold">
-						<img
-							src="/easy-forms-icon.svg"
-							alt=""
-							width={24}
-							height={24}
-							className="h-6 w-6"
-						/>
+						<img src="/easy-forms-icon.svg" alt="" width={24} height={24} className="h-6 w-6" />
 						Easy Forms
 					</span>
 					<p className="mt-3 flex items-center gap-1.5 text-sm text-fd-muted-foreground">
