@@ -58,11 +58,16 @@ Keep the docs server running across iterations.
   the checkbox component doc) likewise renders plain.
 
 ## Phase 3 — Examples gallery redesign + 6 new examples
-- [ ] Replace `<Cards>` in `content/docs/examples/index.mdx` with a visual gallery
+- [x] Replace `<Cards>` in `content/docs/examples/index.mdx` with a visual gallery
   (`components/demo/ExampleGallery.tsx`): grid of cards, each a **live mini-preview**
-  (genuine engine, scaled/contained) → links to the detail page.
-- [ ] Detail pages render via `<ComponentPreview>` (Preview/Code tabs).
-- [ ] Existing 4: `examples/{signup,checkout-wizard,dependent-dropdowns,order-calculator}.mdx`.
+  (genuine engine, clipped/scaled, `pointer-events-none` + gradient fade) → links to the
+  detail page. Introduced `components/demo/example-registry.tsx` as the **single source**
+  (schema + `code` + meta per example) consumed by both the gallery mini-preview and the
+  detail demos; refactored the 4 example demos in `examples.tsx` to thin registry wrappers.
+- [x] Detail pages render via `<ComponentPreview>` (Preview/Code tabs) — registry demos
+  self-wrap, so every detail page gets the tabs.
+- [x] Existing 4: `examples/{signup,checkout-wizard,dependent-dropdowns,order-calculator}.mdx`
+  — now registry-backed; verified order-calculator's `valueDependsOn` total computes (19.99).
 - [ ] Add 6 new (each = demo in `examples.tsx` + `code` snippet + detail `.mdx` + card; total = 10):
   - [ ] **Contact form** — text + email + textarea + required.
   - [ ] **Async username check** — custom **async** validator (availability).
@@ -100,6 +105,15 @@ Keep the docs server running across iterations.
 - [ ] `pnpm --filter docs typecheck` + `pnpm --filter docs build` + `pnpm lint` green.
 - [ ] Update the Loop progress log; finish the branch (PR).
 
+## Deferred refactors (post-landing)
+- [ ] **Auto-derive Code tab for field-level component docs.** Field-doc schemas
+  (`components/*.mdx`) are pure data (no functions/regex), so a small schema pretty-printer
+  could feed `<ComponentPreview>`'s Code tab **from the live schema object** — giving those
+  pages real Preview/Code tabs with a single source of truth (no hand-written `code` string,
+  no drift). This is the proper way to add field-level Code tabs; deferred so the landing
+  refactor isn't blocked. NB: this is viable *only* for function-free schemas — the named
+  example demos must keep their hand-authored `code` because functions don't serialize.
+
 ---
 
 ## Loop progress log
@@ -129,3 +143,15 @@ Keep the docs server running across iterations.
   `CheckboxRequiredDemo` reverted to plain too. Verified live: signup + props-depends-on show
   tabs, checkbox shows a plain preview, console clean, `docs` typecheck green. Next: Phase 3
   — examples gallery redesign + 6 new examples.
+- 2026-06-27 — Phase 3 (gallery + existing 4) done. Added `components/demo/example-registry.tsx`
+  as the single source for gallery examples (schema + `code` + meta), and
+  `components/demo/ExampleGallery.tsx` (live, clipped, non-interactive engine mini-previews in
+  window-chrome cards linking to detail pages). Refactored the 4 example demos in
+  `examples.tsx` to thin registry wrappers (no duplicated schema/code). Swapped `<Cards>` →
+  `<ExampleGallery />` in `examples/index.mdx` and dropped the dead Schema Studio `/playground`
+  link (pre-empts Phase 4). Registered `ExampleGallery` in `mdx-components`. **Infra note:**
+  Windows reserved TCP 3906–4005 this boot, so the `docs` server can no longer bind 3942 —
+  moved it to **port 3850** in `.claude/launch.json` (use `http://localhost:3850` from here on).
+  Verified: gallery shows 4 live mini-previews + working card links; order-calculator detail
+  page renders Preview/Code tabs with the derived total = 19.99; console clean; `docs` typecheck
+  green. Next: Phase 3 — add the 6 new examples (start with Contact form).

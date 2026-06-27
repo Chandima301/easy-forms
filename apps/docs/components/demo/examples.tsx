@@ -6,13 +6,29 @@
 // why inline `<LiveForm schema={{ ...functions }} />` in server-rendered MDX is
 // not allowed. MDX references these by name instead.
 //
-// Each demo renders through `<ComponentPreview>` so every usage gets the
-// MagicUI Preview/Code tabbed shell, with a co-located `code` snippet kept
-// next to its schema so the two never drift.
+// Concept demos (dependency/wizard pages) self-wrap in `<ComponentPreview>` with
+// a co-located `code` snippet. The gallery *examples* live in `example-registry`
+// (single source for both the gallery mini-preview and the detail page).
 
 import type { FormSchema } from '@easy-forms/core';
 import { ComponentPreview } from './ComponentPreview';
+import { getExample } from './example-registry';
 import { LiveForm } from './LiveForm';
+
+/** Renders a registry example as the full Preview/Code shell (detail pages). */
+function ExampleDemo({ slug }: { slug: string }) {
+	const e = getExample(slug);
+	return (
+		<ComponentPreview code={e.code}>
+			<LiveForm
+				schema={e.schema}
+				initialValues={e.initialValues}
+				showReset={e.showReset ?? true}
+				framed={false}
+			/>
+		</ComponentPreview>
+	);
+}
 
 export function CheckboxRequiredDemo() {
 	const schema: FormSchema = {
@@ -520,383 +536,20 @@ export function WizardDemo() {
 	);
 }
 
-const SIGNUP_CODE = `const schema: FormSchema = {
-	title: 'Create your account',
-	groups: [
-		{
-			layout: 'grid',
-			gridCols: 2,
-			questions: [
-				{ key: 'firstName', label: 'First name', control: 'text', validators: { required: true, minLength: 2 } },
-				{ key: 'lastName', label: 'Last name', control: 'text', validators: { required: true } },
-			],
-		},
-		{
-			questions: [
-				{ key: 'email', label: 'Email', control: 'email', placeholder: 'you@example.com', validators: { required: true, email: true } },
-				{ key: 'password', label: 'Password', control: 'text', inputType: 'password', validators: { required: true, minLength: 8 } },
-				{
-					key: 'terms',
-					label: 'Terms',
-					control: 'checkbox',
-					checkboxLabel: 'I agree to the terms of service',
-					validators: { required: true, custom: (v) => (v ? null : 'You must agree to continue') },
-				},
-			],
-		},
-	],
-};`;
+// --- Gallery examples (schemas live in example-registry) -------------------
 
 export function SignupDemo() {
-	const schema: FormSchema = {
-		title: 'Create your account',
-		groups: [
-			{
-				layout: 'grid',
-				gridCols: 2,
-				questions: [
-					{
-						key: 'firstName',
-						label: 'First name',
-						control: 'text',
-						validators: { required: true, minLength: 2 },
-					},
-					{ key: 'lastName', label: 'Last name', control: 'text', validators: { required: true } },
-				],
-			},
-			{
-				questions: [
-					{
-						key: 'email',
-						label: 'Email',
-						control: 'email',
-						placeholder: 'you@example.com',
-						validators: { required: true, email: true },
-					},
-					{
-						key: 'password',
-						label: 'Password',
-						control: 'text',
-						inputType: 'password',
-						validators: { required: true, minLength: 8 },
-					},
-					{
-						key: 'terms',
-						label: 'Terms',
-						control: 'checkbox',
-						checkboxLabel: 'I agree to the terms of service',
-						validators: {
-							required: true,
-							custom: (v) => (v ? null : 'You must agree to continue'),
-						},
-					},
-				],
-			},
-		],
-	};
-	return (
-		<ComponentPreview code={SIGNUP_CODE}>
-			<LiveForm
-				schema={schema}
-				framed={false}
-				initialValues={{ firstName: '', lastName: '', email: '', password: '', terms: false }}
-			/>
-		</ComponentPreview>
-	);
+	return <ExampleDemo slug="signup" />;
 }
-
-const CHECKOUT_WIZARD_CODE = `const schema: FormSchema = {
-	title: 'Checkout',
-	groups: [],
-	wizard: {
-		steps: [
-			{
-				id: 'contact',
-				title: 'Contact',
-				groups: [{ questions: [{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true } }] }],
-			},
-			{
-				id: 'address',
-				title: 'Address',
-				groups: [
-					{
-						layout: 'grid',
-						gridCols: 2,
-						questions: [
-							{ key: 'city', label: 'City', control: 'text', validators: { required: true } },
-							{ key: 'zip', label: 'Postal code', control: 'text', validators: { required: true, pattern: /^[A-Z0-9 -]{3,10}$/i } },
-						],
-					},
-					{ questions: [{ key: 'expedite', label: 'Shipping', control: 'checkbox', checkboxLabel: 'Expedited shipping' }] },
-				],
-			},
-			{
-				id: 'notes',
-				title: 'Shipping notes',
-				dependents: {
-					propsDependsOn: [{ fieldNames: ['expedite'], compute: (v) => ({ hidden: v.expedite !== true }) }],
-				},
-				groups: [{ questions: [{ key: 'notes', label: 'Notes for the courier', control: 'textarea', rows: 3 }] }],
-			},
-		],
-	},
-};`;
 
 export function CheckoutWizardDemo() {
-	const schema: FormSchema = {
-		title: 'Checkout',
-		groups: [],
-		wizard: {
-			steps: [
-				{
-					id: 'contact',
-					title: 'Contact',
-					groups: [
-						{
-							questions: [
-								{
-									key: 'email',
-									label: 'Email',
-									control: 'email',
-									validators: { required: true, email: true },
-								},
-							],
-						},
-					],
-				},
-				{
-					id: 'address',
-					title: 'Address',
-					groups: [
-						{
-							layout: 'grid',
-							gridCols: 2,
-							questions: [
-								{ key: 'city', label: 'City', control: 'text', validators: { required: true } },
-								{
-									key: 'zip',
-									label: 'Postal code',
-									control: 'text',
-									validators: { required: true, pattern: /^[A-Z0-9 -]{3,10}$/i },
-								},
-							],
-						},
-						{
-							questions: [
-								{
-									key: 'expedite',
-									label: 'Shipping',
-									control: 'checkbox',
-									checkboxLabel: 'Expedited shipping',
-								},
-							],
-						},
-					],
-				},
-				{
-					id: 'notes',
-					title: 'Shipping notes',
-					dependents: {
-						propsDependsOn: [
-							{ fieldNames: ['expedite'], compute: (v) => ({ hidden: v.expedite !== true }) },
-						],
-					},
-					groups: [
-						{
-							questions: [
-								{ key: 'notes', label: 'Notes for the courier', control: 'textarea', rows: 3 },
-							],
-						},
-					],
-				},
-			],
-		},
-	};
-	return (
-		<ComponentPreview code={CHECKOUT_WIZARD_CODE}>
-			<LiveForm
-				schema={schema}
-				framed={false}
-				initialValues={{ email: '', city: '', zip: '', expedite: false, notes: '' }}
-			/>
-		</ComponentPreview>
-	);
+	return <ExampleDemo slug="checkout-wizard" />;
 }
-
-const DEPENDENT_DROPDOWNS_CODE = `const schema: FormSchema = {
-	groups: [
-		{
-			layout: 'grid',
-			gridCols: 2,
-			questions: [
-				{
-					key: 'country',
-					label: 'Country',
-					control: 'dropdown',
-					placeholder: 'Pick a country',
-					options: [
-						{ value: 'us', label: 'United States' },
-						{ value: 'gb', label: 'United Kingdom' },
-						{ value: 'lk', label: 'Sri Lanka' },
-					],
-					validators: { required: true },
-				},
-				{
-					key: 'region',
-					label: 'Region',
-					control: 'dropdown',
-					options: [],
-					dependents: {
-						propsDependsOn: [
-							{
-								fieldNames: ['country'],
-								compute: (v) => ({
-									options: REGIONS[v.country] ?? [],
-									disabled: !v.country,
-									placeholder: v.country ? 'Pick a region' : 'Pick a country first',
-								}),
-							},
-						],
-					},
-				},
-			],
-		},
-	],
-};`;
 
 export function DependentDropdownsDemo() {
-	const schema: FormSchema = {
-		groups: [
-			{
-				layout: 'grid',
-				gridCols: 2,
-				questions: [
-					{
-						key: 'country',
-						label: 'Country',
-						control: 'dropdown',
-						placeholder: 'Pick a country',
-						options: [
-							{ value: 'us', label: 'United States' },
-							{ value: 'gb', label: 'United Kingdom' },
-							{ value: 'lk', label: 'Sri Lanka' },
-						],
-						validators: { required: true },
-					},
-					{
-						key: 'region',
-						label: 'Region',
-						control: 'dropdown',
-						options: [],
-						dependents: {
-							propsDependsOn: [
-								{
-									fieldNames: ['country'],
-									compute: (v) => ({
-										options:
-											v.country === 'us'
-												? [
-														{ value: 'ca', label: 'California' },
-														{ value: 'ny', label: 'New York' },
-														{ value: 'tx', label: 'Texas' },
-													]
-												: v.country === 'gb'
-													? [
-															{ value: 'eng', label: 'England' },
-															{ value: 'sct', label: 'Scotland' },
-														]
-													: v.country === 'lk'
-														? [
-																{ value: 'wp', label: 'Western Province' },
-																{ value: 'sp', label: 'Southern Province' },
-															]
-														: [],
-										disabled: !v.country,
-										placeholder: v.country ? 'Pick a region' : 'Pick a country first',
-									}),
-								},
-							],
-						},
-					},
-				],
-			},
-		],
-	};
-	return (
-		<ComponentPreview code={DEPENDENT_DROPDOWNS_CODE}>
-			<LiveForm schema={schema} initialValues={{ country: null, region: null }} framed={false} />
-		</ComponentPreview>
-	);
+	return <ExampleDemo slug="dependent-dropdowns" />;
 }
 
-const ORDER_CALCULATOR_CODE = `const schema: FormSchema = {
-	groups: [
-		{
-			layout: 'grid',
-			gridCols: 3,
-			questions: [
-				{ key: 'qty', label: 'Quantity', control: 'number', validators: { min: 0 } },
-				{ key: 'unitPrice', label: 'Unit price', control: 'number', prefix: '$', decimalScale: 2, validators: { min: 0 } },
-				{
-					key: 'total',
-					label: 'Total',
-					control: 'number',
-					prefix: '$',
-					readOnly: true,
-					dependents: {
-						valueDependsOn: {
-							fieldNames: ['qty', 'unitPrice'],
-							compute: (v) => Number((((v.qty as number) ?? 0) * ((v.unitPrice as number) ?? 0)).toFixed(2)),
-						},
-					},
-				},
-			],
-		},
-	],
-};`;
-
 export function OrderCalculatorDemo() {
-	const schema: FormSchema = {
-		groups: [
-			{
-				layout: 'grid',
-				gridCols: 3,
-				questions: [
-					{ key: 'qty', label: 'Quantity', control: 'number', validators: { min: 0 } },
-					{
-						key: 'unitPrice',
-						label: 'Unit price',
-						control: 'number',
-						prefix: '$',
-						decimalScale: 2,
-						validators: { min: 0 },
-					},
-					{
-						key: 'total',
-						label: 'Total',
-						control: 'number',
-						prefix: '$',
-						readOnly: true,
-						dependents: {
-							valueDependsOn: {
-								fieldNames: ['qty', 'unitPrice'],
-								compute: (v) =>
-									Number((((v.qty as number) ?? 0) * ((v.unitPrice as number) ?? 0)).toFixed(2)),
-							},
-						},
-					},
-				],
-			},
-		],
-	};
-	return (
-		<ComponentPreview code={ORDER_CALCULATOR_CODE}>
-			<LiveForm
-				schema={schema}
-				showReset={false}
-				initialValues={{ qty: 1, unitPrice: 19.99, total: 0 }}
-				framed={false}
-			/>
-		</ComponentPreview>
-	);
+	return <ExampleDemo slug="order-calculator" />;
 }
