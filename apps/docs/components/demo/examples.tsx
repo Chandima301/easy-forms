@@ -12,23 +12,7 @@
 
 import type { FormSchema } from '@easy-forms/core';
 import { ComponentPreview } from './ComponentPreview';
-import { getExample } from './example-registry';
 import { LiveForm } from './LiveForm';
-
-/** Renders a registry example as the full Preview/Code shell (detail pages). */
-function ExampleDemo({ slug }: { slug: string }) {
-	const e = getExample(slug);
-	return (
-		<ComponentPreview code={e.code}>
-			<LiveForm
-				schema={e.schema}
-				initialValues={e.initialValues}
-				showReset={e.showReset ?? true}
-				framed={false}
-			/>
-		</ComponentPreview>
-	);
-}
 
 export function CheckboxRequiredDemo() {
 	const schema: FormSchema = {
@@ -534,22 +518,4 @@ export function WizardDemo() {
 			/>
 		</ComponentPreview>
 	);
-}
-
-// --- Gallery examples (schemas live in example-registry) -------------------
-
-export function SignupDemo() {
-	return <ExampleDemo slug="signup" />;
-}
-
-export function CheckoutWizardDemo() {
-	return <ExampleDemo slug="checkout-wizard" />;
-}
-
-export function DependentDropdownsDemo() {
-	return <ExampleDemo slug="dependent-dropdowns" />;
-}
-
-export function OrderCalculatorDemo() {
-	return <ExampleDemo slug="order-calculator" />;
 }

@@ -1,18 +1,16 @@
 'use client';
 
-// Single source of truth for the examples gallery + the example detail demos.
-// Each entry pairs the *live* schema object (functions and all) with a
-// hand-authored `code` string for the Code tab. The gallery renders a contained
-// mini-preview from `schema`; the detail page renders the full Preview/Code shell.
-// Because these schemas contain functions, the module is a client boundary.
+// Runtime source for the examples gallery mini-previews + detail demos. Each
+// entry pairs the *live* schema object (functions and all) with a hand-authored
+// `code` string for the Code tab. Because these schemas contain functions, the
+// module is a client boundary. Display text (title/description/intro) lives in
+// the server-safe `lib/examples-meta`; the two are tied by `slug`.
 
 import type { FormSchema } from '@easy-forms/core';
 
 export interface ExampleEntry {
-	/** Route slug under /docs/examples and the demo lookup key. */
+	/** Lookup key; matches an entry in `lib/examples-meta`. */
 	slug: string;
-	title: string;
-	description: string;
 	schema: FormSchema;
 	initialValues: Record<string, unknown>;
 	/** Hide the Reset button (derived-value demos that start computed). */
@@ -24,8 +22,6 @@ export interface ExampleEntry {
 export const examples: ExampleEntry[] = [
 	{
 		slug: 'signup',
-		title: 'Sign up',
-		description: 'Grid layout, validation, and a required terms checkbox.',
 		initialValues: { firstName: '', lastName: '', email: '', password: '', terms: false },
 		schema: {
 			title: 'Create your account',
@@ -102,8 +98,6 @@ export const examples: ExampleEntry[] = [
 	},
 	{
 		slug: 'checkout-wizard',
-		title: 'Checkout wizard',
-		description: 'Multi-step with a conditional step and per-step validation.',
 		initialValues: { email: '', city: '', zip: '', expedite: false, notes: '' },
 		schema: {
 			title: 'Checkout',
@@ -213,8 +207,6 @@ export const examples: ExampleEntry[] = [
 	},
 	{
 		slug: 'dependent-dropdowns',
-		title: 'Dependent dropdowns',
-		description: 'Country → region, driven by one propsDependsOn rule.',
 		initialValues: { country: null, region: null },
 		schema: {
 			groups: [
@@ -316,8 +308,6 @@ export const examples: ExampleEntry[] = [
 	},
 	{
 		slug: 'order-calculator',
-		title: 'Order calculator',
-		description: 'A live total via valueDependsOn.',
 		showReset: false,
 		initialValues: { qty: 1, unitPrice: 19.99, total: 0 },
 		schema: {

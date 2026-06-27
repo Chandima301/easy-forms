@@ -1,58 +1,43 @@
 'use client';
 
 import { EasyForm } from '@/components/easy-forms/easy-form';
-import { ArrowRight } from 'lucide-react';
+import { type ExampleMeta, exampleMeta } from '@/lib/examples-meta';
+import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import { LiveBadge } from './DemoFrame';
-import { type ExampleEntry, examples } from './example-registry';
+import { getExample } from './example-registry';
 
 /**
- * Visual gallery of examples. Each card is a *genuine* engine mini-preview
- * (clipped + non-interactive) that links to the full detail page.
+ * Masonry gallery. Each card *is* the genuine form at its natural size — the
+ * `.easy-forms` surface already carries the border/padding/shadow, so we add no
+ * second card chrome around it, only a compact text label above. The form is
+ * display-only; the whole tile links to the detail page.
  */
 export function ExampleGallery() {
 	return (
-		<div className="not-prose grid gap-5 sm:grid-cols-2">
-			{examples.map((ex) => (
-				<GalleryCard key={ex.slug} example={ex} />
+		<div className="columns-1 gap-5 sm:columns-2 xl:columns-3">
+			{exampleMeta.map((meta) => (
+				<GalleryCard key={meta.slug} meta={meta} />
 			))}
 		</div>
 	);
 }
 
-function GalleryCard({ example }: { example: ExampleEntry }) {
+function GalleryCard({ meta }: { meta: ExampleMeta }) {
+	const example = getExample(meta.slug);
 	return (
-		<Link
-			href={`/docs/examples/${example.slug}`}
-			className="group flex flex-col overflow-hidden rounded-xl border border-fd-border bg-fd-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-fd-primary/50 hover:shadow-md"
-		>
-			<div className="flex items-center gap-2 border-b border-fd-border bg-fd-muted/40 px-4 py-2.5">
-				<div className="flex gap-1.5">
-					<span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
-					<span className="h-2.5 w-2.5 rounded-full bg-amber-400/80" />
-					<span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
-				</div>
-				<span className="ml-1 font-medium text-sm text-fd-foreground">{example.title}</span>
-				<div className="ml-auto">
-					<LiveBadge />
-				</div>
+		<Link href={`/examples/${meta.slug}`} className="group mb-5 block break-inside-avoid">
+			<div className="mb-2 flex items-center gap-2 px-1">
+				<span className="font-medium text-sm text-fd-foreground">{meta.title}</span>
+				<span className="truncate text-xs text-fd-muted-foreground">{meta.description}</span>
+				<ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-fd-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:text-fd-primary" />
 			</div>
-
-			<div className="relative h-52 overflow-hidden">
-				<div className="ef-demo-surface pointer-events-none absolute inset-0 origin-top scale-[0.85] p-5">
-					<EasyForm
-						schema={example.schema}
-						initialValues={example.initialValues}
-						showReset={false}
-						onSubmit={async () => {}}
-					/>
-				</div>
-				<div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-fd-card via-fd-card/80 to-transparent" />
-			</div>
-
-			<div className="flex items-center gap-2 border-t border-fd-border px-4 py-3">
-				<p className="text-sm text-fd-muted-foreground">{example.description}</p>
-				<ArrowRight className="ml-auto h-4 w-4 shrink-0 text-fd-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-fd-primary" />
+			<div className="ef-demo-surface pointer-events-none select-none rounded-xl ring-1 ring-transparent transition group-hover:ring-2 group-hover:ring-fd-primary/40">
+				<EasyForm
+					schema={example.schema}
+					initialValues={example.initialValues}
+					showReset={false}
+					onSubmit={async () => {}}
+				/>
 			</div>
 		</Link>
 	);

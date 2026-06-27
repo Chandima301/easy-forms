@@ -58,32 +58,44 @@ Keep the docs server running across iterations.
   the checkbox component doc) likewise renders plain.
 
 ## Phase 3 — Examples gallery redesign + 6 new examples
-- [x] Replace `<Cards>` in `content/docs/examples/index.mdx` with a visual gallery
-  (`components/demo/ExampleGallery.tsx`): grid of cards, each a **live mini-preview**
-  (genuine engine, clipped/scaled, `pointer-events-none` + gradient fade) → links to the
-  detail page. Introduced `components/demo/example-registry.tsx` as the **single source**
-  (schema + `code` + meta per example) consumed by both the gallery mini-preview and the
-  detail demos; refactored the 4 example demos in `examples.tsx` to thin registry wrappers.
-- [x] Detail pages render via `<ComponentPreview>` (Preview/Code tabs) — registry demos
-  self-wrap, so every detail page gets the tabs.
-- [x] Existing 4: `examples/{signup,checkout-wizard,dependent-dropdowns,order-calculator}.mdx`
-  — now registry-backed; verified order-calculator's `valueDependsOn` total computes (19.99).
-- [ ] Add 6 new (each = demo in `examples.tsx` + `code` snippet + detail `.mdx` + card; total = 10):
+> **Redesigned 2026-06-27** after review: the gallery is a **full-width page outside docs**
+> (no side nav), with **masonry cards sized to each form** (not uniform). Cards are
+> **compact** — the genuine `.easy-forms` surface (which already has its own border/padding/
+> shadow) *is* the card, with only a small text label above; no second card chrome, no
+> clip/scale/gradient. Forms are static (`pointer-events-none`); the whole tile links out.
+- [x] Full-width route in the home group (navbar only): `app/(home)/examples/page.tsx`
+  (gallery) + `app/(home)/examples/[slug]/page.tsx` (detail, `generateStaticParams` + SEO).
+- [x] `components/demo/ExampleGallery.tsx` → CSS **columns masonry**
+  (`columns-1 sm:columns-2 xl:columns-3`, `break-inside-avoid`); each card = compact label +
+  the real form at natural size, static, linking to `/examples/{slug}`.
+- [x] `components/demo/ExampleDetail.tsx` (client) → back-link + title + intro +
+  `<ComponentPreview>` (Preview/Code) + optional "see also". Detail pages full-width.
+- [x] Data split for RSC: `lib/examples-meta.ts` (server-safe text: title/description/intro/
+  seeAlso) for the route handlers; `components/demo/example-registry.tsx` (client: schema +
+  `code`) for the live form. Tied by `slug`. No duplicated schema.
+- [x] **Dropped** `content/docs/examples/*` (5 MDX + meta.json) and the old `<XDemo />`
+  wrappers + their `mdx-components` registration. Old `/docs/examples/*` URLs now 404 (no
+  redirects, per decision). Repointed nav/footer/hero CTA → `/examples`; updated `sitemap.ts`
+  + root `content/docs/meta.json`. Regenerated fumadocs `.source` after the deletions.
+- [x] Existing 4 (`signup`, `checkout-wizard`, `dependent-dropdowns`, `order-calculator`)
+  ported to the registry; verified order-calculator's `valueDependsOn` total = 19.99.
+- [ ] Add 6 new (each = `examples-meta` entry + `example-registry` entry {schema, code}; the
+  gallery card + `/examples/{slug}` detail page are then automatic — total = 10):
   - [ ] **Contact form** — text + email + textarea + required.
   - [ ] **Async username check** — custom **async** validator (availability).
   - [ ] **Survey / feedback** — `radioGroup` + `multiselect` + conditional "Other → text" via `propsDependsOn`.
   - [ ] **Job application** — `file` upload + `date` + grouped layout + validation.
   - [ ] **Newsletter preferences** — conditional **groups** (adapt `ConditionalGroupsDemo`).
   - [ ] **Change password** — custom cross-field "passwords must match" + `minLength`.
-- [ ] Update examples nav (`content/docs/examples/meta.json` if present).
 
 ## Phase 4 — Remove Playground / Schema Studio (everywhere)
 - [ ] Delete `app/(home)/playground/page.tsx`, `components/demo/SchemaStudio.tsx`,
   `lib/studio-presets.ts`.
-- [ ] Strip links: `app/layout.config.tsx` nav; Hero "Open the playground" CTA in
-  `app/(home)/page.tsx` → repoint to `/docs/examples`; Footer + `FinalCta` links;
-  `content/docs/examples/index.mdx` "Schema Studio" line; `app/sitemap.ts`;
-  `app/not-found.tsx`; `content/docs/index.mdx` mention.
+- [ ] Strip links: `app/layout.config.tsx` nav ("Playground"); Hero "Open the playground" CTA
+  in `app/(home)/page.tsx`; Footer + `FinalCta` links; `app/sitemap.ts` (`/playground`);
+  `app/not-found.tsx`; `content/docs/index.mdx` mention. (NB: the examples-index "Schema
+  Studio" line + `/docs/examples` links were already removed/repointed to `/examples` in
+  Phase 3.)
 - [ ] `pnpm --filter docs typecheck` — no dead imports / broken routes.
 
 ## Phase 5 — Alignment fixes
@@ -155,3 +167,18 @@ Keep the docs server running across iterations.
   Verified: gallery shows 4 live mini-previews + working card links; order-calculator detail
   page renders Preview/Code tabs with the derived total = 19.99; console clean; `docs` typecheck
   green. Next: Phase 3 — add the 6 new examples (start with Contact form).
+- 2026-06-27 — **Examples gallery redesigned per user feedback** (the first cut was wrong:
+  uniform card sizes + heavy card chrome doubled on top of the form + lived inside docs with a
+  side nav). Brainstormed + approved a new design, then rebuilt: gallery moved to a **full-width
+  page outside docs** at `/examples` (home group, navbar only) with `[slug]` detail pages;
+  **masonry** cards (CSS columns) sized to each form; **compact** cards where the genuine
+  `.easy-forms` surface *is* the card (it already has border/padding/shadow — the old wrapper
+  doubled it) with just a small label above; forms static, tile links out. Split data for RSC:
+  `lib/examples-meta.ts` (server-safe text) + `example-registry.tsx` (client schema/code).
+  Deleted `content/docs/examples/*` + the old `<XDemo />` wrappers + their registration; old
+  `/docs/examples/*` URLs now **404 (no redirects, per decision)**; repointed nav/footer/hero →
+  `/examples`; fixed `sitemap.ts` + root docs `meta.json`; regenerated fumadocs `.source` (its
+  stale codegen had thrown ENOENT for the deleted MDX until regen). Verified on 3850: full-width
+  gallery (no `<aside>`), 4 compact masonry cards, detail page tabs + derived total 19.99,
+  `/docs/examples/signup` → 404, console clean, `docs` typecheck green. Next: add the 6 new
+  examples (Contact form first).

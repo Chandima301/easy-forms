@@ -18,7 +18,7 @@ export const baseOptions: BaseLayoutProps = {
 	links: [
 		{ text: 'Docs', url: '/docs', active: 'nested-url' },
 		{ text: 'Playground', url: '/playground' },
-		{ text: 'Examples', url: '/docs/examples' },
+		{ text: 'Examples', url: '/examples' },
 		{ text: 'Enterprise', url: '/enterprise' },
 	],
 	githubUrl: 'https://github.com/Chandima301/easy-forms',

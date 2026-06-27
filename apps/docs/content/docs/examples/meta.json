@@ -1,5 +1,0 @@
-{
-	"title": "Examples & templates",
-	"icon": "LayoutTemplate",
-	"pages": ["index", "signup", "checkout-wizard", "dependent-dropdowns", "order-calculator"]
-}

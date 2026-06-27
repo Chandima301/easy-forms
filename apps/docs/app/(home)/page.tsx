@@ -433,7 +433,7 @@ function FinalCta() {
 							Quick start
 						</Link>
 						<Link
-							href="/docs/examples"
+							href="/examples"
 							className="inline-flex items-center gap-1.5 rounded-lg border border-fd-border px-5 py-2.5 text-sm font-semibold"
 						>
 							Browse examples
@@ -452,7 +452,7 @@ function Footer() {
 			links: [
 				{ label: 'Documentation', href: '/docs' },
 				{ label: 'Playground', href: '/playground' },
-				{ label: 'Examples', href: '/docs/examples' },
+				{ label: 'Examples', href: '/examples' },
 				{ label: 'Enterprise', href: '/enterprise' },
 			],
 		},

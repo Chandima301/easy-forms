@@ -1,3 +1,4 @@
+import { exampleMeta } from '@/lib/examples-meta';
 import { source } from '@/lib/source';
 import type { MetadataRoute } from 'next';
 
@@ -10,7 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 		priority: 0.7,
 	}));
 
-	const staticPages = ['', '/playground', '/enterprise'].map((path) => ({
+	const examplePaths = ['/examples', ...exampleMeta.map((m) => `/examples/${m.slug}`)];
+	const staticPages = ['', '/playground', '/enterprise', ...examplePaths].map((path) => ({
 		url: `${SITE_URL}${path}`,
 		changeFrequency: 'weekly' as const,
 		priority: path === '' ? 1 : 0.8,
