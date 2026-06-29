@@ -1,0 +1,70 @@
+{
+	"name": "@easy-forms/pro",
+	"version": "0.0.0",
+	"description": "Premium engine for complex, conditional, multi-step easy-forms — repeating sections, branching wizard, auto-review. Commercial license.",
+	"license": "SEE LICENSE IN LICENSE",
+	"author": "Easy Forms",
+	"homepage": "https://github.com/Chandima301/easy-forms#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Chandima301/easy-forms.git",
+		"directory": "packages/pro"
+	},
+	"bugs": {
+		"url": "https://github.com/Chandima301/easy-forms/issues"
+	},
+	"keywords": ["react", "form", "forms", "form-builder", "schema", "easy-forms", "pro"],
+	"publishConfig": {
+		"access": "public"
+	},
+	"sideEffects": false,
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": ["dist", "README.md", "LICENSE"],
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc --noEmit",
+		"clean": "rimraf dist .turbo",
+		"license:genkey": "tsx scripts/genkey.ts",
+		"license:sign": "tsx scripts/sign.ts"
+	},
+	"dependencies": {
+		"@noble/ed25519": "^2.1.0",
+		"@noble/hashes": "^1.5.0"
+	},
+	"peerDependencies": {
+		"@easy-forms/core": ">=0.1.0",
+		"react": ">=18.0.0",
+		"react-dom": ">=18.0.0"
+	},
+	"devDependencies": {
+		"@easy-forms/core": "workspace:*",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.0.1",
+		"@testing-library/user-event": "^14.5.2",
+		"@types/node": "^22.9.0",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"jsdom": "^25.0.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"rimraf": "^6.0.1",
+		"tsup": "^8.3.5",
+		"tsx": "^4.19.2",
+		"typescript": "^5.6.3",
+		"vitest": "^2.1.5"
+	}
+}

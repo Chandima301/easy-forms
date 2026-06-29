@@ -1,0 +1,39 @@
+Easy Forms Pro — Commercial License
+Copyright (c) Easy Forms. All rights reserved.
+
+This package (`@easy-forms/pro`) is commercial software. Its source is made
+available for transparency and ease of integration, but it is NOT open source
+and is NOT licensed under the MIT terms that cover `@easy-forms/core`.
+
+1. License grant
+   Use of `@easy-forms/pro` in any application — whether in development,
+   testing, or production — requires a valid, current Easy Forms Pro license
+   issued by Easy Forms. A license is sold per developer seat and is renewable.
+   Subject to a valid license and payment of the applicable fees, Easy Forms
+   grants you a non-exclusive, non-transferable, non-sublicensable right to use
+   the software to build and operate your own applications.
+
+2. Restrictions
+   You may not redistribute, resell, sublicense, or publish this package or its
+   source, in whole or in part, as a standalone product or as part of a
+   competing form-building library or toolkit. You may not remove, disable, or
+   circumvent the license verification or the unlicensed-build watermark except
+   by obtaining a valid license.
+
+3. Soft enforcement
+   The software performs a best-effort, offline license check. Absence of a
+   valid license produces a development-time warning and an on-screen watermark;
+   it does NOT disable functionality in production. This is a convenience and an
+   integrity check, not a digital-rights-management system. Using the software
+   without a valid license is a breach of this license regardless of whether the
+   software continues to run.
+
+4. No warranty
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+   OR OTHER DEALINGS IN THE SOFTWARE.
+
+For license purchases and inquiries, see https://github.com/Chandima301/easy-forms.
