@@ -164,4 +164,33 @@ describe('createFormStore', () => {
 		await store.submit(handler);
 		expect(handler).toHaveBeenCalledWith({ name: 'Ada' });
 	});
+
+	it('getNestedValues assembles dotted keys into nested arrays/objects', () => {
+		const store = createFormStore();
+		store.registerField({ key: 'fullName', initialValue: 'Ada' });
+		store.registerField({ key: 'bankAccounts.0.currency', initialValue: 'USD' });
+		store.registerField({ key: 'bankAccounts.1.currency', initialValue: 'EUR' });
+		expect(store.getNestedValues()).toEqual({
+			fullName: 'Ada',
+			bankAccounts: [{ currency: 'USD' }, { currency: 'EUR' }],
+		});
+	});
+
+	it('getNestedValues excludes hidden fields like getValues', () => {
+		const store = createFormStore();
+		store.registerField({ key: 'bankAccounts.0.currency', initialValue: 'USD' });
+		store.registerField({ key: 'bankAccounts.1.currency', initialValue: 'EUR' });
+		store.setRuntimeProps('bankAccounts.1.currency', { hidden: true });
+		expect(store.getNestedValues()).toEqual({
+			bankAccounts: [{ currency: 'USD' }],
+		});
+	});
+
+	it('submit passes nested values to the handler', async () => {
+		const store = createFormStore();
+		store.registerField({ key: 'bankAccounts.0.currency', initialValue: 'USD' });
+		const handler = vi.fn();
+		await store.submit(handler);
+		expect(handler).toHaveBeenCalledWith({ bankAccounts: [{ currency: 'USD' }] });
+	});
 });

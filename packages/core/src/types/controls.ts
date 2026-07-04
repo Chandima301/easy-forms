@@ -22,15 +22,20 @@ export type BuiltInControlType =
 	| 'file'
 	| 'custom';
 
-// Augmentable: consumers add their own control identifiers + (optional) prop types.
+// Augmentable: consumers (and `@easy-forms/pro`) add their own control
+// identifiers + config/value types. An extension entry may carry a `value`
+// member to declare the control's value type; the remaining members become
+// the question's config props.
 //   declare module '@easy-forms/core' {
 //     interface ControlTypeExtensions {
-//       signature: { canvasSize: { w: number; h: number } };
+//       signature: { value: string; canvasSize: { w: number; h: number } };
 //     }
 //   }
 export interface ControlTypeExtensions {}
 
-export type ControlType = BuiltInControlType | Extract<keyof ControlTypeExtensions, string>;
+export type ControlExtensionKey = Extract<keyof ControlTypeExtensions, string>;
+
+export type ControlType = BuiltInControlType | ControlExtensionKey;
 
 export interface BaseQuestion<
 	TControl extends ControlType,
@@ -194,6 +199,30 @@ export interface CustomQuestion<
 	render?: (props: CustomRendererProps<any>) => ReactNode;
 }
 
+// ---------- Augmentable extension questions ----------
+
+// The value type an extension entry declares via its `value` member.
+type ExtensionValue<T> = T extends { value: infer V } ? V : unknown;
+
+/**
+ * A first-class `Question` synthesized from a `ControlTypeExtensions` entry:
+ * `BaseQuestion` for control `K` (with the declared value type) plus the
+ * entry's remaining members as config props. This is what makes a custom
+ * `control` (e.g. `repeatingGroup`) placeable in a schema and narrowable by
+ * its discriminant — with no `as never` casts at the renderer.
+ */
+export type ExtensionQuestion<
+	K extends ControlExtensionKey,
+	TFormData extends Record<string, unknown> = Record<string, unknown>,
+> = BaseQuestion<K, ExtensionValue<ControlTypeExtensions[K]>, TFormData> &
+	Omit<ControlTypeExtensions[K], 'value'>;
+
+// Distributes over every augmented control. Resolves to `never` when
+// `ControlTypeExtensions` is empty, leaving the built-in union untouched.
+type ExtensionQuestions<TFormData extends Record<string, unknown>> = {
+	[K in ControlExtensionKey]: ExtensionQuestion<K, TFormData>;
+}[ControlExtensionKey];
+
 // ---------- Discriminated union ----------
 
 export type Question<TFormData extends Record<string, unknown> = Record<string, unknown>> =
@@ -208,4 +237,5 @@ export type Question<TFormData extends Record<string, unknown> = Record<string, 
 	| RadioGroupQuestion<TFormData>
 	| DateQuestion<TFormData>
 	| FileQuestion<TFormData>
-	| CustomQuestion<TFormData>;
+	| CustomQuestion<TFormData>
+	| ExtensionQuestions<TFormData>;

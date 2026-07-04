@@ -15,6 +15,8 @@ import { RadioGroupRenderer } from '@/components/easy-forms/radio-group-renderer
 import { TextRenderer } from '@/components/easy-forms/text-renderer';
 import { TextAreaRenderer } from '@/components/easy-forms/textarea-renderer';
 import type { RendererRegistry } from '@easy-forms/core';
+// Pro control — importing it also loads the `repeatingGroup` ControlType augmentation.
+import { RepeatingGroupRenderer } from '@easy-forms/pro';
 
 export const easyFormsRegistry: RendererRegistry = {
 	text: TextRenderer,
@@ -29,4 +31,5 @@ export const easyFormsRegistry: RendererRegistry = {
 	date: DateRenderer,
 	file: FileRenderer,
 	custom: CustomRenderer,
+	repeatingGroup: RepeatingGroupRenderer,
 };

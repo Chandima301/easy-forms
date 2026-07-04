@@ -68,6 +68,12 @@ export interface FormStore {
 	// --- read ---
 	getFieldState(key: string): FieldState;
 	getValues(): Record<string, unknown>;
+	/**
+	 * Output-only nested view of `getValues()`: dotted keys
+	 * (`bankAccounts.0.currency`) assemble into nested arrays/objects. Passed to
+	 * the submit handler; the flat `getValues()` is unchanged for internal use.
+	 */
+	getNestedValues(): Record<string, unknown>;
 	getValue(key: string): unknown;
 	getDerived(): FormDerivedState;
 	getGroupRuntimeProps(groupId: string): Partial<RuntimeProps>;

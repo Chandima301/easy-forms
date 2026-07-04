@@ -434,7 +434,162 @@ const wizardSchema: FormSchema<WizardData> = {
 	},
 };
 
-type Mode = 'plain' | 'wizard';
+// --- Repeating-sections demo (Pro `repeatingGroup`) ----------------------
+
+// A single repeated row — the repeating group's columns.
+interface BankAccount extends Record<string, unknown> {
+	bankName: string;
+	accountNumber: string;
+	country: string;
+	accountType: string;
+	routingNumber: string;
+	iban: string;
+	businessName: string;
+}
+
+interface RepeatData extends Record<string, unknown> {
+	accountHolder: string;
+	bankAccounts: BankAccount[];
+}
+
+const repeatSchema: FormSchema<RepeatData> = {
+	title: 'Repeating sections (Pro)',
+	description:
+		'`repeatingGroup` from @easy-forms/pro. Each account is a grouped sub-form with its own conditional logic: pick a country and account type to reveal the right fields — independently per row.',
+	groups: [
+		{
+			questions: [
+				{
+					key: 'accountHolder',
+					label: 'Account holder',
+					control: 'text',
+					placeholder: 'Ada Lovelace',
+					validators: { required: true, minLength: 2 },
+				},
+			],
+		},
+		{
+			questions: [
+				// A plain declarative question — `repeatingGroup` is just another `control`.
+				{
+					key: 'bankAccounts',
+					label: 'Bank accounts',
+					control: 'repeatingGroup',
+					minItems: 1,
+					maxItems: 4,
+					addLabel: '+ Add account',
+					removeLabel: 'Remove',
+					itemLabel: (i) => `Account ${i + 1}`,
+					// The item is described with the same Group structure as the rest of
+					// the schema — layout, gridCols, nested groups, and per-item
+					// `propsDependsOn` all work here (each row is isolated).
+					groups: [
+						{
+							layout: 'grid',
+							gridCols: 2,
+							questions: [
+								{
+									key: 'bankName',
+									label: 'Bank name',
+									control: 'text',
+									placeholder: 'Acme Bank',
+									validators: { required: true },
+								},
+								{
+									key: 'accountNumber',
+									label: 'Account number',
+									control: 'text',
+									placeholder: '00012345',
+									validators: { required: true, minLength: 4 },
+								},
+								{
+									key: 'country',
+									label: 'Country',
+									control: 'dropdown',
+									placeholder: 'Pick a country',
+									options: [
+										{ value: 'US', label: 'United States' },
+										{ value: 'GB', label: 'United Kingdom' },
+										{ value: 'LK', label: 'Sri Lanka' },
+									],
+								},
+								{
+									key: 'accountType',
+									label: 'Account type',
+									control: 'radioGroup',
+									options: [
+										{ value: 'personal', label: 'Personal' },
+										{ value: 'business', label: 'Business' },
+									],
+								},
+								// In-row conditional: routing number only for US accounts.
+								{
+									key: 'routingNumber',
+									label: 'Routing number',
+									control: 'text',
+									placeholder: '9 digits',
+									dependents: {
+										propsDependsOn: [
+											{
+												fieldNames: ['country'],
+												compute: (v) => ({ hidden: v.country !== 'US' }),
+											},
+										],
+									},
+								},
+								// In-row conditional: IBAN for non-US (once a country is chosen).
+								{
+									key: 'iban',
+									label: 'IBAN',
+									control: 'text',
+									placeholder: 'GB29 NWBK ...',
+									dependents: {
+										propsDependsOn: [
+											{
+												fieldNames: ['country'],
+												compute: (v) => ({ hidden: !v.country || v.country === 'US' }),
+											},
+										],
+									},
+								},
+								// In-row conditional: business name shown + required for business accounts.
+								{
+									key: 'businessName',
+									label: 'Business name',
+									control: 'text',
+									placeholder: 'Registered company name',
+									dependents: {
+										propsDependsOn: [
+											{
+												fieldNames: ['accountType'],
+												compute: (v) => ({
+													hidden: v.accountType !== 'business',
+													required: v.accountType === 'business',
+												}),
+											},
+										],
+									},
+								},
+							],
+						},
+					],
+				},
+			],
+		},
+	],
+};
+
+// Stable reference — an inline object literal would make <Form> recreate its
+// store on every parent re-render (e.g. after submit), discarding field state.
+const repeatInitialValues: RepeatData = { accountHolder: '', bankAccounts: [] };
+
+type Mode = 'plain' | 'wizard' | 'repeat';
+
+const MODE_LABELS: Record<Mode, string> = {
+	plain: 'Plain form',
+	wizard: 'Wizard form',
+	repeat: 'Repeating sections',
+};
 
 export function App() {
 	const [mode, setMode] = useState<Mode>('plain');
@@ -445,10 +600,11 @@ export function App() {
 			<header className="flex flex-col gap-2">
 				<h1 className="text-2xl font-bold">easy-forms playground</h1>
 				<p className="text-sm text-slate-500">
-					Plain form (all controls + the 3 dep kinds) vs. wizard (multi-step + persistence).
+					Plain form (all controls + the 3 dep kinds), wizard (multi-step + persistence), and
+					repeating sections (the Pro `repeatingGroup` control).
 				</p>
 				<div className="flex gap-2 self-start">
-					{(['plain', 'wizard'] as const).map((m) => (
+					{(['plain', 'wizard', 'repeat'] as const).map((m) => (
 						<button
 							key={m}
 							type="button"
@@ -462,7 +618,7 @@ export function App() {
 									: 'rounded-full border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50'
 							}
 						>
-							{m === 'plain' ? 'Plain form' : 'Wizard form'}
+							{MODE_LABELS[m]}
 						</button>
 					))}
 				</div>
@@ -495,7 +651,7 @@ export function App() {
 					showReset
 					onSubmit={async (values) => setSubmitted(values)}
 				/>
-			) : (
+			) : mode === 'wizard' ? (
 				<EasyForm<WizardData>
 					schema={wizardSchema}
 					plugins={[loggerPlugin({ prefix: '[wizard]' })]}
@@ -508,6 +664,14 @@ export function App() {
 						shippingNotes: '',
 						confirmEmail: '',
 					}}
+					onSubmit={async (values) => setSubmitted(values)}
+				/>
+			) : (
+				<EasyForm<RepeatData>
+					schema={repeatSchema}
+					plugins={[loggerPlugin({ prefix: '[repeat]' })]}
+					initialValues={repeatInitialValues}
+					showReset
 					onSubmit={async (values) => setSubmitted(values)}
 				/>
 			)}

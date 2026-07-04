@@ -14,6 +14,7 @@
 
 import type { RuntimeProps } from '../types/dependencies';
 import { firstError, runAsyncCustoms, runSyncValidators } from '../validation/runValidators';
+import { assembleNestedValues } from './assembleNested';
 import { FORM_TOPIC, createListenerHub } from './listeners';
 import type {
 	FieldDescriptor,
@@ -86,6 +87,13 @@ export function createFormStore(options: FormStoreOptions = {}): FormStore {
 			if (!isFieldHidden(key, state)) out[key] = state.value;
 		}
 		return out;
+	}
+
+	// Output-only nested view: dotted keys (`bankAccounts.0.currency`) assemble
+	// into nested arrays/objects. Internal consumers (validators, dependency
+	// engine, derived state) keep using the flat `getValues()`.
+	function getNestedValues(): Record<string, unknown> {
+		return assembleNestedValues(getValues());
 	}
 
 	function registerField(descriptor: FieldDescriptor): () => void {
@@ -325,7 +333,7 @@ export function createFormStore(options: FormStoreOptions = {}): FormStore {
 		try {
 			const ok = await validateAll();
 			if (!ok) return;
-			await handler(getValues());
+			await handler(getNestedValues());
 		} finally {
 			submitting = false;
 			hub.emit(FORM_TOPIC);
@@ -402,6 +410,7 @@ export function createFormStore(options: FormStoreOptions = {}): FormStore {
 	return {
 		getFieldState,
 		getValues,
+		getNestedValues,
 		getValue,
 		getDerived,
 		getGroupRuntimeProps,

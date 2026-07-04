@@ -111,6 +111,9 @@ importers:
       '@easy-forms/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@easy-forms/pro':
+        specifier: workspace:*
+        version: link:../../packages/pro
       '@radix-ui/react-checkbox':
         specifier: ^1.1.2
         version: 1.3.3(@types/react-dom@18.3.7(@types/react@18.3.29))(@types/react@18.3.29)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
