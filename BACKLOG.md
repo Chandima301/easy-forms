@@ -56,21 +56,12 @@ Reference (current dependency directions):
   - **Files:** `packages/core/src/store/{createFormStore,listeners,types}.ts` (primitive);
     `packages/pro/src/hooks/useRepeatingGroup.ts` (+`move`); renderer (drag UI). **Effort:** L.
 
-- ✅ **#C1 — Outside → inside** (form-level field reads the group as an array of row objects).
-  **Shipped 2026-07-04.** A form-level field declares
-  `propsDependsOn: [{ fieldNames: ['bankAccounts'], compute }]` and `compute` receives
-  `bankAccounts === [{ … }, …]` (empty group → `[]`). Implemented via a core container-control
-  registry (`dependencies/containerControls.ts`; Pro registers `repeatingGroup`), a shared
-  `pickValues` helper that nested-picks container sources, and a
-  `store.subscribeKeyAndDescendants` subtree subscription so the dependent wakes on both
-  add/remove and row-field edits. Spec:
+- ✅ **#C1 Outside → inside** and **#C2 Inside → outside** — **shipped 2026-07-04** (commit
+  `ff281bb`). #C1: form-level field reads the group as an array of row objects
+  (`fieldNames: ['bankAccounts']`, empty → `[]`) via a core container-control registry +
+  `pickValues` + `store.subscribeKeyAndDescendants`. #C2: `$root.` escape marker
+  (`fieldNames: ['$root.accountType']`) in a row field's `dependents`. Detail:
   `docs/superpowers/specs/2026-07-04-repeating-group-cross-boundary-deps.md`.
-
-- ✅ **#C2 — Inside → outside** (a row field reads a form-level field). **Shipped 2026-07-04.**
-  Use the `$root.` escape marker in a row field's `dependents` `fieldNames`
-  (`fieldNames: ['$root.accountType']`); `prefixItemGroups` leaves it un-prefixed so the row
-  engine subscribes to the real outside key, and `compute` still sees the clean name. Same spec
-  as #C1.
 
 - **Item-field typing** — inline item fields are loosely `Question`-typed. The
   `ControlTypeExtensions` augmentation registers `repeatingGroup` without a generic (TS module
