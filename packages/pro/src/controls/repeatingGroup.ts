@@ -1,5 +1,11 @@
 import type { ExtensionQuestion, Group } from '@easy-forms/core';
 
+// NOTE: this control is marked a cross-boundary *container* (so a form-level
+// dependent reads it as an array of row objects) via `registerContainerControl`
+// — but that call lives in `hooks/useRepeatingGroup` (a runtime-retained path),
+// NOT here: a top-level side-effect in this types-only module is tree-shaken away
+// under the package's `sideEffects: false`.
+
 /**
  * Config for the Pro `repeatingGroup` control — a sub-form the end user repeats
  * N times (add / remove). `TItem` is the shape of a single repeated row (its
@@ -18,6 +24,11 @@ import type { ExtensionQuestion, Group } from '@easy-forms/core';
  *   minItems: 1, maxItems: 4,
  *   groups: [{ layout: 'grid', gridCols: 2, questions: [ ... ] }] }
  * ```
+ *
+ * Row fields may declare `dependents` that read other fields in the *same* row
+ * by their item-relative key. To read a form-level field from inside a row,
+ * prefix the source name with `$root.` (e.g. `fieldNames: ['$root.accountType']`)
+ * — `compute` still receives the clean name (`accountType`).
  */
 export interface RepeatingGroupConfig<
 	TItem extends Record<string, unknown> = Record<string, unknown>,

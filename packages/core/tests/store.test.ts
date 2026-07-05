@@ -50,6 +50,25 @@ describe('createFormStore', () => {
 		expect(bListener).not.toHaveBeenCalled();
 	});
 
+	it('subscribeKeyAndDescendants fires on the key and any descendant change', () => {
+		const store = createFormStore();
+		store.registerField({ key: 'bankAccounts', initialValue: [0] });
+		store.registerField({ key: 'bankAccounts.0.currency', initialValue: 'USD' });
+		store.registerField({ key: 'bankAccountsExtra', initialValue: 'x' });
+		const listener = vi.fn();
+		store.subscribeKeyAndDescendants('bankAccounts', listener);
+		listener.mockClear();
+		// Exact-key change (row add/remove on the container scalar).
+		store.setValue('bankAccounts', [0, 1], { validate: false });
+		expect(listener).toHaveBeenCalledTimes(1);
+		// Descendant change (a row field edit) — must also fire.
+		store.setValue('bankAccounts.0.currency', 'EUR', { validate: false });
+		expect(listener).toHaveBeenCalledTimes(2);
+		// A key that merely shares a string prefix (no dot boundary) must NOT fire.
+		store.setValue('bankAccountsExtra', 'y', { validate: false });
+		expect(listener).toHaveBeenCalledTimes(2);
+	});
+
 	it('subscribeForm fires on any field change', () => {
 		const store = createFormStore();
 		store.registerField({ key: 'a', initialValue: 1 });

@@ -12,11 +12,12 @@ import { FileRenderer } from '@/components/easy-forms/file-renderer';
 import { MultiSelectRenderer } from '@/components/easy-forms/multiselect-renderer';
 import { NumberRenderer } from '@/components/easy-forms/number-renderer';
 import { RadioGroupRenderer } from '@/components/easy-forms/radio-group-renderer';
+// Pro control — the ejected renderer imports from @easy-forms/pro, which loads the
+// `repeatingGroup` ControlType augmentation.
+import { RepeatingGroupRenderer } from '@/components/easy-forms/repeating-group-renderer';
 import { TextRenderer } from '@/components/easy-forms/text-renderer';
 import { TextAreaRenderer } from '@/components/easy-forms/textarea-renderer';
 import type { RendererRegistry } from '@easy-forms/core';
-// Pro control — importing it also loads the `repeatingGroup` ControlType augmentation.
-import { RepeatingGroupRenderer } from '@easy-forms/pro';
 
 export const easyFormsRegistry: RendererRegistry = {
 	text: TextRenderer,

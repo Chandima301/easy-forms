@@ -430,6 +430,7 @@ export function createFormStore(options: FormStoreOptions = {}): FormStore {
 		validateAll,
 		submit,
 		subscribeField: (key, listener) => hub.on(key, listener),
+		subscribeKeyAndDescendants: (key, listener) => hub.onSubtree(key, listener),
 		subscribeGroup: (id, listener) => hub.on(GROUP_TOPIC_PREFIX + id, listener),
 		subscribeForm: (listener) => hub.on(FORM_TOPIC, listener),
 	};

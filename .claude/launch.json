@@ -11,6 +11,15 @@
 			"port": 5173
 		},
 		{
+			"name": "playground-preview",
+			"runtimeExecutable": "cmd",
+			"runtimeArgs": [
+				"/c",
+				"cd apps\\playground && node node_modules/vite/bin/vite.js --port 5199 --strictPort"
+			],
+			"port": 5199
+		},
+		{
 			"name": "docs",
 			"runtimeExecutable": "cmd",
 			"runtimeArgs": ["/c", "cd apps\\docs && node node_modules/next/dist/bin/next dev -p 3850"],

@@ -439,6 +439,7 @@ const wizardSchema: FormSchema<WizardData> = {
 // A single repeated row — the repeating group's columns.
 interface BankAccount extends Record<string, unknown> {
 	bankName: string;
+	nickname: string;
 	accountNumber: string;
 	country: string;
 	accountType: string;
@@ -455,7 +456,7 @@ interface RepeatData extends Record<string, unknown> {
 const repeatSchema: FormSchema<RepeatData> = {
 	title: 'Repeating sections (Pro)',
 	description:
-		'`repeatingGroup` from @easy-forms/pro. Each account is a grouped sub-form with its own conditional logic: pick a country and account type to reveal the right fields — independently per row.',
+		'`repeatingGroup` from @easy-forms/pro. Each account is a grouped sub-form with its own conditional logic: pick a country and account type to reveal the right fields — independently per row. Cross-boundary deps also work: the Account holder description summarizes every row (#C1), and each row nickname reads the holder via `$root.` (#C2).',
 	groups: [
 		{
 			questions: [
@@ -465,6 +466,25 @@ const repeatSchema: FormSchema<RepeatData> = {
 					control: 'text',
 					placeholder: 'Ada Lovelace',
 					validators: { required: true, minLength: 2 },
+					// #C1 outside → inside: this form-level field reads the whole group as
+					// an array of row objects — its description updates live as you edit a
+					// bank name or add/remove a row.
+					dependents: {
+						propsDependsOn: [
+							{
+								fieldNames: ['bankAccounts'],
+								compute: (v) => {
+									const rows = (v.bankAccounts as BankAccount[]) ?? [];
+									const banks = rows.map((r) => r.bankName).filter(Boolean);
+									return {
+										description: rows.length
+											? `${rows.length} account(s)${banks.length ? `: ${banks.join(', ')}` : ''}`
+											: 'No accounts yet',
+									};
+								},
+							},
+						],
+					},
 				},
 			],
 		},
@@ -494,6 +514,26 @@ const repeatSchema: FormSchema<RepeatData> = {
 									control: 'text',
 									placeholder: 'Acme Bank',
 									validators: { required: true },
+								},
+								// #C2 inside → outside: a row field reads the form-level
+								// `accountHolder` via the `$root.` marker — appears once a
+								// holder is entered and echoes it back.
+								{
+									key: 'nickname',
+									label: 'Account nickname',
+									control: 'text',
+									placeholder: "e.g. Ada's savings",
+									dependents: {
+										propsDependsOn: [
+											{
+												fieldNames: ['$root.accountHolder'],
+												compute: (v) => ({
+													hidden: !v.accountHolder,
+													description: v.accountHolder ? `Holder: ${v.accountHolder}` : undefined,
+												}),
+											},
+										],
+									},
 								},
 								{
 									key: 'accountNumber',

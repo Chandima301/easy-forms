@@ -14,10 +14,54 @@ vi.mock('../src/license/setEasyFormsProLicense', () => ({
 	getLicenseStatus: vi.fn(),
 }));
 
-import { RepeatingGroupRenderer } from '../src/components/RepeatingGroupRenderer';
+import { RepeatingGroupItem } from '../src/components/RepeatingGroupItem';
+import type { RepeatingGroupQuestion } from '../src/controls/repeatingGroup';
 import '../src/controls/repeatingGroup'; // loads the `repeatingGroup` control augmentation
+import { useRepeatingGroup } from '../src/hooks/useRepeatingGroup';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
+
+// The ejectable registry renderer lives in @easy-forms/registry, so it is not
+// importable here. This in-file harness mirrors it exactly (hook + item + markup)
+// so these tests exercise the same Pro contract the ejected renderer relies on.
+function RepeatingGroupRenderer(props: RendererProps<RepeatingGroupQuestion>) {
+	const { question } = props;
+	const { indices, add, remove, atMax, canRemove } = useRepeatingGroup(props);
+	const addLabel = question.addLabel ?? 'Add';
+	const removeLabel = question.removeLabel ?? 'Remove';
+	const itemLabel = question.itemLabel;
+
+	return (
+		<div className="easy-forms-repeat" data-control="repeatingGroup">
+			{question.label ? <div className="easy-forms-repeat__header">{question.label}</div> : null}
+			{indices.map((index, position) => (
+				<div className="easy-forms-repeat__item" data-index={index} key={index}>
+					{itemLabel ? (
+						<div className="easy-forms-repeat__item-header">{itemLabel(position)}</div>
+					) : null}
+					<RepeatingGroupItem
+						groupKey={question.key}
+						index={index}
+						groups={question.groups}
+						defaultItem={question.defaultItem}
+					/>
+					{canRemove ? (
+						<button
+							type="button"
+							className="easy-forms-repeat__remove"
+							onClick={() => remove(index)}
+						>
+							{removeLabel}
+						</button>
+					) : null}
+				</div>
+			))}
+			<button type="button" className="easy-forms-repeat__add" onClick={add} disabled={atMax}>
+				{addLabel}
+			</button>
+		</div>
+	);
+}
 
 const statusMock = vi.mocked(getLicenseStatus);
 const ORIGINAL_ENV = process.env.NODE_ENV;
@@ -77,7 +121,7 @@ afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-describe('RepeatingGroupRenderer', () => {
+describe('useRepeatingGroup + RepeatingGroupItem', () => {
 	it('seeds minItems rows on mount', () => {
 		renderForm(buildSchema({ minItems: 2 }));
 		expect(screen.getAllByLabelText('Currency')).toHaveLength(2);
@@ -213,12 +257,198 @@ describe('RepeatingGroupRenderer', () => {
 		expect(screen.getAllByLabelText('Routing')).toHaveLength(2);
 	});
 
+	it('lets a row field read an outside field via the $root. marker', async () => {
+		const user = userEvent.setup();
+		const repeating = {
+			key: 'bankAccounts',
+			label: 'Bank accounts',
+			control: 'repeatingGroup',
+			minItems: 2,
+			maxItems: 3,
+			groups: [
+				{
+					questions: [
+						{
+							key: 'routing',
+							label: 'Routing',
+							control: 'text',
+							dependents: {
+								propsDependsOn: [
+									{
+										fieldNames: ['$root.accountType'],
+										compute: (v: Record<string, unknown>) => ({
+											hidden: v.accountType !== 'business',
+										}),
+									},
+								],
+							},
+						},
+					],
+				},
+			],
+		} as unknown as Question;
+		const schema: FormSchema = {
+			groups: [
+				{
+					id: 'root',
+					questions: [
+						{ key: 'accountType', label: 'Account type', control: 'text' } as Question,
+						repeating,
+					],
+				},
+			],
+		};
+		renderForm(schema);
+
+		// accountType empty → routing hidden in both rows.
+		expect(screen.queryAllByLabelText('Routing')).toHaveLength(0);
+
+		// Toggling the OUTSIDE field reveals routing in every row (shared source).
+		await user.type(screen.getByLabelText('Account type'), 'business');
+		expect(screen.getAllByLabelText('Routing')).toHaveLength(2);
+	});
+
+	it('supports a mixed rule of row-relative and $root. field names', async () => {
+		const user = userEvent.setup();
+		const repeating = {
+			key: 'bankAccounts',
+			label: 'Bank accounts',
+			control: 'repeatingGroup',
+			minItems: 1,
+			maxItems: 3,
+			groups: [
+				{
+					questions: [
+						{ key: 'country', label: 'Country', control: 'text' },
+						{
+							key: 'routing',
+							label: 'Routing',
+							control: 'text',
+							dependents: {
+								propsDependsOn: [
+									{
+										fieldNames: ['country', '$root.accountType'],
+										compute: (v: Record<string, unknown>) => ({
+											hidden: !(v.country === 'US' && v.accountType === 'business'),
+										}),
+									},
+								],
+							},
+						},
+					],
+				},
+			],
+		} as unknown as Question;
+		const schema: FormSchema = {
+			groups: [
+				{
+					id: 'root',
+					questions: [
+						{ key: 'accountType', label: 'Account type', control: 'text' } as Question,
+						repeating,
+					],
+				},
+			],
+		};
+		renderForm(schema);
+
+		expect(screen.queryAllByLabelText('Routing')).toHaveLength(0);
+		// Row-relative condition met, outside not yet → still hidden.
+		await user.type(screen.getByLabelText('Country'), 'US');
+		expect(screen.queryAllByLabelText('Routing')).toHaveLength(0);
+		// Outside condition now met → routing revealed.
+		await user.type(screen.getByLabelText('Account type'), 'business');
+		expect(screen.getAllByLabelText('Routing')).toHaveLength(1);
+	});
+
 	it('submits a nested array of item objects', async () => {
 		const user = userEvent.setup();
 		const onSubmit = renderForm(buildSchema({ minItems: 1 }));
 		await user.type(screen.getByLabelText('Currency'), 'USD');
 		await user.click(screen.getByRole('button', { name: 'Submit' }));
 		expect(onSubmit).toHaveBeenCalledWith({ bankAccounts: [{ currency: 'USD' }] });
+	});
+
+	it('lets an outside field read the group as an array of row objects (#C1)', async () => {
+		const user = userEvent.setup();
+		const seen: unknown[] = [];
+		const repeating = {
+			key: 'bankAccounts',
+			label: 'Bank accounts',
+			control: 'repeatingGroup',
+			minItems: 1,
+			maxItems: 3,
+			addLabel: 'Add account',
+			groups: [{ questions: [{ key: 'currency', label: 'Currency', control: 'text' }] }],
+		} as unknown as Question;
+		const summary = {
+			key: 'summary',
+			label: 'Summary',
+			control: 'text',
+			dependents: {
+				propsDependsOn: [
+					{
+						fieldNames: ['bankAccounts'],
+						compute: (v: Record<string, unknown>) => {
+							seen.push(v.bankAccounts);
+							const rows = (v.bankAccounts as Array<{ currency?: string }>) ?? [];
+							return { description: rows.map((r) => r.currency ?? '').join(',') };
+						},
+					},
+				],
+			},
+		} as unknown as Question;
+		const schema: FormSchema = {
+			groups: [{ id: 'root', questions: [repeating, summary] }],
+		};
+		renderForm(schema);
+
+		// Compute received an array of row objects (not the raw index list).
+		const first = seen.at(-1) as Array<{ currency?: string }>;
+		expect(Array.isArray(first)).toBe(true);
+		expect(first).toEqual([{ currency: undefined }]);
+
+		// Editing a ROW field re-runs the outside dependent with fresh row objects.
+		await user.type(screen.getByLabelText('Currency'), 'USD');
+		expect(seen.at(-1)).toEqual([{ currency: 'USD' }]);
+
+		// Adding a row updates the array too.
+		await user.click(screen.getByRole('button', { name: 'Add account' }));
+		expect((seen.at(-1) as unknown[]).length).toBe(2);
+	});
+
+	it('gives an outside dependent [] for an empty group (#C1)', () => {
+		const seen: unknown[] = [];
+		const repeating = {
+			key: 'bankAccounts',
+			label: 'Bank accounts',
+			control: 'repeatingGroup',
+			minItems: 0,
+			maxItems: 3,
+			groups: [{ questions: [{ key: 'currency', label: 'Currency', control: 'text' }] }],
+		} as unknown as Question;
+		const summary = {
+			key: 'summary',
+			label: 'Summary',
+			control: 'text',
+			dependents: {
+				propsDependsOn: [
+					{
+						fieldNames: ['bankAccounts'],
+						compute: (v: Record<string, unknown>) => {
+							seen.push(v.bankAccounts);
+							return {};
+						},
+					},
+				],
+			},
+		} as unknown as Question;
+		const schema: FormSchema = {
+			groups: [{ id: 'root', questions: [repeating, summary] }],
+		};
+		renderForm(schema);
+		// No rows seeded (minItems 0) → the outside dependent sees an empty array.
+		expect(seen.at(-1)).toEqual([]);
 	});
 
 	it('shows the unlicensed watermark in dev when no license is set', () => {
@@ -231,5 +461,19 @@ describe('RepeatingGroupRenderer', () => {
 		statusMock.mockReturnValue(licensed);
 		renderForm(buildSchema());
 		expect(screen.queryByText(/unlicensed/i)).toBeNull();
+	});
+
+	it('shows a single watermark across many rows and hands off when the owner is removed', async () => {
+		const user = userEvent.setup();
+		statusMock.mockReturnValue(unlicensed);
+		renderForm(buildSchema({ minItems: 1, maxItems: 3 }));
+		// Two rows, but the singleton yields exactly one badge.
+		await user.click(screen.getByRole('button', { name: 'Add account' }));
+		expect(screen.getAllByText(/unlicensed/i)).toHaveLength(1);
+		// Remove the owning (first) row — ownership hands off, still exactly one.
+		const [firstRemove] = screen.getAllByRole('button', { name: 'Remove' });
+		if (!firstRemove) throw new Error('expected a remove button');
+		await user.click(firstRemove);
+		expect(screen.getAllByText(/unlicensed/i)).toHaveLength(1);
 	});
 });

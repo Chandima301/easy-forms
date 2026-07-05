@@ -66,6 +66,8 @@ function runEdge(
 	const ctx: DependencyContext = {
 		store,
 		getValues: () => store.getValues(),
+		getNestedValues: () => store.getNestedValues(),
+		containerKeys: graph.containerKeys,
 		target: edge.target,
 	};
 	const beforeHidden = effectiveHidden(store, edge.target);
@@ -164,11 +166,17 @@ export function attachDependencyEngine(
 	// edges that depend on it.
 	const unsubs: Array<() => void> = [];
 	for (const [source, edges] of graph.sourceGraph) {
-		const unsub = store.subscribeField(source, () => {
+		const run = () => {
 			for (const edge of edges) {
 				runEdge(edge, store, handlers, graph, hiddenCache);
 			}
-		});
+		};
+		// Container sources (a `repeatingGroup`) must wake on add/remove AND on any
+		// row-field edit, so subscribe to the whole subtree; plain fields use the
+		// exact-key subscription.
+		const unsub = graph.containerKeys.has(source)
+			? store.subscribeKeyAndDescendants(source, run)
+			: store.subscribeField(source, run);
 		unsubs.push(unsub);
 	}
 

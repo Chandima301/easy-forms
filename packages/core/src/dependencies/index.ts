@@ -3,6 +3,7 @@ export {
 	type DependencyEdge,
 	type DependencyGraph,
 } from './buildGraph';
+export { isContainerControl, registerContainerControl } from './containerControls';
 export {
 	assertNoDependencyCycle,
 	detectDependencyCycle,

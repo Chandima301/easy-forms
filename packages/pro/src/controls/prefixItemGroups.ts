@@ -1,5 +1,23 @@
 import type { Dependency, Group, Question } from '@easy-forms/core';
 
+/**
+ * Escape marker for a dependent source that points *outside* the row, at a
+ * form-level field. `prefixDependents` leaves such names un-prefixed so the
+ * per-row engine subscribes to the real outside key on the shared store; the
+ * marker is stripped so `compute` / `when` still sees a clean name
+ * (`$root.accountType` → subscribes to `accountType`, compute reads `accountType`).
+ */
+export const ROOT_FIELD_PREFIX = '$root.';
+
+// Map a dependent's source `fieldName` onto its store key: `$root.`-prefixed
+// names escape the row (real outside key, un-prefixed); every other name is a
+// this-row field and gets the row prefix.
+function mapSourceName(name: string, prefix: string): string {
+	return name.startsWith(ROOT_FIELD_PREFIX)
+		? name.slice(ROOT_FIELD_PREFIX.length)
+		: `${prefix}${name}`;
+}
+
 // Strip the row prefix from a picked-values map so a within-row dependent's
 // `compute` / `when` sees item-relative keys (`bankAccounts.0.country` → `country`).
 function stripPrefix(values: Record<string, unknown>, prefix: string): Record<string, unknown> {
@@ -28,7 +46,7 @@ function prefixDependents(dependents: Dependency, prefix: string): Dependency {
 	const props = src.propsDependsOn as LooseRule[] | undefined;
 	if (props) {
 		out.propsDependsOn = props.map((rule) => ({
-			fieldNames: rule.fieldNames.map((name) => `${prefix}${name}`),
+			fieldNames: rule.fieldNames.map((name) => mapSourceName(name, prefix)),
 			compute: (values: Record<string, unknown>) => rule.compute?.(stripPrefix(values, prefix)),
 		}));
 	}
@@ -36,7 +54,7 @@ function prefixDependents(dependents: Dependency, prefix: string): Dependency {
 	const value = src.valueDependsOn as LooseRule | undefined;
 	if (value) {
 		out.valueDependsOn = {
-			fieldNames: value.fieldNames.map((name) => `${prefix}${name}`),
+			fieldNames: value.fieldNames.map((name) => mapSourceName(name, prefix)),
 			compute: (values: Record<string, unknown>) => value.compute?.(stripPrefix(values, prefix)),
 		};
 	}
@@ -44,7 +62,7 @@ function prefixDependents(dependents: Dependency, prefix: string): Dependency {
 	const reset = src.resetDependsOn as LooseRule | undefined;
 	if (reset) {
 		out.resetDependsOn = {
-			fieldNames: reset.fieldNames.map((name) => `${prefix}${name}`),
+			fieldNames: reset.fieldNames.map((name) => mapSourceName(name, prefix)),
 			when: (values: Record<string, unknown>) => reset.when?.(stripPrefix(values, prefix)),
 		};
 	}

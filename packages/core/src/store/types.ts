@@ -106,6 +106,12 @@ export interface FormStore {
 
 	// --- subscribe ---
 	subscribeField(key: string, listener: () => void): () => void;
+	/**
+	 * Subscribe to `key` and every descendant key (`key.*`). Fires on the
+	 * container scalar (add/remove) and on any nested field edit. Used by the
+	 * dependency engine for container sources (e.g. `repeatingGroup`).
+	 */
+	subscribeKeyAndDescendants(key: string, listener: () => void): () => void;
 	subscribeGroup(id: string, listener: () => void): () => void;
 	subscribeForm(listener: () => void): () => void;
 }

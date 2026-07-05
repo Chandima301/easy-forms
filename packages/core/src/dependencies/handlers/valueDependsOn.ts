@@ -1,4 +1,5 @@
 import type { ValueDependency } from '../../types/dependencies';
+import { pickValues } from '../pickValues';
 import type { DependencyContext, DependencyHandler } from '../types';
 
 /**
@@ -21,12 +22,7 @@ export const valueDependsOnHandler: DependencyHandler<ValueDependency<Record<str
 	apply(config, ctx: DependencyContext) {
 		if (ctx.target.kind !== 'field') return;
 		const targetKey = ctx.target.key;
-		const values = ctx.getValues();
-		const picked: Record<string, unknown> = {};
-		for (const name of config.fieldNames) {
-			picked[name] = values[name];
-		}
-		const next = config.compute(picked);
+		const next = config.compute(pickValues(ctx, config.fieldNames));
 		const current = ctx.store.getFieldState(targetKey).value;
 		if (Object.is(current, next)) return;
 		queueMicrotask(() => {

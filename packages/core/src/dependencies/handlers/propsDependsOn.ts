@@ -9,6 +9,7 @@
 // earlier ones for the same prop.
 
 import type { PropsDependencyRule, RuntimeProps } from '../../types/dependencies';
+import { pickValues } from '../pickValues';
 import type { DependencyHandler } from '../types';
 
 type PropsConfig = PropsDependencyRule<Record<string, unknown>>[];
@@ -26,13 +27,10 @@ export const propsDependsOnHandler: DependencyHandler<PropsConfig> = {
 		return all;
 	},
 	apply(config, ctx) {
-		const values = ctx.getValues();
 		// Accumulate overrides across all rules so we hit the store once.
 		const merged: Partial<RuntimeProps> = {};
 		for (const rule of config) {
-			const picked: Record<string, unknown> = {};
-			for (const name of rule.fieldNames) picked[name] = values[name];
-			const result = rule.compute(picked);
+			const result = rule.compute(pickValues(ctx, rule.fieldNames));
 			if (!result) continue;
 			Object.assign(merged, result);
 		}

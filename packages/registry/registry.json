@@ -198,6 +198,21 @@
 			]
 		},
 		{
+			"name": "repeating-group",
+			"type": "registry:component",
+			"title": "Repeating group renderer (Pro)",
+			"description": "Renderer for the Pro `repeatingGroup` control (repeating sections / field array). Requires @easy-forms/pro.",
+			"dependencies": ["@easy-forms/core", "@easy-forms/pro"],
+			"registryDependencies": ["button"],
+			"files": [
+				{
+					"path": "registry/easy-forms/repeating-group-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/repeating-group-renderer.tsx"
+				}
+			]
+		},
+		{
 			"name": "registry",
 			"type": "registry:lib",
 			"title": "Renderer registry",

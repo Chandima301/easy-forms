@@ -11,6 +11,7 @@
 import type { Question } from '../types/controls';
 import type { Group } from '../types/group';
 import type { FormSchema } from '../types/schema';
+import { isContainerControl } from './containerControls';
 import type { DependencyHandlerRegistry, DependencyTarget } from './types';
 
 export interface DependencyEdge {
@@ -27,6 +28,12 @@ export interface DependencyGraph {
 	groupFieldKeysIndex: Map<string, string[]>;
 	/** All group ids encountered. Used by the engine to register groups + verify ids. */
 	groupIds: string[];
+	/**
+	 * Keys of questions whose `control` is a registered container type. The
+	 * engine subtree-subscribes these sources and handlers read their *nested*
+	 * value. See `containerControls.ts`.
+	 */
+	containerKeys: Set<string>;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: group iteration ignores TFormData.
@@ -41,6 +48,7 @@ function walkGroup(
 	edges: DependencyEdge[],
 	groupFieldKeysIndex: Map<string, string[]>,
 	groupIds: string[],
+	containerKeys: Set<string>,
 	path: string
 ): void {
 	// Group-level deps.
@@ -65,6 +73,10 @@ function walkGroup(
 		collectGroupFieldKeys(group, descendants);
 		groupFieldKeysIndex.set(group.id, descendants);
 	}
+	// Record container questions (scanned for every question, independent of deps).
+	for (const question of group.questions ?? []) {
+		if (isContainerControl(question.control)) containerKeys.add(question.key);
+	}
 	// Field-level deps.
 	for (const question of group.questions ?? []) {
 		const deps = question.dependents;
@@ -81,7 +93,14 @@ function walkGroup(
 	}
 	// Recurse.
 	(group.groups ?? []).forEach((child, idx) => {
-		walkGroup(child, edges, groupFieldKeysIndex, groupIds, `${path}/${child.id ?? `[${idx}]`}`);
+		walkGroup(
+			child,
+			edges,
+			groupFieldKeysIndex,
+			groupIds,
+			containerKeys,
+			`${path}/${child.id ?? `[${idx}]`}`
+		);
 	});
 }
 
@@ -93,9 +112,17 @@ export function buildDependencyGraph(
 	const edges: DependencyEdge[] = [];
 	const groupFieldKeysIndex = new Map<string, string[]>();
 	const groupIds: string[] = [];
+	const containerKeys = new Set<string>();
 
 	schema.groups.forEach((group, idx) => {
-		walkGroup(group, edges, groupFieldKeysIndex, groupIds, group.id ?? `root[${idx}]`);
+		walkGroup(
+			group,
+			edges,
+			groupFieldKeysIndex,
+			groupIds,
+			containerKeys,
+			group.id ?? `root[${idx}]`
+		);
 	});
 	if (schema.wizard) {
 		schema.wizard.steps.forEach((step) => {
@@ -105,6 +132,7 @@ export function buildDependencyGraph(
 					edges,
 					groupFieldKeysIndex,
 					groupIds,
+					containerKeys,
 					`step:${step.id}/${group.id ?? `[${idx}]`}`
 				);
 			});
@@ -126,5 +154,5 @@ export function buildDependencyGraph(
 		}
 	}
 
-	return { edges, sourceGraph, groupFieldKeysIndex, groupIds };
+	return { edges, sourceGraph, groupFieldKeysIndex, groupIds, containerKeys };
 }
