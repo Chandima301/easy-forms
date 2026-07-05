@@ -198,36 +198,6 @@
 			]
 		},
 		{
-			"name": "repeating-group",
-			"type": "registry:component",
-			"title": "Repeating group renderer (Pro)",
-			"description": "Renderer for the Pro `repeatingGroup` control (repeating sections / field array). Requires @easy-forms/pro.",
-			"dependencies": ["@easy-forms/core", "@easy-forms/pro"],
-			"registryDependencies": ["button"],
-			"files": [
-				{
-					"path": "registry/easy-forms/repeating-group-renderer.tsx",
-					"type": "registry:component",
-					"target": "components/easy-forms/repeating-group-renderer.tsx"
-				}
-			]
-		},
-		{
-			"name": "advanced-wizard",
-			"type": "registry:component",
-			"title": "Advanced wizard (Pro)",
-			"description": "Ejectable branching / non-linear wizard: conditional routing, per-path validation gating, back-stack. Owns all chrome; the engine lives in @easy-forms/pro. Registry is bound by default (override via the `registry` prop). Requires @easy-forms/pro.",
-			"dependencies": ["@easy-forms/core", "@easy-forms/pro"],
-			"registryDependencies": ["button", "@easy-forms/registry"],
-			"files": [
-				{
-					"path": "registry/easy-forms/advanced-wizard.tsx",
-					"type": "registry:component",
-					"target": "components/easy-forms/advanced-wizard.tsx"
-				}
-			]
-		},
-		{
 			"name": "registry",
 			"type": "registry:lib",
 			"title": "Renderer registry",
