@@ -2,6 +2,7 @@
 //   "Plain"   — kitchen sink of every control + the 3 categorical dependency kinds
 //   "Wizard"  — multi-step form with persistence + step-level visibility + logger plugin
 
+import { AdvancedWizard } from '@/components/easy-forms/advanced-wizard';
 import { EasyForm } from '@/components/easy-forms/easy-form';
 import {
 	type CustomRendererProps,
@@ -9,6 +10,7 @@ import {
 	type Option,
 	loggerPlugin,
 } from '@easy-forms/core';
+import type { AdvancedWizardConfig } from '@easy-forms/pro';
 import { useState } from 'react';
 
 interface DemoFormData extends Record<string, unknown> {
@@ -623,16 +625,188 @@ const repeatSchema: FormSchema<RepeatData> = {
 // store on every parent re-render (e.g. after submit), discarding field state.
 const repeatInitialValues: RepeatData = { accountHolder: '', bankAccounts: [] };
 
-type Mode = 'plain' | 'wizard' | 'repeat';
+// --- Branching wizard demo (Pro `AdvancedWizard`) ------------------------
+//
+// An insurance-quote flow that is NON-linear: the applicant type routes to a
+// different profile step, and only "Premium" coverage reveals the add-ons step.
+// Fields on the branch you don't take are never mounted — so they neither block
+// validation nor appear in the submission. Declarative routing (`next`) is
+// `{ fieldNames, when, to }` rules, first match wins.
+const advancedWizardBase: Omit<AdvancedWizardConfig, 'navigation'> = {
+	start: 'basics',
+	steps: [
+		{
+			id: 'basics',
+			title: 'Basics',
+			description: 'Who is this policy for?',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'applicantType',
+							label: 'Applicant type',
+							control: 'radioGroup',
+							options: [
+								{ value: 'individual', label: 'Individual' },
+								{ value: 'business', label: 'Business' },
+							],
+							validators: { required: true },
+						},
+					],
+				},
+			],
+			// Route on the applicant type: business → company profile, else → personal.
+			next: [
+				{
+					fieldNames: ['applicantType'],
+					when: (v) => v.applicantType === 'business',
+					to: 'business',
+				},
+				{ fieldNames: [], when: () => true, to: 'individual' },
+			],
+		},
+		{
+			id: 'individual',
+			title: 'Your details',
+			groups: [
+				{
+					layout: 'grid',
+					gridCols: 2,
+					questions: [
+						{
+							key: 'fullName',
+							label: 'Full name',
+							control: 'text',
+							validators: { required: true },
+						},
+						{
+							key: 'age',
+							label: 'Age',
+							control: 'number',
+							validators: { required: true, min: 18 },
+						},
+					],
+				},
+			],
+			next: 'coverage',
+		},
+		{
+			id: 'business',
+			title: 'Company details',
+			groups: [
+				{
+					layout: 'grid',
+					gridCols: 2,
+					questions: [
+						{
+							key: 'companyName',
+							label: 'Company name',
+							control: 'text',
+							validators: { required: true },
+						},
+						{
+							key: 'employees',
+							label: 'Employees',
+							control: 'number',
+							validators: { required: true, min: 1 },
+						},
+					],
+				},
+			],
+			next: 'coverage',
+		},
+		{
+			id: 'coverage',
+			title: 'Coverage',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'coverageLevel',
+							label: 'Coverage level',
+							control: 'radioGroup',
+							options: [
+								{ value: 'basic', label: 'Basic' },
+								{ value: 'premium', label: 'Premium (unlocks add-ons)' },
+							],
+							validators: { required: true },
+						},
+					],
+				},
+			],
+			// Only Premium routes through the add-ons step.
+			next: [
+				{ fieldNames: ['coverageLevel'], when: (v) => v.coverageLevel === 'premium', to: 'addons' },
+				{ fieldNames: [], when: () => true, to: 'review' },
+			],
+		},
+		{
+			id: 'addons',
+			title: 'Add-ons',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'addons',
+							label: 'Premium add-ons',
+							control: 'checkboxList',
+							options: [
+								{ value: 'roadside', label: 'Roadside assistance' },
+								{ value: 'legal', label: 'Legal cover' },
+								{ value: 'travel', label: 'Worldwide travel' },
+							],
+						},
+					],
+				},
+			],
+			next: 'review',
+		},
+		{
+			id: 'review',
+			title: 'Review',
+			description: 'Confirm your email to get the quote.',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'email',
+							label: 'Email',
+							control: 'email',
+							validators: { required: true, email: true },
+						},
+					],
+				},
+			],
+		},
+	],
+};
+
+// Two variants of the same flow, differing only in how validation gates navigation:
+//   - strict  — a step with errors blocks Next (the classic wizard).
+//   - lenient — Next always advances; each step shows an error chip and the final
+//     Review step lists everything still to fix (submit still blocks).
+const advancedWizardConfigStrict: AdvancedWizardConfig = {
+	...advancedWizardBase,
+	navigation: 'strict',
+};
+const advancedWizardConfigLenient: AdvancedWizardConfig = {
+	...advancedWizardBase,
+	navigation: 'lenient',
+};
+
+type Mode = 'plain' | 'wizard' | 'repeat' | 'advanced';
+type AdvNav = 'strict' | 'lenient';
 
 const MODE_LABELS: Record<Mode, string> = {
 	plain: 'Plain form',
 	wizard: 'Wizard form',
 	repeat: 'Repeating sections',
+	advanced: 'Branching wizard',
 };
 
 export function App() {
 	const [mode, setMode] = useState<Mode>('plain');
+	const [advNav, setAdvNav] = useState<AdvNav>('lenient');
 	const [submitted, setSubmitted] = useState<unknown>(null);
 
 	return (
@@ -644,7 +818,7 @@ export function App() {
 					repeating sections (the Pro `repeatingGroup` control).
 				</p>
 				<div className="flex gap-2 self-start">
-					{(['plain', 'wizard', 'repeat'] as const).map((m) => (
+					{(['plain', 'wizard', 'repeat', 'advanced'] as const).map((m) => (
 						<button
 							key={m}
 							type="button"
@@ -706,7 +880,7 @@ export function App() {
 					}}
 					onSubmit={async (values) => setSubmitted(values)}
 				/>
-			) : (
+			) : mode === 'repeat' ? (
 				<EasyForm<RepeatData>
 					schema={repeatSchema}
 					plugins={[loggerPlugin({ prefix: '[repeat]' })]}
@@ -714,6 +888,40 @@ export function App() {
 					showReset
 					onSubmit={async (values) => setSubmitted(values)}
 				/>
+			) : (
+				<div className="flex flex-col gap-3">
+					<div className="flex items-center gap-2 text-xs">
+						<span className="text-slate-500">Navigation:</span>
+						{(['strict', 'lenient'] as const).map((n) => (
+							<button
+								key={n}
+								type="button"
+								onClick={() => {
+									setAdvNav(n);
+									setSubmitted(null);
+								}}
+								className={
+									n === advNav
+										? 'rounded-full bg-slate-900 px-3 py-1 font-medium text-white'
+										: 'rounded-full border border-slate-300 px-3 py-1 font-medium text-slate-700 hover:bg-slate-50'
+								}
+							>
+								{n}
+							</button>
+						))}
+						<span className="text-slate-400">
+							{advNav === 'strict'
+								? 'Next is blocked until the current step is valid.'
+								: 'Next always advances; errors show as chips and at Review.'}
+						</span>
+					</div>
+					<AdvancedWizard
+						key={advNav}
+						config={advNav === 'strict' ? advancedWizardConfigStrict : advancedWizardConfigLenient}
+						plugins={[loggerPlugin({ prefix: '[advanced]' })]}
+						onSubmit={async (values) => setSubmitted(values)}
+					/>
+				</div>
 			)}
 			{submitted ? (
 				<section className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
