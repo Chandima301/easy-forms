@@ -62,10 +62,10 @@ describe('ProWatermark', () => {
 		expect(container).toBeEmptyDOMElement();
 	});
 
-	it('renders nothing in production even when unlicensed', () => {
+	it('renders the unlicensed badge in production too', () => {
 		process.env.NODE_ENV = 'production';
 		statusMock.mockReturnValue(invalidStatus);
-		const { container } = render(<ProWatermark />);
-		expect(container).toBeEmptyDOMElement();
+		render(<ProWatermark />);
+		expect(screen.getByText(/unlicensed/i)).toBeInTheDocument();
 	});
 });

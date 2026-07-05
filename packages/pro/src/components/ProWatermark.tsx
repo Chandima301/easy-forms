@@ -1,8 +1,6 @@
 import type { CSSProperties } from 'react';
 import { getLicenseStatus } from '../license/setEasyFormsProLicense';
 
-const isDev = (): boolean => process.env.NODE_ENV !== 'production';
-
 const badgeStyle: CSSProperties = {
 	position: 'fixed',
 	bottom: 12,
@@ -22,12 +20,11 @@ const badgeStyle: CSSProperties = {
 };
 
 /**
- * Dev-only "Pro — unlicensed" badge. Renders `null` in production and when a
- * valid license is present, so it is invisible to honest, licensed apps and to
- * every production build.
+ * "Pro — unlicensed" badge. Renders `null` only when a valid license is
+ * present, so it is invisible to honest, licensed apps but visible in every
+ * unlicensed build — including production.
  */
 export function ProWatermark(): JSX.Element | null {
-	if (!isDev()) return null;
 	if (getLicenseStatus().valid) return null;
 
 	return (
