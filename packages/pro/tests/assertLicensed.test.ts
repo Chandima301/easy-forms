@@ -48,12 +48,13 @@ describe('assertLicensed', () => {
 		expect(warn).toHaveBeenCalledTimes(2);
 	});
 
-	it('never warns in production but still reports unlicensed', () => {
+	it('warns once per feature in production and reports unlicensed', () => {
 		process.env.NODE_ENV = 'production';
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 		statusMock.mockReturnValue({ valid: false, reason: 'expired' });
 
 		expect(assertLicensed('repeatingGroup')).toBe(false);
-		expect(warn).not.toHaveBeenCalled();
+		expect(assertLicensed('repeatingGroup')).toBe(false);
+		expect(warn).toHaveBeenCalledTimes(1);
 	});
 });
