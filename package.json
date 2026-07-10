@@ -17,6 +17,7 @@
 		"clean": "turbo run clean && rimraf node_modules",
 		"changeset": "changeset",
 		"version": "changeset version",
+		"ci:version": "changeset version && pnpm format",
 		"release": "turbo run build && changeset publish"
 	},
 	"devDependencies": {
