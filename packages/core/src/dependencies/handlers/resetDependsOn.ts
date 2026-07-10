@@ -9,6 +9,7 @@
 // `resetDependsOn` rules. (We can lift this if the use case becomes common.)
 
 import type { ResetDependency } from '../../types/dependencies';
+import { pickValues } from '../pickValues';
 import type { DependencyHandler } from '../types';
 
 const previousWhen = new WeakMap<object, boolean>();
@@ -18,10 +19,7 @@ export const resetDependsOnHandler: DependencyHandler<ResetDependency<Record<str
 		return [...config.fieldNames];
 	},
 	apply(config, ctx) {
-		const values = ctx.getValues();
-		const picked: Record<string, unknown> = {};
-		for (const name of config.fieldNames) picked[name] = values[name];
-		const now = !!config.when(picked);
+		const now = !!config.when(pickValues(ctx, config.fieldNames));
 		const prev = previousWhen.get(config as unknown as object);
 		previousWhen.set(config as unknown as object, now);
 		// Rising edge only.

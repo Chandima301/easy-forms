@@ -436,6 +436,11 @@ const wizardSchema: FormSchema<WizardData> = {
 
 type Mode = 'plain' | 'wizard';
 
+const MODE_LABELS: Record<Mode, string> = {
+	plain: 'Plain form',
+	wizard: 'Wizard form',
+};
+
 export function App() {
 	const [mode, setMode] = useState<Mode>('plain');
 	const [submitted, setSubmitted] = useState<unknown>(null);
@@ -445,7 +450,7 @@ export function App() {
 			<header className="flex flex-col gap-2">
 				<h1 className="text-2xl font-bold">easy-forms playground</h1>
 				<p className="text-sm text-slate-500">
-					Plain form (all controls + the 3 dep kinds) vs. wizard (multi-step + persistence).
+					Plain form (all controls + the 3 dep kinds) and wizard (multi-step + persistence).
 				</p>
 				<div className="flex gap-2 self-start">
 					{(['plain', 'wizard'] as const).map((m) => (
@@ -462,7 +467,7 @@ export function App() {
 									: 'rounded-full border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50'
 							}
 						>
-							{m === 'plain' ? 'Plain form' : 'Wizard form'}
+							{MODE_LABELS[m]}
 						</button>
 					))}
 				</div>

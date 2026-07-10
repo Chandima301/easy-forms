@@ -13,7 +13,9 @@ export {
 	type DependencyHandlerRegistry,
 	type DependencyTarget,
 	detectDependencyCycle,
+	isContainerControl,
 	propsDependsOnHandler,
+	registerContainerControl,
 	resetDependsOnHandler,
 	valueDependsOnHandler,
 } from './dependencies';

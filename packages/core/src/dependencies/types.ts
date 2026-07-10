@@ -31,6 +31,14 @@ export type DependencyTarget =
 export interface DependencyContext {
 	store: FormStore;
 	getValues: () => Record<string, unknown>;
+	/**
+	 * Nested (output-shaped) view of the form values — dotted/indexed keys
+	 * assembled into arrays/objects. Used to read a container source (a
+	 * `repeatingGroup`) as an array of row objects rather than its raw index list.
+	 */
+	getNestedValues: () => Record<string, unknown>;
+	/** Source keys that are containers — read from `getNestedValues`, not flat. */
+	containerKeys: ReadonlySet<string>;
 	target: DependencyTarget;
 }
 
