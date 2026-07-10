@@ -34,10 +34,13 @@ jobs:
       - name: Create Release PR or publish
         uses: changesets/action@v1
         with:
+          # Runs the `ci:version` script (`changeset version && pnpm format`).
           # `changeset version` re-serializes package.json and expands short
           # arrays (files/sideEffects); `pnpm format` re-applies biome formatting
-          # so the "Version Packages" commit stays lint-clean.
-          version: pnpm changeset version && pnpm format
+          # so the "Version Packages" commit stays lint-clean. Must be a single
+          # script — changesets/action runs this without a shell, so a literal
+          # `&&` here would be passed as an argument, not a command separator.
+          version: pnpm ci:version
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
