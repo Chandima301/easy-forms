@@ -2,7 +2,6 @@
 //   "Plain"   — kitchen sink of every control + the 3 categorical dependency kinds
 //   "Wizard"  — multi-step form with persistence + step-level visibility + logger plugin
 
-import { AdvancedWizard } from '@/components/easy-forms/advanced-wizard';
 import { EasyForm } from '@/components/easy-forms/easy-form';
 import {
 	type CustomRendererProps,
@@ -10,7 +9,6 @@ import {
 	type Option,
 	loggerPlugin,
 } from '@easy-forms/core';
-import type { AdvancedWizardConfig } from '@easy-forms/pro';
 import { useState } from 'react';
 
 interface DemoFormData extends Record<string, unknown> {
@@ -436,377 +434,15 @@ const wizardSchema: FormSchema<WizardData> = {
 	},
 };
 
-// --- Repeating-sections demo (Pro `repeatingGroup`) ----------------------
-
-// A single repeated row — the repeating group's columns.
-interface BankAccount extends Record<string, unknown> {
-	bankName: string;
-	nickname: string;
-	accountNumber: string;
-	country: string;
-	accountType: string;
-	routingNumber: string;
-	iban: string;
-	businessName: string;
-}
-
-interface RepeatData extends Record<string, unknown> {
-	accountHolder: string;
-	bankAccounts: BankAccount[];
-}
-
-const repeatSchema: FormSchema<RepeatData> = {
-	title: 'Repeating sections (Pro)',
-	description:
-		'`repeatingGroup` from @easy-forms/pro. Each account is a grouped sub-form with its own conditional logic: pick a country and account type to reveal the right fields — independently per row. Cross-boundary deps also work: the Account holder description summarizes every row (#C1), and each row nickname reads the holder via `$root.` (#C2).',
-	groups: [
-		{
-			questions: [
-				{
-					key: 'accountHolder',
-					label: 'Account holder',
-					control: 'text',
-					placeholder: 'Ada Lovelace',
-					validators: { required: true, minLength: 2 },
-					// #C1 outside → inside: this form-level field reads the whole group as
-					// an array of row objects — its description updates live as you edit a
-					// bank name or add/remove a row.
-					dependents: {
-						propsDependsOn: [
-							{
-								fieldNames: ['bankAccounts'],
-								compute: (v) => {
-									const rows = (v.bankAccounts as BankAccount[]) ?? [];
-									const banks = rows.map((r) => r.bankName).filter(Boolean);
-									return {
-										description: rows.length
-											? `${rows.length} account(s)${banks.length ? `: ${banks.join(', ')}` : ''}`
-											: 'No accounts yet',
-									};
-								},
-							},
-						],
-					},
-				},
-			],
-		},
-		{
-			questions: [
-				// A plain declarative question — `repeatingGroup` is just another `control`.
-				{
-					key: 'bankAccounts',
-					label: 'Bank accounts',
-					control: 'repeatingGroup',
-					minItems: 1,
-					maxItems: 4,
-					addLabel: '+ Add account',
-					removeLabel: 'Remove',
-					itemLabel: (i) => `Account ${i + 1}`,
-					// The item is described with the same Group structure as the rest of
-					// the schema — layout, gridCols, nested groups, and per-item
-					// `propsDependsOn` all work here (each row is isolated).
-					groups: [
-						{
-							layout: 'grid',
-							gridCols: 2,
-							questions: [
-								{
-									key: 'bankName',
-									label: 'Bank name',
-									control: 'text',
-									placeholder: 'Acme Bank',
-									validators: { required: true },
-								},
-								// #C2 inside → outside: a row field reads the form-level
-								// `accountHolder` via the `$root.` marker — appears once a
-								// holder is entered and echoes it back.
-								{
-									key: 'nickname',
-									label: 'Account nickname',
-									control: 'text',
-									placeholder: "e.g. Ada's savings",
-									dependents: {
-										propsDependsOn: [
-											{
-												fieldNames: ['$root.accountHolder'],
-												compute: (v) => ({
-													hidden: !v.accountHolder,
-													description: v.accountHolder ? `Holder: ${v.accountHolder}` : undefined,
-												}),
-											},
-										],
-									},
-								},
-								{
-									key: 'accountNumber',
-									label: 'Account number',
-									control: 'text',
-									placeholder: '00012345',
-									validators: { required: true, minLength: 4 },
-								},
-								{
-									key: 'country',
-									label: 'Country',
-									control: 'dropdown',
-									placeholder: 'Pick a country',
-									options: [
-										{ value: 'US', label: 'United States' },
-										{ value: 'GB', label: 'United Kingdom' },
-										{ value: 'LK', label: 'Sri Lanka' },
-									],
-								},
-								{
-									key: 'accountType',
-									label: 'Account type',
-									control: 'radioGroup',
-									options: [
-										{ value: 'personal', label: 'Personal' },
-										{ value: 'business', label: 'Business' },
-									],
-								},
-								// In-row conditional: routing number only for US accounts.
-								{
-									key: 'routingNumber',
-									label: 'Routing number',
-									control: 'text',
-									placeholder: '9 digits',
-									dependents: {
-										propsDependsOn: [
-											{
-												fieldNames: ['country'],
-												compute: (v) => ({ hidden: v.country !== 'US' }),
-											},
-										],
-									},
-								},
-								// In-row conditional: IBAN for non-US (once a country is chosen).
-								{
-									key: 'iban',
-									label: 'IBAN',
-									control: 'text',
-									placeholder: 'GB29 NWBK ...',
-									dependents: {
-										propsDependsOn: [
-											{
-												fieldNames: ['country'],
-												compute: (v) => ({ hidden: !v.country || v.country === 'US' }),
-											},
-										],
-									},
-								},
-								// In-row conditional: business name shown + required for business accounts.
-								{
-									key: 'businessName',
-									label: 'Business name',
-									control: 'text',
-									placeholder: 'Registered company name',
-									dependents: {
-										propsDependsOn: [
-											{
-												fieldNames: ['accountType'],
-												compute: (v) => ({
-													hidden: v.accountType !== 'business',
-													required: v.accountType === 'business',
-												}),
-											},
-										],
-									},
-								},
-							],
-						},
-					],
-				},
-			],
-		},
-	],
-};
-
-// Stable reference — an inline object literal would make <Form> recreate its
-// store on every parent re-render (e.g. after submit), discarding field state.
-const repeatInitialValues: RepeatData = { accountHolder: '', bankAccounts: [] };
-
-// --- Branching wizard demo (Pro `AdvancedWizard`) ------------------------
-//
-// An insurance-quote flow that is NON-linear: the applicant type routes to a
-// different profile step, and only "Premium" coverage reveals the add-ons step.
-// Fields on the branch you don't take are never mounted — so they neither block
-// validation nor appear in the submission. Declarative routing (`next`) is
-// `{ fieldNames, when, to }` rules, first match wins.
-const advancedWizardBase: Omit<AdvancedWizardConfig, 'navigation'> = {
-	start: 'basics',
-	steps: [
-		{
-			id: 'basics',
-			title: 'Basics',
-			description: 'Who is this policy for?',
-			groups: [
-				{
-					questions: [
-						{
-							key: 'applicantType',
-							label: 'Applicant type',
-							control: 'radioGroup',
-							options: [
-								{ value: 'individual', label: 'Individual' },
-								{ value: 'business', label: 'Business' },
-							],
-							validators: { required: true },
-						},
-					],
-				},
-			],
-			// Route on the applicant type: business → company profile, else → personal.
-			next: [
-				{
-					fieldNames: ['applicantType'],
-					when: (v) => v.applicantType === 'business',
-					to: 'business',
-				},
-				{ fieldNames: [], when: () => true, to: 'individual' },
-			],
-		},
-		{
-			id: 'individual',
-			title: 'Your details',
-			groups: [
-				{
-					layout: 'grid',
-					gridCols: 2,
-					questions: [
-						{
-							key: 'fullName',
-							label: 'Full name',
-							control: 'text',
-							validators: { required: true },
-						},
-						{
-							key: 'age',
-							label: 'Age',
-							control: 'number',
-							validators: { required: true, min: 18 },
-						},
-					],
-				},
-			],
-			next: 'coverage',
-		},
-		{
-			id: 'business',
-			title: 'Company details',
-			groups: [
-				{
-					layout: 'grid',
-					gridCols: 2,
-					questions: [
-						{
-							key: 'companyName',
-							label: 'Company name',
-							control: 'text',
-							validators: { required: true },
-						},
-						{
-							key: 'employees',
-							label: 'Employees',
-							control: 'number',
-							validators: { required: true, min: 1 },
-						},
-					],
-				},
-			],
-			next: 'coverage',
-		},
-		{
-			id: 'coverage',
-			title: 'Coverage',
-			groups: [
-				{
-					questions: [
-						{
-							key: 'coverageLevel',
-							label: 'Coverage level',
-							control: 'radioGroup',
-							options: [
-								{ value: 'basic', label: 'Basic' },
-								{ value: 'premium', label: 'Premium (unlocks add-ons)' },
-							],
-							validators: { required: true },
-						},
-					],
-				},
-			],
-			// Only Premium routes through the add-ons step.
-			next: [
-				{ fieldNames: ['coverageLevel'], when: (v) => v.coverageLevel === 'premium', to: 'addons' },
-				{ fieldNames: [], when: () => true, to: 'review' },
-			],
-		},
-		{
-			id: 'addons',
-			title: 'Add-ons',
-			groups: [
-				{
-					questions: [
-						{
-							key: 'addons',
-							label: 'Premium add-ons',
-							control: 'checkboxList',
-							options: [
-								{ value: 'roadside', label: 'Roadside assistance' },
-								{ value: 'legal', label: 'Legal cover' },
-								{ value: 'travel', label: 'Worldwide travel' },
-							],
-						},
-					],
-				},
-			],
-			next: 'review',
-		},
-		{
-			id: 'review',
-			title: 'Review',
-			description: 'Confirm your email to get the quote.',
-			groups: [
-				{
-					questions: [
-						{
-							key: 'email',
-							label: 'Email',
-							control: 'email',
-							validators: { required: true, email: true },
-						},
-					],
-				},
-			],
-		},
-	],
-};
-
-// Two variants of the same flow, differing only in how validation gates navigation:
-//   - strict  — a step with errors blocks Next (the classic wizard).
-//   - lenient — Next always advances; each step shows an error chip and the final
-//     Review step lists everything still to fix (submit still blocks).
-const advancedWizardConfigStrict: AdvancedWizardConfig = {
-	...advancedWizardBase,
-	navigation: 'strict',
-};
-const advancedWizardConfigLenient: AdvancedWizardConfig = {
-	...advancedWizardBase,
-	navigation: 'lenient',
-};
-
-type Mode = 'plain' | 'wizard' | 'repeat' | 'advanced';
-type AdvNav = 'strict' | 'lenient';
+type Mode = 'plain' | 'wizard';
 
 const MODE_LABELS: Record<Mode, string> = {
 	plain: 'Plain form',
 	wizard: 'Wizard form',
-	repeat: 'Repeating sections',
-	advanced: 'Branching wizard',
 };
 
 export function App() {
 	const [mode, setMode] = useState<Mode>('plain');
-	const [advNav, setAdvNav] = useState<AdvNav>('lenient');
 	const [submitted, setSubmitted] = useState<unknown>(null);
 
 	return (
@@ -814,11 +450,10 @@ export function App() {
 			<header className="flex flex-col gap-2">
 				<h1 className="text-2xl font-bold">easy-forms playground</h1>
 				<p className="text-sm text-slate-500">
-					Plain form (all controls + the 3 dep kinds), wizard (multi-step + persistence), and
-					repeating sections (the Pro `repeatingGroup` control).
+					Plain form (all controls + the 3 dep kinds) and wizard (multi-step + persistence).
 				</p>
 				<div className="flex gap-2 self-start">
-					{(['plain', 'wizard', 'repeat', 'advanced'] as const).map((m) => (
+					{(['plain', 'wizard'] as const).map((m) => (
 						<button
 							key={m}
 							type="button"
@@ -865,7 +500,7 @@ export function App() {
 					showReset
 					onSubmit={async (values) => setSubmitted(values)}
 				/>
-			) : mode === 'wizard' ? (
+			) : (
 				<EasyForm<WizardData>
 					schema={wizardSchema}
 					plugins={[loggerPlugin({ prefix: '[wizard]' })]}
@@ -880,48 +515,6 @@ export function App() {
 					}}
 					onSubmit={async (values) => setSubmitted(values)}
 				/>
-			) : mode === 'repeat' ? (
-				<EasyForm<RepeatData>
-					schema={repeatSchema}
-					plugins={[loggerPlugin({ prefix: '[repeat]' })]}
-					initialValues={repeatInitialValues}
-					showReset
-					onSubmit={async (values) => setSubmitted(values)}
-				/>
-			) : (
-				<div className="flex flex-col gap-3">
-					<div className="flex items-center gap-2 text-xs">
-						<span className="text-slate-500">Navigation:</span>
-						{(['strict', 'lenient'] as const).map((n) => (
-							<button
-								key={n}
-								type="button"
-								onClick={() => {
-									setAdvNav(n);
-									setSubmitted(null);
-								}}
-								className={
-									n === advNav
-										? 'rounded-full bg-slate-900 px-3 py-1 font-medium text-white'
-										: 'rounded-full border border-slate-300 px-3 py-1 font-medium text-slate-700 hover:bg-slate-50'
-								}
-							>
-								{n}
-							</button>
-						))}
-						<span className="text-slate-400">
-							{advNav === 'strict'
-								? 'Next is blocked until the current step is valid.'
-								: 'Next always advances; errors show as chips and at Review.'}
-						</span>
-					</div>
-					<AdvancedWizard
-						key={advNav}
-						config={advNav === 'strict' ? advancedWizardConfigStrict : advancedWizardConfigLenient}
-						plugins={[loggerPlugin({ prefix: '[advanced]' })]}
-						onSubmit={async (values) => setSubmitted(values)}
-					/>
-				</div>
 			)}
 			{submitted ? (
 				<section className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
