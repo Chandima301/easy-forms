@@ -59,9 +59,7 @@ const payloadSegment = stringToBase64url(JSON.stringify(claims));
 const signature = ed.sign(signingMessage(payloadSegment), base64urlToBytes(privateB64));
 const token = `${payloadSegment}.${bytesToBase64url(signature)}`;
 
-console.log(
-	`Issued ${aud} token for "${customer}" (${seats} seat(s)), expires ${expRaw}:`
-);
+console.log(`Issued ${aud} token for "${customer}" (${seats} seat(s)), expires ${expRaw}:`);
 console.log('');
 console.log(token);
 console.log('');
