@@ -1,0 +1,30 @@
+---
+title: Installing Pro renderers
+description: Add the premium repeating-group and advanced-wizard renderers with your registry token.
+icon: KeyRound
+---
+
+The Pro renderers ship from an authenticated registry; after purchase you receive a registry
+token. Add the registry to your `components.json`:
+
+```jsonc title="components.json"
+"registries": {
+	"@ef-pro": {
+		"url": "https://easy-forms-pro-registry.<subdomain>.workers.dev/r/{name}.json",
+		"headers": { "Authorization": "Bearer ${EASY_FORMS_PRO_TOKEN}" }
+	}
+}
+```
+
+Set the token in your environment and add a renderer:
+
+```bash
+EASY_FORMS_PRO_TOKEN=<your token> npx shadcn@latest add @ef-pro/repeating-group
+```
+
+Then set your license key at runtime to clear the watermark:
+
+```ts
+import { setEasyFormsProLicense } from '@easy-forms/pro';
+setEasyFormsProLicense('<your license key>');
+```
