@@ -87,4 +87,19 @@ describe('verifyLicense', () => {
 			reason: 'malformed',
 		});
 	});
+
+	it('accepts a token with an explicit license audience', () => {
+		const { privateKey, publicKey } = makeKeypair();
+		const token = signToken(defaultClaims({ aud: 'license' }), privateKey);
+		expect(verifyLicense(token, publicKey).valid).toBe(true);
+	});
+
+	it('rejects a registry-audience token as a license key', () => {
+		const { privateKey, publicKey } = makeKeypair();
+		const token = signToken(defaultClaims({ aud: 'registry' }), privateKey);
+		expect(verifyLicense(token, publicKey)).toEqual({
+			valid: false,
+			reason: 'wrong-audience',
+		});
+	});
 });
