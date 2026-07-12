@@ -37,6 +37,10 @@ export function resolveExpiry(input: ExpiryInput): ResolvedExpiry {
 		if (!Number.isInteger(input.months) || input.months < 1) {
 			throw new Error('--months must be a positive integer');
 		}
+		// NB: setUTCMonth rolls day-overflow forward (e.g. Jan 31 + 1mo -> Mar 3)
+		// rather than clamping to month-end. Accepted: it only affects monthly terms
+		// issued on days 29-31, always lengthens the token (never shortens it), and
+		// renewal re-issues anyway. Annual/24mo terms land on the same day-of-month.
 		const d = new Date(nowMs);
 		d.setUTCMonth(d.getUTCMonth() + input.months);
 		licenseExpMs = d.getTime();

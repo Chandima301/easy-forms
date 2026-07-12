@@ -31,6 +31,13 @@ describe('resolveExpiry', () => {
 		expect(r.registryExpSec - r.licenseExpSec).toBe(7 * 24 * 60 * 60);
 	});
 
+	it('rolls day-overflow forward on the months path (documented, not clamped)', () => {
+		// Issuing on Jan 31 + 1 month overflows to early March, not end-of-Feb.
+		const now = Date.parse('2026-01-31T00:00:00.000Z');
+		const r = resolveExpiry({ months: 1, now });
+		expect(new Date(r.licenseExpSec * 1000).toISOString()).toBe('2026-03-03T00:00:00.000Z');
+	});
+
 	it('throws when neither months nor exp is given', () => {
 		expect(() => resolveExpiry({ now: Date.now() })).toThrow(/--months|--exp/);
 	});
