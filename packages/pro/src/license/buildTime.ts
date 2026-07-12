@@ -7,6 +7,4 @@
 declare const __EF_PRO_BUILD_TIME__: string | undefined;
 
 export const PRO_BUILD_TIME: number =
-	typeof __EF_PRO_BUILD_TIME__ === 'string'
-		? Date.parse(__EF_PRO_BUILD_TIME__)
-		: Date.now();
+	typeof __EF_PRO_BUILD_TIME__ === 'string' ? Date.parse(__EF_PRO_BUILD_TIME__) : Date.now();
