@@ -78,10 +78,14 @@ describe('buildIssuedTokens', () => {
 		if (reg.valid) expect(reg.claims.aud).toBe('registry');
 
 		// Audience split holds both ways.
-		expect(verifyRegistryToken(out.licenseToken, publicB64).reason).toBe('wrong-audience');
-		expect(verifyLicense(out.registryToken, publicB64, licenseExpSec * 1000 - 1000).reason).toBe(
-			'wrong-audience'
-		);
+		expect(verifyRegistryToken(out.licenseToken, publicB64)).toEqual({
+			valid: false,
+			reason: 'wrong-audience',
+		});
+		expect(verifyLicense(out.registryToken, publicB64, licenseExpSec * 1000 - 1000)).toEqual({
+			valid: false,
+			reason: 'wrong-audience',
+		});
 	});
 
 	it('renders a delivery email containing both tokens and install wiring', () => {
