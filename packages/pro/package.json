@@ -40,7 +40,8 @@
 		"clean": "rimraf dist .turbo",
 		"license:genkey": "tsx scripts/genkey.ts",
 		"license:sign": "tsx scripts/sign.ts",
-		"license:sign-registry": "tsx scripts/sign.ts --aud registry"
+		"license:sign-registry": "tsx scripts/sign.ts --aud registry",
+		"license:issue": "tsx scripts/issue.ts"
 	},
 	"dependencies": {
 		"@noble/ed25519": "^2.1.0",
