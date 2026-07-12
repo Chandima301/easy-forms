@@ -1,7 +1,15 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { verifyLicense } from '../src/license/verify';
 import { verifyRegistryToken } from '../src/license/verifyRegistryToken';
 import { defaultClaims, makeKeypair, signToken } from './signToken';
+
+// Pin PRO_BUILD_TIME to a fixed PAST date so we can prove verifyLicense defaults
+// its comparison to the build date, not wall-clock now (which are indistinguishable
+// otherwise, since the unbuilt fallback is Date.now()).
+const { MOCK_BUILD } = vi.hoisted(() => ({
+	MOCK_BUILD: Date.parse('2020-06-01T00:00:00.000Z'),
+}));
+vi.mock('../src/license/buildTime', () => ({ PRO_BUILD_TIME: MOCK_BUILD }));
 
 // A key's exp is the END of the paid subscription term. The gate asks: was the
 // INSTALLED version (its build date) released on or before exp? We simulate the
@@ -51,23 +59,16 @@ describe('verifyLicense release-date gate', () => {
 		});
 	});
 
-	it('setEasyFormsProLicense uses the build-date default (no now arg)', async () => {
-		const { setEasyFormsProLicense, getLicenseStatus, resetLicenseForTests } =
-			await import('../src/license/setEasyFormsProLicense');
-		const { PRO_BUILD_TIME } = await import('../src/license/buildTime');
-		resetLicenseForTests();
-
-		const { privateKey } = makeKeypair();
-		// Build a key that expired 10s ago in wall-clock terms but comfortably
-		// after PRO_BUILD_TIME's test fallback (~now) → covered by the release gate.
-		const expSec = Math.floor(PRO_BUILD_TIME / 1000) + 60;
+	it('defaults the comparison timestamp to PRO_BUILD_TIME, not wall-clock now', () => {
+		const { privateKey, publicKey } = makeKeypair();
+		// exp is one year AFTER the mocked build date (2021) but years BEFORE real
+		// wall-clock now — so under wall-clock this key would be "expired", but under
+		// the release-date gate (build date 2020) it is covered.
+		const expSec = Math.floor(MOCK_BUILD / 1000) + 60 * 60 * 24 * 365;
 		const token = signToken(defaultClaims({ aud: 'license', exp: expSec }), privateKey);
 
-		// NOTE: setEasyFormsProLicense verifies against the EMBEDDED public key,
-		// so this asserts the code path/default, not signature validity — expect
-		// a bad-signature (throwaway key) rather than a time-based reason.
-		setEasyFormsProLicense(token);
-		expect(getLicenseStatus().reason).not.toBe('expired');
-		resetLicenseForTests();
+		// No `now` arg → uses the PRO_BUILD_TIME default. valid proves the default
+		// is the build date; if it were Date.now() this would be 'expired'.
+		expect(verifyLicense(token, publicKey).valid).toBe(true);
 	});
 });
