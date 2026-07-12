@@ -5,7 +5,26 @@ icon: KeyRound
 ---
 
 The Pro renderers ship from an authenticated registry; after purchase you receive a registry
-token. Add the registry to your `components.json`:
+token.
+
+## How to buy
+
+Easy Forms Pro is a per-seat subscription. Purchase here:
+
+<!-- POLAR-CHECKOUT-URL: replace with the live Polar checkout link from polar-setup.md step 4 -->
+[Buy Easy Forms Pro →](https://polar.sh/)
+
+After checkout you'll receive an email with **two tokens**:
+
+- an **engine license key** — pass it to `setEasyFormsProLicense(...)` to clear the
+  Pro watermark, and
+- a **registry token** — put it in `components.json` to install the premium
+  renderers with `shadcn add @ef-pro/*`.
+
+Both are set up below. Your license covers every version released during your
+subscription term; renewing keeps you on the latest.
+
+Add the registry to your `components.json`:
 
 ```jsonc title="components.json"
 "registries": {
