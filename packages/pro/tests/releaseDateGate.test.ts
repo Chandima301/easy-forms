@@ -39,7 +39,7 @@ describe('verifyLicense release-date gate', () => {
 		});
 	});
 
-	it('treats build-date == exp as still covered (boundary is exclusive of expiry)', () => {
+	it('treats build-date == exp as expired (exclusive boundary), and exp - 1ms as valid', () => {
 		const { privateKey, publicKey } = makeKeypair();
 		const expSec = 2_000_000_000;
 		const token = signToken(defaultClaims({ aud: 'license', exp: expSec }), privateKey);

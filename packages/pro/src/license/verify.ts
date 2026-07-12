@@ -1,7 +1,7 @@
 // Offline verification of a LICENSE key. A license key must not carry the
 // 'registry' audience — that token type unlocks registry source, not the engine.
 // Expiry is a RELEASE-DATE gate: a key is valid for any @easy-forms/pro version
-// built on or before the key's exp. So the comparison timestamp defaults to this
+// built before the key's exp. So the comparison timestamp defaults to this
 // bundle's PRO_BUILD_TIME, not wall-clock now — a lapsed subscription keeps a
 // clean app on versions released during the paid term.
 import { PRO_BUILD_TIME } from './buildTime';
