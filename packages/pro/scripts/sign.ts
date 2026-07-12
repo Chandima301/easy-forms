@@ -1,3 +1,4 @@
+import type { LicenseClaims } from '../src/license/types';
 // Issue a signed license token.
 //
 //   pnpm --filter @easy-forms/pro license:sign -- \
@@ -5,8 +6,7 @@
 //
 // Reads the private key from packages/pro/.keys/private.key (or $EASY_FORMS_PRO_KEY)
 // and prints the token `base64url(payload).base64url(signature)`.
-import { resolvePrivateKey, buildToken } from './signToken';
-import type { LicenseClaims } from '../src/license/types';
+import { buildToken, resolvePrivateKey } from './signToken';
 
 function getArg(name: string): string | undefined {
 	const flag = `--${name}`;

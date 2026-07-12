@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { buildToken } from '../scripts/signToken';
 import { bytesToBase64url } from '../src/license/base64url';
 import { ed } from '../src/license/ed25519';
 import { verifyLicense } from '../src/license/verify';
-import { buildToken } from '../scripts/signToken';
 import { defaultClaims } from './signToken';
 
 describe('scripts/signToken buildToken', () => {

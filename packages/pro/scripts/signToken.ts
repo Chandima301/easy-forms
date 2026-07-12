@@ -19,9 +19,7 @@ export function resolvePrivateKey(): string {
 		process.env.EASY_FORMS_PRO_KEY ??
 		(existsSync(privatePath) ? readFileSync(privatePath, 'utf8').trim() : undefined);
 	if (!key) {
-		console.error(
-			'Error: no private key — run license:genkey first or set $EASY_FORMS_PRO_KEY'
-		);
+		console.error('Error: no private key — run license:genkey first or set $EASY_FORMS_PRO_KEY');
 		process.exit(1);
 	}
 	return key;
