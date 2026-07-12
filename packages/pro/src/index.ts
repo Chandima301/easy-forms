@@ -58,5 +58,7 @@ export type {
 	LicenseInvalidReason,
 	LicenseStatus,
 	ProEdition,
+	TokenAudience,
 } from './license/types';
 export { verifyLicense } from './license/verify';
+export { verifyRegistryToken } from './license/verifyRegistryToken';

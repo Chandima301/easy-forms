@@ -28,6 +28,10 @@ function fail(message: string): never {
 const customer = getArg('customer') ?? fail('--customer is required');
 const edition = getArg('edition') ?? 'pro';
 if (edition !== 'pro') fail(`unknown edition "${edition}" (expected "pro")`);
+const aud = getArg('aud') ?? 'license';
+if (aud !== 'license' && aud !== 'registry') {
+	fail(`unknown aud "${aud}" (expected "license" or "registry")`);
+}
 const seats = Number(getArg('seats') ?? fail('--seats is required'));
 if (!Number.isInteger(seats) || seats < 1) fail('--seats must be a positive integer');
 const expRaw = getArg('exp') ?? fail('--exp is required (e.g. 2027-01-01)');
@@ -48,13 +52,14 @@ const claims: LicenseClaims = {
 	seats,
 	iat: Math.floor(Date.now() / 1000),
 	exp: Math.floor(expMs / 1000),
+	aud: aud as 'license' | 'registry',
 };
 
 const payloadSegment = stringToBase64url(JSON.stringify(claims));
 const signature = ed.sign(signingMessage(payloadSegment), base64urlToBytes(privateB64));
 const token = `${payloadSegment}.${bytesToBase64url(signature)}`;
 
-console.log(`Issued license for "${customer}" (${seats} seat(s)), expires ${expRaw}:`);
+console.log(`Issued ${aud} token for "${customer}" (${seats} seat(s)), expires ${expRaw}:`);
 console.log('');
 console.log(token);
 console.log('');
