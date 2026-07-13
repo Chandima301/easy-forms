@@ -9,4 +9,5 @@ export default defineConfig({
 	treeshake: true,
 	external: ['react', 'react-dom', '@easy-forms/core'],
 	target: 'es2022',
+	define: { __EF_PRO_BUILD_TIME__: JSON.stringify(new Date().toISOString()) },
 });

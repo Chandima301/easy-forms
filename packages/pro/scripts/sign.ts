@@ -1,3 +1,4 @@
+import type { LicenseClaims } from '../src/license/types';
 // Issue a signed license token.
 //
 //   pnpm --filter @easy-forms/pro license:sign -- \
@@ -5,12 +6,7 @@
 //
 // Reads the private key from packages/pro/.keys/private.key (or $EASY_FORMS_PRO_KEY)
 // and prints the token `base64url(payload).base64url(signature)`.
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { base64urlToBytes, bytesToBase64url, stringToBase64url } from '../src/license/base64url';
-import { ed, signingMessage } from '../src/license/ed25519';
-import type { LicenseClaims } from '../src/license/types';
+import { buildToken, resolvePrivateKey } from './signToken';
 
 function getArg(name: string): string | undefined {
 	const flag = `--${name}`;
@@ -38,14 +34,6 @@ const expRaw = getArg('exp') ?? fail('--exp is required (e.g. 2027-01-01)');
 const expMs = Date.parse(expRaw);
 if (Number.isNaN(expMs)) fail(`--exp "${expRaw}" is not a valid date`);
 
-const scriptDir = dirname(fileURLToPath(import.meta.url));
-const privatePath = resolve(scriptDir, '../.keys/private.key');
-const privateB64 =
-	process.env.EASY_FORMS_PRO_KEY ??
-	(existsSync(privatePath)
-		? readFileSync(privatePath, 'utf8').trim()
-		: fail('no private key — run license:genkey first or set $EASY_FORMS_PRO_KEY'));
-
 const claims: LicenseClaims = {
 	customer,
 	edition,
@@ -55,9 +43,7 @@ const claims: LicenseClaims = {
 	aud: aud as 'license' | 'registry',
 };
 
-const payloadSegment = stringToBase64url(JSON.stringify(claims));
-const signature = ed.sign(signingMessage(payloadSegment), base64urlToBytes(privateB64));
-const token = `${payloadSegment}.${bytesToBase64url(signature)}`;
+const token = buildToken(claims, resolvePrivateKey());
 
 console.log(`Issued ${aud} token for "${customer}" (${seats} seat(s)), expires ${expRaw}:`);
 console.log('');
