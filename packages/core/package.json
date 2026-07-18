@@ -4,7 +4,7 @@
 	"description": "Headless React form library — types, state engine, hooks, dependency engine, wizard.",
 	"license": "MIT",
 	"author": "Easy Forms",
-	"homepage": "https://github.com/Chandima301/easy-forms#readme",
+	"homepage": "https://easy-forms-docs.vercel.app",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Chandima301/easy-forms.git",

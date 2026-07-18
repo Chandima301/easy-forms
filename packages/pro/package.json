@@ -1,10 +1,10 @@
 {
 	"name": "@easy-forms/pro",
 	"version": "0.3.0",
-	"description": "Premium engine for complex, conditional, multi-step easy-forms — repeating sections, branching wizard, auto-review. Commercial license.",
+	"description": "Premium engine for complex, conditional, multi-step easy-forms — repeating sections and branching wizard. Commercial license.",
 	"license": "SEE LICENSE IN LICENSE",
 	"author": "Easy Forms",
-	"homepage": "https://github.com/Chandima301/easy-forms#readme",
+	"homepage": "https://easy-forms-docs.vercel.app",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Chandima301/easy-forms.git",
