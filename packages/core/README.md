@@ -1,8 +1,33 @@
-# @easy-forms/core
+<p align="center">
+  <a href="https://easy-forms-docs.vercel.app">
+    <img src="https://easy-forms-docs.vercel.app/easy-forms-logo.svg" alt="easy-forms" width="260" />
+  </a>
+</p>
 
-Headless React form library. Hand it an array of question objects; it owns rendering, validation, conditional logic, dirty/touched tracking, multi-step navigation, and submission.
+<h1 align="center">@easy-forms/core</h1>
 
-No `register()`. No `Controller`. No `useForm` boilerplate. The schema is the source of truth.
+<p align="center">
+  <strong>The React form engine you'd otherwise build yourself.</strong><br />
+  Hand it an array of question objects and it owns rendering, validation, conditional logic,
+  dirty/touched tracking, multi-step wizards, and submission. The schema is the source of truth —
+  no <code>useForm</code>, no <code>register()</code>, no <code>Controller</code>.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@easy-forms/core"><img src="https://img.shields.io/npm/v/@easy-forms/core.svg?color=2563eb" alt="npm version" /></a>
+  <a href="https://github.com/Chandima301/easy-forms/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@easy-forms/core.svg?color=16a34a" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/@easy-forms/core"><img src="https://img.shields.io/npm/types/@easy-forms/core.svg" alt="types" /></a>
+</p>
+
+<p align="center">
+  <a href="https://easy-forms-docs.vercel.app/docs"><strong>Documentation</strong></a>
+  ·
+  <a href="https://easy-forms-docs.vercel.app/docs/quick-start"><strong>Quick start</strong></a>
+  ·
+  <a href="https://easy-forms-docs.vercel.app/examples"><strong>Examples</strong></a>
+  ·
+  <a href="https://github.com/Chandima301/easy-forms"><strong>GitHub</strong></a>
+</p>
 
 ## Install
 

@@ -12,6 +12,8 @@ Hand it an **array of question objects**. It owns the whole workflow — renderi
 [![license](https://img.shields.io/npm/l/@easy-forms/core.svg?color=16a34a)](./LICENSE)
 [![types](https://img.shields.io/npm/types/@easy-forms/core.svg)](https://www.npmjs.com/package/@easy-forms/core)
 
+**[Documentation](https://easy-forms-docs.vercel.app/docs)** · **[Quick start](https://easy-forms-docs.vercel.app/docs/quick-start)** · **[Examples](https://easy-forms-docs.vercel.app/examples)**
+
 <br />
 
 <img src=".github/assets/hero.gif" alt="A schema array turning into a working multi-step form with conditional fields" width="760" />
@@ -156,7 +158,7 @@ apps/
 
 ## Status
 
-`@easy-forms/core@0.1.1` is on npm; the UI is distributed as the `@easy-forms` shadcn registry (hosted on GitHub Pages). The library is in active development — the engine is stable and tested (58 tests), and the docs site is being built out. If you build a lot of forms, I'd genuinely love your feedback — open an issue or a discussion.
+`@easy-forms/core@0.1.1` is on npm; the UI is distributed as the `@easy-forms` shadcn registry (hosted on GitHub Pages); the [docs site](https://easy-forms-docs.vercel.app) is live and growing. The library is in active development — the engine is stable and tested (58 tests). If you build a lot of forms, I'd genuinely love your feedback — open an issue or a discussion.
 
 If it saves you from hand-rolling one more wizard, a ⭐ helps others find it.
 
