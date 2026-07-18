@@ -1,6 +1,6 @@
 {
 	"name": "@easy-forms/pro",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Premium engine for complex, conditional, multi-step easy-forms — repeating sections and branching wizard. Commercial license.",
 	"license": "SEE LICENSE IN LICENSE",
 	"author": "Easy Forms",
@@ -48,7 +48,7 @@
 		"@noble/hashes": "^1.5.0"
 	},
 	"peerDependencies": {
-		"@easy-forms/core": ">=0.1.0",
+		"@easy-forms/core": ">=0.1.2",
 		"react": ">=18.0.0",
 		"react-dom": ">=18.0.0"
 	},
