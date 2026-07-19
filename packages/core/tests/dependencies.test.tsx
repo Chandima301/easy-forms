@@ -4,16 +4,16 @@
 //   - resetDependsOn
 // Plus group-cascade hidden, clearWhenHidden, and cycle detection.
 
-import { act, render, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import { Form } from '../src/components/Form';
 import {
 	assertNoDependencyCycle,
 	buildDependencyGraph,
 	defaultDependencyHandlers,
 } from '../src/dependencies';
 import { createFormStore } from '../src/store/createFormStore';
+import { renderForm } from './helpers/renderForm';
 import type {
 	CheckboxQuestion,
 	DateQuestion,
@@ -147,14 +147,12 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(
-			<Form
-				schema={schema}
-				registry={registry}
-				initialValues={{ subscribe: false, email: '' }}
-				onSubmit={async () => {}}
-			/>
-		);
+		renderForm({
+			schema,
+			registry,
+			initialValues: { subscribe: false, email: '' },
+			onSubmit: async () => {},
+		});
 		expect(screen.queryByLabelText('email')).not.toBeInTheDocument();
 		await userEvent.click(screen.getByLabelText('subscribe'));
 		expect(screen.getByLabelText('email')).toBeInTheDocument();
@@ -184,7 +182,7 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await act(async () => {
 			await Promise.resolve();
 		});
@@ -219,7 +217,7 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await userEvent.click(screen.getByLabelText('lock'));
 		await act(async () => {
 			await Promise.resolve();
@@ -267,7 +265,7 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await act(async () => {
 			await Promise.resolve();
 		});
@@ -298,7 +296,7 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await act(async () => {
 			await Promise.resolve();
 		});
@@ -331,7 +329,7 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await act(async () => {
 			await Promise.resolve();
 		});
@@ -365,7 +363,7 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		// Toggle to hidden.
 		await userEvent.click(screen.getByLabelText('show'));
 		await act(async () => {
@@ -400,7 +398,7 @@ describe('propsDependsOn (field-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		// Mutate value, then hide.
 		await act(async () => {
 			store.setValue('email', 'changed', { validate: false });
@@ -444,7 +442,7 @@ describe('propsDependsOn (group-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		// Initially visible.
 		expect(store.getValues()).toEqual({ show: true, a: 'A', b: 'B' });
 		// Toggle group hidden.
@@ -490,7 +488,7 @@ describe('propsDependsOn (group-level)', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		// Mutate before hiding.
 		await act(async () => {
 			store.setValue('a', 'mutated', { validate: false });
@@ -538,7 +536,7 @@ describe('valueDependsOn', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await act(async () => {
 			await Promise.resolve();
 		});
@@ -572,7 +570,7 @@ describe('valueDependsOn', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await act(async () => {
 			await Promise.resolve();
 		});
@@ -607,7 +605,7 @@ describe('resetDependsOn', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		// Mutate, then trigger reset.
 		await act(async () => {
 			store.setValue('name', 'changed', { validate: false });
@@ -642,7 +640,7 @@ describe('resetDependsOn', () => {
 				},
 			],
 		};
-		render(<Form schema={schema} registry={registry} store={store} onSubmit={async () => {}} />);
+		renderForm({ schema, registry, store, onSubmit: async () => {} });
 		await act(async () => {
 			await Promise.resolve();
 		});
