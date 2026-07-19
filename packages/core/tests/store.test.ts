@@ -212,4 +212,36 @@ describe('createFormStore', () => {
 		await store.submit(handler);
 		expect(handler).toHaveBeenCalledWith({ bankAccounts: [{ currency: 'USD' }] });
 	});
+
+	it('validateAll marks every validated field touched (enters validation stage)', async () => {
+		const store = createFormStore();
+		store.registerField({ key: 'a', initialValue: '', validators: { required: true } });
+		store.registerField({ key: 'b', initialValue: '', validators: { required: true } });
+		expect(store.getFieldState('a').touched).toBe(false);
+		expect(store.getFieldState('b').touched).toBe(false);
+		await store.validateAll();
+		expect(store.getFieldState('a').touched).toBe(true);
+		expect(store.getFieldState('b').touched).toBe(true);
+	});
+
+	it('submit reveals errors on fields the user never touched', async () => {
+		const store = createFormStore();
+		store.registerField({ key: 'name', initialValue: '', validators: { required: true } });
+		// No interaction at all — this is the "click submit without touching" case.
+		await store.submit(vi.fn());
+		const state = store.getFieldState('name');
+		expect(state.touched).toBe(true);
+		expect(state.error).toBe('This field is required');
+	});
+
+	it('validateAll(keys) only touches the given fields (wizard step scope)', async () => {
+		const store = createFormStore();
+		store.registerField({ key: 'step1', initialValue: '', validators: { required: true } });
+		store.registerField({ key: 'step2', initialValue: '', validators: { required: true } });
+		await store.validateAll(['step1']);
+		expect(store.getFieldState('step1').touched).toBe(true);
+		// step2 belongs to a later step — it must stay silent until its own submit.
+		expect(store.getFieldState('step2').touched).toBe(false);
+		expect(store.getFieldState('step2').error).toBe(null);
+	});
 });

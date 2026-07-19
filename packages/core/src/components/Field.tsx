@@ -66,10 +66,15 @@ export function Field({ question }: FieldProps) {
 		<Renderer
 			question={effectiveQuestion}
 			value={field.value}
-			onChange={(v: unknown) => store.setValue(question.key, v, { touch: true })}
+			onChange={(v: unknown) =>
+				// Update value (and dirty) always, but only validate once the field
+				// has entered its validation stage — i.e. after the form/step has been
+				// submitted (which marks it touched). Before that first submit no errors
+				// are computed or shown; after it, re-validate live on every change.
+				store.setValue(question.key, v, { validate: field.touched, touch: false })
+			}
 			onBlur={() => {
-				store.setTouched(question.key, true);
-				void store.validateField(question.key);
+				if (field.touched) void store.validateField(question.key);
 			}}
 			error={field.error}
 			errors={field.errors}

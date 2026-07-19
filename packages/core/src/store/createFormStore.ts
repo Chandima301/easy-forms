@@ -320,6 +320,14 @@ export function createFormStore(options: FormStoreOptions = {}): FormStore {
 
 	async function validateAll(keys?: string[]): Promise<boolean> {
 		const targets = keys ?? Array.from(fields.keys());
+		// Entering the validation stage: mark every validated field touched so the
+		// renderers (which gate error display on `touched`) reveal all errors at
+		// once. Submit passes no keys (whole form); the wizard passes a step's keys
+		// (just that step), so the reveal scope falls out of the caller.
+		for (const k of targets) {
+			const current = fields.get(k);
+			if (current && !current.touched) patchField(k, { touched: true });
+		}
 		const results = await Promise.all(targets.map((k) => validateField(k)));
 		return results.every(Boolean);
 	}

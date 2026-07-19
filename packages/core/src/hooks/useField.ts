@@ -26,7 +26,12 @@ export function useField<T = unknown>(key: string): UseFieldReturn<T> {
 	const subscribe = useCallback((cb: () => void) => store.subscribeField(key, cb), [store, key]);
 	const getSnapshot = useCallback((): FieldState => store.getFieldState(key), [store, key]);
 	const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-	const setValue = useCallback((v: T) => store.setValue(key, v, { touch: true }), [store, key]);
+	// Mirror <Field>: update value always, but only validate after the field has
+	// entered its validation stage (touched via a submit). No early error reveal.
+	const setValue = useCallback(
+		(v: T) => store.setValue(key, v, { validate: state.touched, touch: false }),
+		[store, key, state.touched]
+	);
 	const setTouched = useCallback((touched = true) => store.setTouched(key, touched), [store, key]);
 	const validate = useCallback(() => store.validateField(key), [store, key]);
 	return {
