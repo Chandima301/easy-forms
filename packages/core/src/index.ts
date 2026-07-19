@@ -21,9 +21,6 @@ export {
 } from './dependencies';
 export { Field } from './components/Field';
 export type { FieldProps } from './components/Field';
-export { Form } from './components/Form';
-export type { FormProps } from './components/Form';
-export { GroupRenderer } from './components/GroupRenderer';
 export {
 	RendererRegistryContext,
 	useRendererRegistry,
@@ -52,8 +49,6 @@ export type {
 export { createListenerHub, FORM_TOPIC } from './store';
 export * from './types';
 export { BUILT_IN_VALIDATORS, firstError, runAsyncCustoms, runSyncValidators } from './validation';
-export { Wizard } from './components/Wizard';
-export type { WizardProps } from './components/Wizard';
 export {
 	attachPlugins,
 	autosavePlugin,
