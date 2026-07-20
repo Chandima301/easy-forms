@@ -1,9 +1,9 @@
 import {
 	type FormSchema,
 	type Group,
-	GroupRenderer,
 	attachDependencyEngine,
 	defaultDependencyHandlers,
+	useChromeRegistry,
 	useFormStoreContext,
 } from '@easy-forms/core';
 import { useEffect, useMemo } from 'react';
@@ -42,6 +42,7 @@ export function RepeatingGroupItem({
 	defaultItem,
 }: RepeatingGroupItemProps) {
 	const store = useFormStoreContext();
+	const { GroupRenderer } = useChromeRegistry();
 	const isWatermarkOwner = useWatermarkSingleton();
 
 	const prefixed = useMemo(

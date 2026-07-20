@@ -1,13 +1,23 @@
 import {
-	Form,
+	ChromeRegistryContext,
+	Field,
 	type FormSchema,
+	FormStoreProvider,
+	type Group,
+	type GroupRendererProps,
 	type Question,
 	type RendererProps,
 	type RendererRegistry,
+	RendererRegistryContext,
 	type TextQuestion,
+	attachDependencyEngine,
+	createFormStore,
+	defaultDependencyHandlers,
+	useGroup,
 } from '@easy-forms/core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useEffect, useMemo } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/license/setEasyFormsProLicense', () => ({
@@ -103,8 +113,72 @@ function buildSchema(overrides: Record<string, unknown> = {}): FormSchema {
 	return { groups: [{ id: 'root', questions: [question] }] };
 }
 
+// Stand-in for the ejectable registry's GroupRenderer (core no longer ships
+// rendered chrome; it's injected via ChromeRegistryContext). Mirrors the
+// deleted core GroupRenderer closely enough to exercise real field/group
+// rendering: walks questions + nested groups recursively.
+function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
+	const overrides = useGroup(group.id);
+	const hidden = overrides.hidden === true;
+	if (hidden) return null;
+	return (
+		<div data-depth={depth}>
+			{group.questions?.map((question) => (
+				<Field key={question.key} question={question} />
+			))}
+			{(group as Group).groups?.map((child, index) => (
+				<StubGroupRenderer
+					key={child.id ?? child.title ?? `group-${depth}-${index}`}
+					group={child}
+					depth={depth + 1}
+				/>
+			))}
+		</div>
+	);
+}
+
+// Stand-in for core's deleted <Form>: creates a store, attaches the dependency
+// engine (mirroring <Form>'s own useEffect timing), provides the renderer +
+// chrome registries, and wires a plain submit button through `store.submit`.
+function FormHarness({
+	schema,
+	registry: rendererRegistry,
+	onSubmit,
+}: {
+	schema: FormSchema;
+	registry: RendererRegistry;
+	onSubmit: (values: Record<string, unknown>) => void | Promise<void>;
+}) {
+	const store = useMemo(() => createFormStore(), []);
+
+	useEffect(() => {
+		const attached = attachDependencyEngine(store, schema, defaultDependencyHandlers);
+		return attached.detach;
+	}, [store, schema]);
+
+	return (
+		<FormStoreProvider store={store}>
+			<RendererRegistryContext.Provider value={rendererRegistry}>
+				<ChromeRegistryContext.Provider value={{ GroupRenderer: StubGroupRenderer }}>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							void store.submit((values) => onSubmit(values));
+						}}
+					>
+						{schema.groups.map((group, index) => (
+							<StubGroupRenderer key={group.id ?? group.title ?? `root-${index}`} group={group} />
+						))}
+						<button type="submit">Submit</button>
+					</form>
+				</ChromeRegistryContext.Provider>
+			</RendererRegistryContext.Provider>
+		</FormStoreProvider>
+	);
+}
+
 function renderForm(schema: FormSchema, onSubmit = vi.fn()) {
-	render(<Form schema={schema} registry={registry} onSubmit={onSubmit} />);
+	render(<FormHarness schema={schema} registry={registry} onSubmit={onSubmit} />);
 	return onSubmit;
 }
 
