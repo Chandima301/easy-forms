@@ -1,4 +1,4 @@
-import { GroupRenderer } from '@easy-forms/core';
+import { useChromeRegistry } from '@easy-forms/core';
 import type { AdvancedWizardStep } from '../wizard/types';
 import { ProWatermark } from './ProWatermark';
 
@@ -20,6 +20,7 @@ export interface AdvancedWizardPanelProps {
  * by editing the ejected component.
  */
 export function AdvancedWizardPanel({ step, active }: AdvancedWizardPanelProps) {
+	const { GroupRenderer } = useChromeRegistry();
 	return (
 		<div
 			role="tabpanel"

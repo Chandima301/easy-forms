@@ -1,10 +1,15 @@
 import {
+	ChromeRegistryContext,
+	Field,
 	FormStoreProvider,
+	type Group,
+	type GroupRendererProps,
 	type RendererProps,
 	type RendererRegistry,
 	RendererRegistryContext,
 	type TextQuestion,
 	createFormStore,
+	useGroup,
 } from '@easy-forms/core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -45,6 +50,30 @@ function TextRenderer({ question, value, onChange, error }: RendererProps<TextQu
 
 const registry: RendererRegistry = { text: TextRenderer };
 
+// Stand-in for the ejectable registry's GroupRenderer (core no longer ships
+// rendered chrome; it's injected via ChromeRegistryContext). Mirrors the
+// deleted core GroupRenderer closely enough to exercise real field/group
+// rendering in these tests: walks questions + nested groups recursively.
+function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
+	const overrides = useGroup(group.id);
+	const hidden = overrides.hidden === true;
+	if (hidden) return null;
+	return (
+		<div data-depth={depth}>
+			{group.questions?.map((question) => (
+				<Field key={question.key} question={question} />
+			))}
+			{(group as Group).groups?.map((child, index) => (
+				<StubGroupRenderer
+					key={child.id ?? child.title ?? `group-${depth}-${index}`}
+					group={child}
+					depth={depth + 1}
+				/>
+			))}
+		</div>
+	);
+}
+
 // In-file harness mirroring the ejectable <AdvancedWizard> (which lives in the
 // registry and is not importable here): store + providers, then the hook + panels.
 function Harness({
@@ -58,7 +87,9 @@ function Harness({
 	return (
 		<FormStoreProvider store={store}>
 			<RendererRegistryContext.Provider value={registry}>
-				<Inner config={config} onSubmit={onSubmit} />
+				<ChromeRegistryContext.Provider value={{ GroupRenderer: StubGroupRenderer }}>
+					<Inner config={config} onSubmit={onSubmit} />
+				</ChromeRegistryContext.Provider>
 			</RendererRegistryContext.Provider>
 		</FormStoreProvider>
 	);
