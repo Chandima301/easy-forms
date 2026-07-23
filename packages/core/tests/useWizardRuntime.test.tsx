@@ -6,6 +6,7 @@
 // any chrome to click.
 
 import { act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createFormStore } from '../src/store/createFormStore';
 import type { CheckboxQuestion, FormSchema, TextQuestion } from '../src/types';
@@ -322,6 +323,30 @@ describe('useWizardRuntime', () => {
 			await getContext().submit();
 		});
 		expect(submitted).toBe(false);
+	});
+
+	it('debounced-persists { values, currentStepIndex } to localStorage on step change', async () => {
+		const wizard: WizardConfig = { ...twoStepWizard, persistKey: 'easy-forms-test-persist-write' };
+		const { getContext } = renderWizard({
+			wizard,
+			registry,
+			initialValues: { a: '', b: '' },
+			onSubmit: async () => {},
+		});
+		await userEvent.type(screen.getByLabelText('a'), 'persist-me');
+		await act(async () => {
+			const ok = await getContext().goNext();
+			expect(ok).toBe(true);
+		});
+		// createDebouncedSaver's default delay is 250ms — wait past it to flush.
+		await act(async () => {
+			await new Promise((r) => setTimeout(r, 350));
+		});
+		const persisted = JSON.parse(
+			window.localStorage.getItem('easy-forms-test-persist-write') ?? '{}'
+		);
+		expect(persisted.values.a).toBe('persist-me');
+		expect(persisted.currentStepIndex).toBe(1);
 	});
 
 	it('hydrates persisted { values, currentStepIndex } on mount', async () => {

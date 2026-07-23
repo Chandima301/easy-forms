@@ -13,7 +13,6 @@ import {
 	defaultDependencyHandlers,
 } from '../src/dependencies';
 import { createFormStore } from '../src/store/createFormStore';
-import { renderForm } from './helpers/renderForm';
 import type {
 	CheckboxQuestion,
 	DateQuestion,
@@ -24,6 +23,7 @@ import type {
 	TextQuestion,
 } from '../src/types';
 import type { RendererProps, RendererRegistry } from '../src/types/renderer';
+import { renderForm } from './helpers/renderForm';
 
 // Tiny inline renderers.
 function TextR(props: RendererProps<TextQuestion>) {
