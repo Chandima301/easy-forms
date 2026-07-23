@@ -26,25 +26,35 @@
 // changed, not the prop shape. No submit button is rendered: no test in this
 // suite clicks a submit control, so submission (where exercised) should be
 // driven directly via `store.submit(...)`.
+//
+// `renderWizard` below is the wizard-flavored sibling: it mounts every
+// step's groups (via the same `TestGroupRenderer`) so their fields register,
+// attaches the dependency engine against a synthetic `{ groups: [], wizard }`
+// schema (mirrors how `buildDependencyGraph` walks `schema.wizard.steps`),
+// and calls `useWizardRuntime` to drive navigation — exposing the returned
+// `WizardContextValue` via `getContext()` so tests can act on it directly
+// instead of clicking chrome that no longer exists in core.
 
-import { render, type RenderResult } from '@testing-library/react';
+import { type RenderResult, render } from '@testing-library/react';
 import { useEffect, useMemo } from 'react';
 import { Field } from '../../src/components/Field';
 import { RendererRegistryContext } from '../../src/components/RegistryContext';
 import { ChromeRegistryContext } from '../../src/context/ChromeRegistryContext';
 import { FormStoreProvider } from '../../src/context/FormStoreProvider';
 import {
+	type DependencyHandlerRegistry,
 	attachDependencyEngine,
 	defaultDependencyHandlers,
-	type DependencyHandlerRegistry,
 } from '../../src/dependencies';
 import { useGroup } from '../../src/hooks/useGroup';
-import { attachPlugins, type FormPlugin } from '../../src/plugins';
+import { type FormPlugin, attachPlugins } from '../../src/plugins';
 import { createFormStore } from '../../src/store/createFormStore';
 import type { FormStore } from '../../src/store/types';
 import type { Group } from '../../src/types/group';
 import type { RendererRegistry } from '../../src/types/renderer';
-import type { FormSchema } from '../../src/types/schema';
+import type { FormSchema, WizardConfig } from '../../src/types/schema';
+import type { WizardContextValue } from '../../src/wizard/WizardContext';
+import { useWizardRuntime } from '../../src/wizard/useWizardRuntime';
 
 export interface RenderFormProps<
 	TFormData extends Record<string, unknown> = Record<string, unknown>,
@@ -159,4 +169,101 @@ export function renderForm<TFormData extends Record<string, unknown> = Record<st
 	props: RenderFormProps<TFormData>
 ): RenderResult {
 	return render(<TestForm {...props} />);
+}
+
+export interface RenderWizardProps<
+	TFormData extends Record<string, unknown> = Record<string, unknown>,
+> {
+	wizard: WizardConfig<TFormData>;
+	registry: RendererRegistry;
+	initialValues?: Partial<TFormData>;
+	/** Provide an external store; otherwise one is created internally. */
+	store?: FormStore;
+	onSubmit: (values: Record<string, unknown>) => void | Promise<void>;
+}
+
+export interface RenderWizardResult extends RenderResult {
+	store: FormStore;
+	/** Latest `WizardContextValue` returned by `useWizardRuntime` — read after
+	 * an `act(...)`-wrapped interaction so pending state updates have flushed. */
+	getContext: () => WizardContextValue;
+}
+
+// Renders every step's groups (all steps mounted, matching the deleted
+// `<Wizard>`'s "everything registered, only display toggles" contract) and
+// drives `useWizardRuntime`, stashing the latest context on `ctxBox` on every
+// render so the test can read it after an interaction settles.
+function WizardInner<TFormData extends Record<string, unknown>>({
+	wizard,
+	onSubmit,
+	store,
+	ctxBox,
+}: {
+	wizard: WizardConfig<TFormData>;
+	onSubmit: (values: Record<string, unknown>) => void | Promise<void>;
+	store: FormStore;
+	ctxBox: { current: WizardContextValue | null };
+}) {
+	// Synthetic schema so `buildDependencyGraph`/`attachDependencyEngine` walk
+	// the wizard's step groups exactly as the real engine does for `<Form>`.
+	const schema = useMemo<FormSchema<TFormData>>(() => ({ groups: [], wizard }), [wizard]);
+
+	useEffect(() => {
+		const attached = attachDependencyEngine(store, schema, defaultDependencyHandlers);
+		return attached.detach;
+	}, [store, schema]);
+
+	// biome-ignore lint/suspicious/noExplicitAny: WizardConfig<TFormData> vs WizardConfig<any> — same variance dodge useWizardRuntime itself uses.
+	const ctx = useWizardRuntime(wizard as WizardConfig<any>, { onSubmit });
+	ctxBox.current = ctx;
+
+	return (
+		<>
+			{wizard.steps.map((step) => (
+				<div key={step.id} data-step-id={step.id}>
+					{step.groups.map((group, gi) => (
+						<TestGroupRenderer key={group.id ?? group.title ?? `${step.id}-${gi}`} group={group} />
+					))}
+				</div>
+			))}
+		</>
+	);
+}
+
+/**
+ * Mounts a `WizardConfig` exactly like the old `<Wizard>` did (every step's
+ * groups rendered, fields registered), minus chrome — driving
+ * `useWizardRuntime` directly instead of Next/Back buttons. Use
+ * `getContext()` (after wrapping interactions in `act`/`await`) to read
+ * navigation state and call `goNext`/`goPrevious`/`goTo`/`submit`.
+ */
+export function renderWizard<TFormData extends Record<string, unknown> = Record<string, unknown>>(
+	props: RenderWizardProps<TFormData>
+): RenderWizardResult {
+	const { wizard, registry, initialValues, store: externalStore, onSubmit } = props;
+	const store =
+		externalStore ??
+		createFormStore({ initialValues: initialValues as Record<string, unknown> | undefined });
+	const ctxBox: { current: WizardContextValue | null } = { current: null };
+
+	const result = render(
+		<FormStoreProvider store={store}>
+			<RendererRegistryContext.Provider value={registry}>
+				<ChromeRegistryContext.Provider value={{ GroupRenderer: TestGroupRenderer }}>
+					<WizardInner wizard={wizard} onSubmit={onSubmit} store={store} ctxBox={ctxBox} />
+				</ChromeRegistryContext.Provider>
+			</RendererRegistryContext.Provider>
+		</FormStoreProvider>
+	);
+
+	return {
+		...result,
+		store,
+		getContext: () => {
+			if (!ctxBox.current) {
+				throw new Error('renderWizard: WizardContextValue not ready yet.');
+			}
+			return ctxBox.current;
+		},
+	};
 }
