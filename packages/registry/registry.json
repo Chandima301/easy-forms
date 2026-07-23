@@ -198,6 +198,36 @@
 			]
 		},
 		{
+			"name": "group-renderer",
+			"type": "registry:component",
+			"title": "Group renderer",
+			"description": "Ejectable group/section chrome. Walks a group tree, renders questions via core's Field dispatch, recurses into subgroups.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["@easy-forms/field-shell"],
+			"files": [
+				{
+					"path": "registry/easy-forms/group-renderer.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/group-renderer.tsx"
+				}
+			]
+		},
+		{
+			"name": "wizard",
+			"type": "registry:component",
+			"title": "Wizard",
+			"description": "Ejectable simple (linear) multi-step wizard chrome, built on core's useWizardRuntime/WizardContext.",
+			"dependencies": ["@easy-forms/core"],
+			"registryDependencies": ["button", "@easy-forms/group-renderer"],
+			"files": [
+				{
+					"path": "registry/easy-forms/wizard.tsx",
+					"type": "registry:component",
+					"target": "components/easy-forms/wizard.tsx"
+				}
+			]
+		},
+		{
 			"name": "registry",
 			"type": "registry:lib",
 			"title": "Renderer registry",
@@ -215,7 +245,8 @@
 				"@easy-forms/radio-group",
 				"@easy-forms/date",
 				"@easy-forms/file",
-				"@easy-forms/custom"
+				"@easy-forms/custom",
+				"@easy-forms/group-renderer"
 			],
 			"files": [
 				{
@@ -229,19 +260,14 @@
 			"name": "easy-form",
 			"type": "registry:component",
 			"title": "EasyForm",
-			"description": "Pre-wired <EasyForm> wrapper + form-chrome styles. One-shot install of the whole kit.",
+			"description": "Pre-wired <EasyForm> wrapper + utility-first form chrome. One-shot install of the whole kit.",
 			"dependencies": ["@easy-forms/core"],
-			"registryDependencies": ["@easy-forms/registry"],
+			"registryDependencies": ["button", "@easy-forms/registry", "@easy-forms/group-renderer", "@easy-forms/wizard"],
 			"files": [
 				{
 					"path": "registry/easy-forms/easy-form.tsx",
 					"type": "registry:component",
 					"target": "components/easy-forms/easy-form.tsx"
-				},
-				{
-					"path": "registry/easy-forms/easy-forms.css",
-					"type": "registry:file",
-					"target": "components/easy-forms/easy-forms.css"
 				}
 			]
 		}
