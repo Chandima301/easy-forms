@@ -262,7 +262,12 @@
 			"title": "EasyForm",
 			"description": "Pre-wired <EasyForm> wrapper + utility-first form chrome. One-shot install of the whole kit.",
 			"dependencies": ["@easy-forms/core"],
-			"registryDependencies": ["button", "@easy-forms/registry", "@easy-forms/group-renderer", "@easy-forms/wizard"],
+			"registryDependencies": [
+				"button",
+				"@easy-forms/registry",
+				"@easy-forms/group-renderer",
+				"@easy-forms/wizard"
+			],
 			"files": [
 				{
 					"path": "registry/easy-forms/easy-form.tsx",
