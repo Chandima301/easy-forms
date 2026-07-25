@@ -1,6 +1,6 @@
-// Chrome component prop types. GroupRenderer moved OUT of core into the registry
-// (ejectable), but core + Pro must reference its prop shape to type the injected
-// component in ChromeRegistryContext.
+// Chrome component prop types. GroupRenderer lives OUT of core, in the registry
+// (ejectable) — every call site is itself a registry file that imports it
+// directly. This is the prop shape those ejected renderers type themselves with.
 import type { Group } from './group';
 
 export interface GroupRendererProps {

@@ -7,9 +7,10 @@
 // plugins in the same after-children-effects mount order the real Form used
 // (Field registers itself in its own useEffect; the engine-attach effect here
 // runs after every child's effect in commit order, so it sees every
-// registered field on first run), and provides the three contexts a schema
-// tree needs to render (FormStoreContext, RendererRegistryContext,
-// ChromeRegistryContext).
+// registered field on first run), and provides the two contexts a schema
+// tree needs to render (FormStoreContext, RendererRegistryContext). The
+// group renderer is passed down directly, the way an ejected registry file
+// imports its own.
 //
 // The inline TestGroupRenderer preserves the exact semantics the deleted
 // `components/GroupRenderer.tsx` had that the dependency/plugin test suites
@@ -39,7 +40,6 @@ import { type RenderResult, render } from '@testing-library/react';
 import { useEffect, useMemo } from 'react';
 import { Field } from '../../src/components/Field';
 import { RendererRegistryContext } from '../../src/components/RegistryContext';
-import { ChromeRegistryContext } from '../../src/context/ChromeRegistryContext';
 import { FormStoreProvider } from '../../src/context/FormStoreProvider';
 import {
 	type DependencyHandlerRegistry,
@@ -145,9 +145,7 @@ function TestForm<TFormData extends Record<string, unknown> = Record<string, unk
 	return (
 		<FormStoreProvider store={store}>
 			<RendererRegistryContext.Provider value={registry}>
-				<ChromeRegistryContext.Provider value={{ GroupRenderer: TestGroupRenderer }}>
-					<FormBody schema={schema} />
-				</ChromeRegistryContext.Provider>
+				<FormBody schema={schema} />
 			</RendererRegistryContext.Provider>
 		</FormStoreProvider>
 	);
@@ -249,9 +247,7 @@ export function renderWizard<TFormData extends Record<string, unknown> = Record<
 	const result = render(
 		<FormStoreProvider store={store}>
 			<RendererRegistryContext.Provider value={registry}>
-				<ChromeRegistryContext.Provider value={{ GroupRenderer: TestGroupRenderer }}>
-					<WizardInner wizard={wizard} onSubmit={onSubmit} store={store} ctxBox={ctxBox} />
-				</ChromeRegistryContext.Provider>
+				<WizardInner wizard={wizard} onSubmit={onSubmit} store={store} ctxBox={ctxBox} />
 			</RendererRegistryContext.Provider>
 		</FormStoreProvider>
 	);

@@ -25,11 +25,6 @@ export {
 	RendererRegistryContext,
 	useRendererRegistry,
 } from './components/RegistryContext';
-export {
-	ChromeRegistryContext,
-	type ChromeRegistry,
-	useChromeRegistry,
-} from './context/ChromeRegistryContext';
 export type { GroupRendererProps } from './types/chrome';
 export { FormStoreContext } from './context/FormStoreContext';
 export { FormStoreProvider } from './context/FormStoreProvider';
