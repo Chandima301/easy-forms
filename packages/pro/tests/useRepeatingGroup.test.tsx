@@ -1,5 +1,4 @@
 import {
-	ChromeRegistryContext,
 	Field,
 	type FormSchema,
 	FormStoreProvider,
@@ -132,7 +131,7 @@ function buildSchema(overrides: Record<string, unknown> = {}): FormSchema {
 }
 
 // Stand-in for the ejectable registry's GroupRenderer (core no longer ships
-// rendered chrome; it's injected via ChromeRegistryContext). Mirrors the
+// rendered chrome; each registry file imports its own). Mirrors the
 // deleted core GroupRenderer closely enough to exercise real field/group
 // rendering: walks questions + nested groups recursively.
 function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
@@ -177,19 +176,17 @@ function FormHarness({
 	return (
 		<FormStoreProvider store={store}>
 			<RendererRegistryContext.Provider value={rendererRegistry}>
-				<ChromeRegistryContext.Provider value={{ GroupRenderer: StubGroupRenderer }}>
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-							void store.submit((values) => onSubmit(values));
-						}}
-					>
-						{schema.groups.map((group, index) => (
-							<StubGroupRenderer key={group.id ?? group.title ?? `root-${index}`} group={group} />
-						))}
-						<button type="submit">Submit</button>
-					</form>
-				</ChromeRegistryContext.Provider>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						void store.submit((values) => onSubmit(values));
+					}}
+				>
+					{schema.groups.map((group, index) => (
+						<StubGroupRenderer key={group.id ?? group.title ?? `root-${index}`} group={group} />
+					))}
+					<button type="submit">Submit</button>
+				</form>
 			</RendererRegistryContext.Provider>
 		</FormStoreProvider>
 	);
@@ -215,7 +212,7 @@ afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-describe('useRepeatingGroup + RepeatingGroupItem', () => {
+describe('useRepeatingGroup + useRepeatingGroupItem', () => {
 	it('seeds minItems rows on mount', () => {
 		renderForm(buildSchema({ minItems: 2 }));
 		expect(screen.getAllByLabelText('Currency')).toHaveLength(2);

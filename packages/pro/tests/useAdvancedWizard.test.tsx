@@ -48,9 +48,9 @@ function TextRenderer({ question, value, onChange, error }: RendererProps<TextQu
 const registry: RendererRegistry = { text: TextRenderer };
 
 // Stand-in for the ejectable registry's GroupRenderer (core no longer ships
-// rendered chrome; it's injected via ChromeRegistryContext). Mirrors the
-// deleted core GroupRenderer closely enough to exercise real field/group
-// rendering in these tests: walks questions + nested groups recursively.
+// rendered chrome; each registry file imports its own). Mirrors the deleted
+// core GroupRenderer closely enough to exercise real field/group rendering in
+// these tests: walks questions + nested groups recursively.
 function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
 	const overrides = useGroup(group.id);
 	const hidden = overrides.hidden === true;
