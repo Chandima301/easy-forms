@@ -8,12 +8,10 @@ import {
 	type RendererRegistry,
 	RendererRegistryContext,
 	type TextQuestion,
-	createFormStore,
 	useGroup,
 } from '@easy-forms/core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useMemo } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/license/setEasyFormsProLicense', () => ({
@@ -76,7 +74,8 @@ function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
 }
 
 // In-file harness mirroring the ejectable <AdvancedWizard> (which lives in the
-// registry and is not importable here): store + providers, then the hook + panels.
+// registry and is not importable here): the HOOK owns the store, and the harness
+// provides it below itself — exactly what the registry file now does.
 function Harness({
 	config,
 	onSubmit = vi.fn(),
@@ -84,16 +83,7 @@ function Harness({
 	config: AdvancedWizardConfig;
 	onSubmit?: (v: Record<string, unknown>) => void | Promise<void>;
 }) {
-	const store = useMemo(() => createFormStore(), []);
-	return (
-		<FormStoreProvider store={store}>
-			<RendererRegistryContext.Provider value={registry}>
-				<ChromeRegistryContext.Provider value={{ GroupRenderer: StubGroupRenderer }}>
-					<Inner config={config} onSubmit={onSubmit} />
-				</ChromeRegistryContext.Provider>
-			</RendererRegistryContext.Provider>
-		</FormStoreProvider>
-	);
+	return <Inner config={config} onSubmit={onSubmit} />;
 }
 
 function Inner({
@@ -105,6 +95,9 @@ function Inner({
 }) {
 	const wiz = useAdvancedWizard(config, { onSubmit });
 	return (
+		<FormStoreProvider store={wiz.store}>
+		<RendererRegistryContext.Provider value={registry}>
+		<ChromeRegistryContext.Provider value={{ GroupRenderer: StubGroupRenderer }}>
 		<div>
 			<nav>
 				{wiz.path.map((s) => (
@@ -145,6 +138,9 @@ function Inner({
 				)}
 			</footer>
 		</div>
+		</ChromeRegistryContext.Provider>
+		</RendererRegistryContext.Provider>
+		</FormStoreProvider>
 	);
 }
 
@@ -203,6 +199,57 @@ afterEach(() => {
 });
 
 describe('useAdvancedWizard', () => {
+	it('re-attaches the dependency engine when a new branch becomes reachable', async () => {
+		const user = userEvent.setup();
+		// `secret` lives on the `biz` branch, which is unmounted at start. Its rule can
+		// only fire if the engine re-attaches once that step joins the projected path.
+		const branchDeps: AdvancedWizardConfig = {
+			steps: [
+				step(
+					'start',
+					[field('kind')],
+					[{ fieldNames: ['kind'], when: (v) => v.kind === 'business', to: 'biz' }]
+				),
+				{
+					id: 'biz',
+					title: 'biz',
+					groups: [
+						{
+							questions: [
+								field('flag'),
+								{
+									key: 'secret',
+									label: 'secret',
+									control: 'text',
+									dependents: {
+										propsDependsOn: [
+											{
+												fieldNames: ['flag'],
+												compute: (v) => ({ hidden: v.flag !== 'show' }),
+											},
+										],
+									},
+								} as TextQuestion,
+							],
+						},
+					],
+				},
+			],
+		};
+
+		render(<Harness config={branchDeps} />);
+		await user.type(screen.getByLabelText('kind'), 'business');
+		await user.click(screen.getByRole('button', { name: 'Next' }));
+
+		// On the newly-reachable branch: the engine's pass hid `secret`.
+		expect(screen.getByLabelText('flag')).toBeInTheDocument();
+		expect(screen.queryByLabelText('secret')).toBeNull();
+
+		// And it stays live on that branch.
+		await user.type(screen.getByLabelText('flag'), 'show');
+		expect(screen.getByLabelText('secret')).toBeInTheDocument();
+	});
+
 	it('mounts only the start step (and its projected path), not other branches', () => {
 		render(<Harness config={kycConfig()} />);
 		// start is active and interactive.

@@ -34,10 +34,6 @@ export { useProLicense } from './hooks/useProLicense';
 export type { UseProLicenseResult } from './hooks/useProLicense';
 // Branching (non-linear) wizard — the Pro engine. Pair with the ejectable
 // `<AdvancedWizard>` from the shadcn registry (`shadcn add @easy-forms/advanced-wizard`).
-export {
-	AdvancedWizardContext,
-	useAdvancedWizardContext,
-} from './wizard/AdvancedWizardContext';
 export { projectPath, resolveNext } from './wizard/routing';
 export type {
 	AdvancedWizardConfig,
