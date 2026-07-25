@@ -29,6 +29,7 @@ import type { RepeatingGroupQuestion } from '../src/controls/repeatingGroup';
 import '../src/controls/repeatingGroup'; // loads the `repeatingGroup` control augmentation
 import { useRepeatingGroup } from '../src/hooks/useRepeatingGroup';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
+import { resetProUsageForTests } from '../src/license/proUsage';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
 
 // The ejectable registry renderer lives in @easy-forms/registry, so it is not
@@ -184,6 +185,8 @@ function renderForm(schema: FormSchema, onSubmit = vi.fn()) {
 
 beforeEach(() => {
 	resetWarningsForTests();
+	resetProUsageForTests();
+	document.body.innerHTML = '';
 	statusMock.mockReset();
 	statusMock.mockReturnValue(licensed);
 	vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -528,26 +531,26 @@ describe('useRepeatingGroup + RepeatingGroupItem', () => {
 	it('shows the unlicensed watermark in dev when no license is set', () => {
 		statusMock.mockReturnValue(unlicensed);
 		renderForm(buildSchema());
-		expect(screen.getByText(/unlicensed/i)).toBeInTheDocument();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).not.toBeNull();
 	});
 
 	it('hides the watermark when licensed', () => {
 		statusMock.mockReturnValue(licensed);
 		renderForm(buildSchema());
-		expect(screen.queryByText(/unlicensed/i)).toBeNull();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).toBeNull();
 	});
 
-	it('shows a single watermark across many rows and hands off when the owner is removed', async () => {
+	it('shows a single watermark across many rows', async () => {
 		const user = userEvent.setup();
 		statusMock.mockReturnValue(unlicensed);
 		renderForm(buildSchema({ minItems: 1, maxItems: 3 }));
 		// Two rows, but the singleton yields exactly one badge.
 		await user.click(screen.getByRole('button', { name: 'Add account' }));
-		expect(screen.getAllByText(/unlicensed/i)).toHaveLength(1);
-		// Remove the owning (first) row — ownership hands off, still exactly one.
+		expect(document.querySelectorAll('[data-easy-forms-pro-watermark]')).toHaveLength(1);
+		// Remove a row — usage count drops but stays > 0, still exactly one badge.
 		const [firstRemove] = screen.getAllByRole('button', { name: 'Remove' });
 		if (!firstRemove) throw new Error('expected a remove button');
 		await user.click(firstRemove);
-		expect(screen.getAllByText(/unlicensed/i)).toHaveLength(1);
+		expect(document.querySelectorAll('[data-easy-forms-pro-watermark]')).toHaveLength(1);
 	});
 });

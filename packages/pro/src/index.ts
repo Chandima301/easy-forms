@@ -4,7 +4,6 @@ export {
 	AdvancedWizardPanel,
 	type AdvancedWizardPanelProps,
 } from './components/AdvancedWizardPanel';
-export { ProWatermark } from './components/ProWatermark';
 export {
 	RepeatingGroupItem,
 	type RepeatingGroupItemProps,

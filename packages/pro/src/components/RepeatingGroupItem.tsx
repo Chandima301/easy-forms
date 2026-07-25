@@ -8,8 +8,6 @@ import {
 } from '@easy-forms/core';
 import { useEffect, useMemo } from 'react';
 import { prefixItemGroups } from '../controls/prefixItemGroups';
-import { ProWatermark } from './ProWatermark';
-import { useWatermarkSingleton } from './watermarkSingleton';
 
 export interface RepeatingGroupItemProps {
 	groupKey: string;
@@ -31,9 +29,10 @@ export interface RepeatingGroupItemProps {
  * engine subscribes only to its own prefixed keys, so rows stay isolated.
  *
  * This is Pro-owned (the moat): the ejectable registry renderer owns all the
- * surrounding markup, but the consumer must render this to get any fields — so
- * the `<ProWatermark>` lives here (singleton across rows) and cannot be removed by
- * editing the ejected renderer.
+ * surrounding markup, but the consumer must render this to get any fields. The
+ * row's fields are rendered through the injected `GroupRenderer`; the
+ * unlicensed-dev watermark is centralized in the license layer (`useProLicense`
+ * / `registerProUsage`), not rendered by this component.
  */
 export function RepeatingGroupItem({
 	groupKey,
@@ -43,7 +42,6 @@ export function RepeatingGroupItem({
 }: RepeatingGroupItemProps) {
 	const store = useFormStoreContext();
 	const { GroupRenderer } = useChromeRegistry();
-	const isWatermarkOwner = useWatermarkSingleton();
 
 	const prefixed = useMemo(
 		() => prefixItemGroups(groups, `${groupKey}.${index}.`, defaultItem),
@@ -61,7 +59,6 @@ export function RepeatingGroupItem({
 
 	return (
 		<>
-			{isWatermarkOwner ? <ProWatermark /> : null}
 			{prefixed.map((group, position) => (
 				<GroupRenderer key={group.id ?? group.title ?? `item-group-${position}`} group={group} />
 			))}

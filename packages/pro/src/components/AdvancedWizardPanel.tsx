@@ -1,6 +1,5 @@
 import { useChromeRegistry } from '@easy-forms/core';
 import type { AdvancedWizardStep } from '../wizard/types';
-import { ProWatermark } from './ProWatermark';
 
 export interface AdvancedWizardPanelProps {
 	step: AdvancedWizardStep;
@@ -15,9 +14,10 @@ export interface AdvancedWizardPanelProps {
  * same-branch back/forward navigation preserves their values.
  *
  * This is Pro-owned (the moat): the ejectable `<AdvancedWizard>` owns the chrome,
- * but the consumer must render this to get any fields — so the dev-only
- * `<ProWatermark>` lives here (on the visible active panel) and cannot be removed
- * by editing the ejected component.
+ * but the consumer must render this to get any fields. The step's fields are
+ * rendered through the injected `GroupRenderer`; the unlicensed-dev watermark is
+ * centralized in the license layer (`useProLicense` / `registerProUsage`), not
+ * rendered by this component.
  */
 export function AdvancedWizardPanel({ step, active }: AdvancedWizardPanelProps) {
 	const { GroupRenderer } = useChromeRegistry();
@@ -30,7 +30,6 @@ export function AdvancedWizardPanel({ step, active }: AdvancedWizardPanelProps) 
 			className="easy-forms-wizard__panel"
 			data-step={step.id}
 		>
-			{active ? <ProWatermark /> : null}
 			{step.groups.map((group, index) => (
 				<GroupRenderer key={group.id ?? group.title ?? `adv-${step.id}-${index}`} group={group} />
 			))}

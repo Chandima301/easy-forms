@@ -23,6 +23,7 @@ vi.mock('../src/license/setEasyFormsProLicense', () => ({
 import { AdvancedWizardPanel } from '../src/components/AdvancedWizardPanel';
 import { useAdvancedWizard } from '../src/hooks/useAdvancedWizard';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
+import { resetProUsageForTests } from '../src/license/proUsage';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
 import type { AdvancedWizardConfig } from '../src/wizard/types';
 
@@ -188,6 +189,8 @@ function kycConfig(overrides: Partial<AdvancedWizardConfig> = {}): AdvancedWizar
 
 beforeEach(() => {
 	resetWarningsForTests();
+	resetProUsageForTests();
+	document.body.innerHTML = '';
 	statusMock.mockReset();
 	statusMock.mockReturnValue(licensed);
 	vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -286,13 +289,13 @@ describe('useAdvancedWizard', () => {
 	it('shows the unlicensed watermark in dev on the active step', () => {
 		statusMock.mockReturnValue(unlicensed);
 		render(<Harness config={kycConfig()} />);
-		expect(screen.getByText(/unlicensed/i)).toBeInTheDocument();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).not.toBeNull();
 	});
 
 	it('hides the watermark when licensed', () => {
 		statusMock.mockReturnValue(licensed);
 		render(<Harness config={kycConfig()} />);
-		expect(screen.queryByText(/unlicensed/i)).toBeNull();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).toBeNull();
 	});
 
 	describe('lenient navigation (continue past errors)', () => {
