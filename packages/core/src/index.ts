@@ -21,14 +21,11 @@ export {
 } from './dependencies';
 export { Field } from './components/Field';
 export type { FieldProps } from './components/Field';
-export { Form } from './components/Form';
-export type { FormProps } from './components/Form';
-export { GroupRenderer } from './components/GroupRenderer';
-export type { GroupRendererProps } from './components/GroupRenderer';
 export {
 	RendererRegistryContext,
 	useRendererRegistry,
 } from './components/RegistryContext';
+export type { GroupRendererProps } from './types/chrome';
 export { FormStoreContext } from './context/FormStoreContext';
 export { FormStoreProvider } from './context/FormStoreProvider';
 export type { FormStoreProviderProps } from './context/FormStoreProvider';
@@ -47,8 +44,6 @@ export type {
 export { createListenerHub, FORM_TOPIC } from './store';
 export * from './types';
 export { BUILT_IN_VALIDATORS, firstError, runAsyncCustoms, runSyncValidators } from './validation';
-export { Wizard } from './components/Wizard';
-export type { WizardProps } from './components/Wizard';
 export {
 	attachPlugins,
 	autosavePlugin,
@@ -66,7 +61,9 @@ export {
 	isStepVisible,
 	loadPersisted,
 	savePersisted,
+	type UseWizardRuntimeOptions,
 	useWizard,
+	useWizardRuntime,
 	WizardContext,
 	type WizardContextValue,
 	type WizardPersistedState,

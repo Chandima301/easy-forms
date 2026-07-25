@@ -46,7 +46,7 @@ export interface UseRepeatingGroupResult {
  *
  * The container field's value is the ordered list of active item indices. Item
  * fields are ordinary parent-store fields keyed `${key}.${index}.${childKey}`
- * (rendered by `RepeatingGroupItem`), so they reuse the engine's validation /
+ * (prefixed by `useRepeatingGroupItem`), so they reuse the engine's validation /
  * dirty / nested `getValues()`.
  */
 export function useRepeatingGroup({

@@ -1,5 +1,15 @@
-import { collectStepFieldKeys, useFormState, useFormStoreContext } from '@easy-forms/core';
-import { useCallback, useMemo, useState } from 'react';
+import {
+	type DependencyHandlerRegistry,
+	type FormPlugin,
+	type FormSchema,
+	attachDependencyEngine,
+	attachPlugins,
+	collectStepFieldKeys,
+	createFormStore,
+	defaultDependencyHandlers,
+	useFormState,
+} from '@easy-forms/core';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { projectPath, resolveNext } from '../wizard/routing';
 import type {
 	AdvancedWizardConfig,
@@ -11,6 +21,9 @@ import { useProLicense } from './useProLicense';
 
 export interface UseAdvancedWizardOptions {
 	onSubmit: (values: Record<string, unknown>) => void | Promise<void>;
+	initialValues?: Record<string, unknown>;
+	dependencyHandlers?: DependencyHandlerRegistry;
+	plugins?: FormPlugin[];
 }
 
 function nonNull<T>(value: T | undefined, message: string): T {
@@ -33,12 +46,17 @@ function nonNull<T>(value: T | undefined, message: string): T {
  */
 export function useAdvancedWizard(
 	config: AdvancedWizardConfig,
-	{ onSubmit }: UseAdvancedWizardOptions
+	{ onSubmit, initialValues, dependencyHandlers, plugins }: UseAdvancedWizardOptions
 ): UseAdvancedWizardResult {
-	const store = useFormStoreContext();
+	const store = useMemo(() => createFormStore({ initialValues }), [initialValues]);
+	const handlers = useMemo(
+		() => ({ ...defaultDependencyHandlers, ...dependencyHandlers }),
+		[dependencyHandlers]
+	);
+	// Read the store this hook created (no ambient provider — it is rendered below us).
 	// `useFormState` re-renders on both value AND error changes (its snapshot
 	// equality covers `errors`), so per-step error chips stay live.
-	const derived = useFormState();
+	const derived = useFormState(store);
 	const values = derived.values;
 	const errors = derived.errors;
 	// Side effect only: fire the one-time dev `assertLicensed` warning. Enforcement
@@ -112,6 +130,25 @@ export function useAdvancedWizard(
 		};
 	}, [config.steps, projectedIds, backStack, currentId, errors, navigation]);
 
+	// The schema of currently-mounted (reachable) steps. Off-path steps aren't
+	// mounted, so their fields never register. Re-derived when the path changes so
+	// the engine's pass covers each step as it becomes reachable.
+	const mountedSchema = useMemo<FormSchema>(() => {
+		const groups = projectedIds.flatMap((id) => byId.get(id)?.groups ?? []);
+		return { groups };
+	}, [projectedIds, byId]);
+
+	// This hook belongs to the top <AdvancedWizard> component, so these effects run
+	// AFTER descendant field-registration effects — the mount-order contract.
+	useEffect(() => {
+		const attached = attachDependencyEngine(store, mountedSchema, handlers);
+		return attached.detach;
+	}, [store, mountedSchema, handlers]);
+	useEffect(() => {
+		if (!plugins || plugins.length === 0) return;
+		return attachPlugins(store, mountedSchema, plugins);
+	}, [store, mountedSchema, plugins]);
+
 	const isTerminalStep = resolveNext(config, currentStep, values) === null;
 	const isFirstStep = backStack.length <= 1;
 
@@ -163,6 +200,7 @@ export function useAdvancedWizard(
 	}, [validateCurrentStep, store, onSubmit]);
 
 	return {
+		store,
 		steps,
 		path,
 		current,

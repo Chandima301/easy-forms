@@ -1,25 +1,27 @@
 import {
+	Field,
 	FormStoreProvider,
+	type Group,
+	type GroupRendererProps,
 	type RendererProps,
 	type RendererRegistry,
 	RendererRegistryContext,
 	type TextQuestion,
-	createFormStore,
+	useGroup,
 } from '@easy-forms/core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useMemo } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/license/setEasyFormsProLicense', () => ({
 	getLicenseStatus: vi.fn(),
 }));
 
-import { AdvancedWizardPanel } from '../src/components/AdvancedWizardPanel';
 import { useAdvancedWizard } from '../src/hooks/useAdvancedWizard';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
+import { resetProUsageForTests } from '../src/license/proUsage';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
-import type { AdvancedWizardConfig } from '../src/wizard/types';
+import type { AdvancedWizardConfig, AdvancedWizardStep } from '../src/wizard/types';
 
 const statusMock = vi.mocked(getLicenseStatus);
 const ORIGINAL_ENV = process.env.NODE_ENV;
@@ -45,8 +47,45 @@ function TextRenderer({ question, value, onChange, error }: RendererProps<TextQu
 
 const registry: RendererRegistry = { text: TextRenderer };
 
+// Stand-in for the ejectable registry's GroupRenderer (core no longer ships
+// rendered chrome; each registry file imports its own). Mirrors the deleted
+// core GroupRenderer closely enough to exercise real field/group rendering in
+// these tests: walks questions + nested groups recursively.
+function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
+	const overrides = useGroup(group.id);
+	const hidden = overrides.hidden === true;
+	if (hidden) return null;
+	return (
+		<div data-depth={depth}>
+			{group.questions?.map((question) => (
+				<Field key={question.key} question={question} />
+			))}
+			{(group as Group).groups?.map((child, index) => (
+				<StubGroupRenderer
+					key={child.id ?? child.title ?? `group-${depth}-${index}`}
+					group={child}
+					depth={depth + 1}
+				/>
+			))}
+		</div>
+	);
+}
+
+// The step panel the ejected <AdvancedWizard> now owns (absorbed from the deleted
+// Pro-owned <AdvancedWizardPanel>): inactive panels stay mounted but CSS-hidden.
+function Panel({ step, active }: { step: AdvancedWizardStep; active: boolean }) {
+	return (
+		<div role="tabpanel" aria-hidden={!active} style={{ display: active ? 'block' : 'none' }}>
+			{step.groups.map((g, i) => (
+				<StubGroupRenderer key={g.id ?? g.title ?? `${step.id}-${i}`} group={g} />
+			))}
+		</div>
+	);
+}
+
 // In-file harness mirroring the ejectable <AdvancedWizard> (which lives in the
-// registry and is not importable here): store + providers, then the hook + panels.
+// registry and is not importable here): the HOOK owns the store, and the harness
+// provides it below itself — exactly what the registry file now does.
 function Harness({
 	config,
 	onSubmit = vi.fn(),
@@ -54,14 +93,7 @@ function Harness({
 	config: AdvancedWizardConfig;
 	onSubmit?: (v: Record<string, unknown>) => void | Promise<void>;
 }) {
-	const store = useMemo(() => createFormStore(), []);
-	return (
-		<FormStoreProvider store={store}>
-			<RendererRegistryContext.Provider value={registry}>
-				<Inner config={config} onSubmit={onSubmit} />
-			</RendererRegistryContext.Provider>
-		</FormStoreProvider>
-	);
+	return <Inner config={config} onSubmit={onSubmit} />;
 }
 
 function Inner({
@@ -73,46 +105,50 @@ function Inner({
 }) {
 	const wiz = useAdvancedWizard(config, { onSubmit });
 	return (
-		<div>
-			<nav>
-				{wiz.path.map((s) => (
-					<button
-						key={s.id}
-						type="button"
-						data-testid={`nav-${s.id}`}
-						data-status={s.status}
-						data-error-count={s.errorCount}
-						data-has-errors={s.hasErrors}
-						disabled={!s.canNavigateTo}
-						onClick={() => void wiz.goTo(s.id)}
-					>
-						{s.title}
-					</button>
-				))}
-			</nav>
-			<div data-testid="invalid-steps">{wiz.invalidSteps.map((s) => s.id).join(',')}</div>
-			<div>
-				{config.steps
-					.filter((s) => wiz.mountedStepIds.includes(s.id))
-					.map((s) => (
-						<AdvancedWizardPanel key={s.id} step={s} active={s.id === wiz.current.id} />
-					))}
-			</div>
-			<footer>
-				<button type="button" onClick={() => wiz.goPrevious()} disabled={!wiz.canGoPrevious}>
-					Back
-				</button>
-				{wiz.isTerminalStep ? (
-					<button type="button" onClick={() => void wiz.submit()}>
-						Submit
-					</button>
-				) : (
-					<button type="button" onClick={() => void wiz.goNext()}>
-						Next
-					</button>
-				)}
-			</footer>
-		</div>
+		<FormStoreProvider store={wiz.store}>
+			<RendererRegistryContext.Provider value={registry}>
+				<div>
+					<nav>
+						{wiz.path.map((s) => (
+							<button
+								key={s.id}
+								type="button"
+								data-testid={`nav-${s.id}`}
+								data-status={s.status}
+								data-error-count={s.errorCount}
+								data-has-errors={s.hasErrors}
+								disabled={!s.canNavigateTo}
+								onClick={() => void wiz.goTo(s.id)}
+							>
+								{s.title}
+							</button>
+						))}
+					</nav>
+					<div data-testid="invalid-steps">{wiz.invalidSteps.map((s) => s.id).join(',')}</div>
+					<div>
+						{config.steps
+							.filter((s) => wiz.mountedStepIds.includes(s.id))
+							.map((s) => (
+								<Panel key={s.id} step={s} active={s.id === wiz.current.id} />
+							))}
+					</div>
+					<footer>
+						<button type="button" onClick={() => wiz.goPrevious()} disabled={!wiz.canGoPrevious}>
+							Back
+						</button>
+						{wiz.isTerminalStep ? (
+							<button type="button" onClick={() => void wiz.submit()}>
+								Submit
+							</button>
+						) : (
+							<button type="button" onClick={() => void wiz.goNext()}>
+								Next
+							</button>
+						)}
+					</footer>
+				</div>
+			</RendererRegistryContext.Provider>
+		</FormStoreProvider>
 	);
 }
 
@@ -157,6 +193,8 @@ function kycConfig(overrides: Partial<AdvancedWizardConfig> = {}): AdvancedWizar
 
 beforeEach(() => {
 	resetWarningsForTests();
+	resetProUsageForTests();
+	document.body.innerHTML = '';
 	statusMock.mockReset();
 	statusMock.mockReturnValue(licensed);
 	vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -169,6 +207,57 @@ afterEach(() => {
 });
 
 describe('useAdvancedWizard', () => {
+	it('re-attaches the dependency engine when a new branch becomes reachable', async () => {
+		const user = userEvent.setup();
+		// `secret` lives on the `biz` branch, which is unmounted at start. Its rule can
+		// only fire if the engine re-attaches once that step joins the projected path.
+		const branchDeps: AdvancedWizardConfig = {
+			steps: [
+				step(
+					'start',
+					[field('kind')],
+					[{ fieldNames: ['kind'], when: (v) => v.kind === 'business', to: 'biz' }]
+				),
+				{
+					id: 'biz',
+					title: 'biz',
+					groups: [
+						{
+							questions: [
+								field('flag'),
+								{
+									key: 'secret',
+									label: 'secret',
+									control: 'text',
+									dependents: {
+										propsDependsOn: [
+											{
+												fieldNames: ['flag'],
+												compute: (v) => ({ hidden: v.flag !== 'show' }),
+											},
+										],
+									},
+								} as TextQuestion,
+							],
+						},
+					],
+				},
+			],
+		};
+
+		render(<Harness config={branchDeps} />);
+		await user.type(screen.getByLabelText('kind'), 'business');
+		await user.click(screen.getByRole('button', { name: 'Next' }));
+
+		// On the newly-reachable branch: the engine's pass hid `secret`.
+		expect(screen.getByLabelText('flag')).toBeInTheDocument();
+		expect(screen.queryByLabelText('secret')).toBeNull();
+
+		// And it stays live on that branch.
+		await user.type(screen.getByLabelText('flag'), 'show');
+		expect(screen.getByLabelText('secret')).toBeInTheDocument();
+	});
+
 	it('mounts only the start step (and its projected path), not other branches', () => {
 		render(<Harness config={kycConfig()} />);
 		// start is active and interactive.
@@ -255,13 +344,13 @@ describe('useAdvancedWizard', () => {
 	it('shows the unlicensed watermark in dev on the active step', () => {
 		statusMock.mockReturnValue(unlicensed);
 		render(<Harness config={kycConfig()} />);
-		expect(screen.getByText(/unlicensed/i)).toBeInTheDocument();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).not.toBeNull();
 	});
 
 	it('hides the watermark when licensed', () => {
 		statusMock.mockReturnValue(licensed);
 		render(<Harness config={kycConfig()} />);
-		expect(screen.queryByText(/unlicensed/i)).toBeNull();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).toBeNull();
 	});
 
 	describe('lenient navigation (continue past errors)', () => {

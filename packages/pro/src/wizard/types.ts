@@ -5,7 +5,7 @@
 // own successor from the current answers, so the taken path is a graph walk, not
 // an index++. See `routing.ts` for the resolution semantics.
 
-import type { Group } from '@easy-forms/core';
+import type { FormStore, Group } from '@easy-forms/core';
 
 /**
  * One declarative routing rule on a step's `next`. Evaluated against the values
@@ -93,6 +93,9 @@ export interface AdvancedWizardStepState {
 }
 
 export interface UseAdvancedWizardResult {
+	/** The form store this wizard created and drives. Provide it via
+	 *  <FormStoreProvider> so the step fields register into it. */
+	store: FormStore;
 	/** Every configured step, decorated with navigation state. */
 	steps: AdvancedWizardStepState[];
 	/** The progress path: completed + active + upcoming (what an indicator renders). */

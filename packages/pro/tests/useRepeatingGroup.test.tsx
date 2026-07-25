@@ -1,28 +1,55 @@
 import {
-	Form,
+	Field,
 	type FormSchema,
+	FormStoreProvider,
+	type Group,
+	type GroupRendererProps,
 	type Question,
 	type RendererProps,
 	type RendererRegistry,
+	RendererRegistryContext,
 	type TextQuestion,
+	attachDependencyEngine,
+	createFormStore,
+	defaultDependencyHandlers,
+	useGroup,
 } from '@easy-forms/core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useEffect, useMemo } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/license/setEasyFormsProLicense', () => ({
 	getLicenseStatus: vi.fn(),
 }));
 
-import { RepeatingGroupItem } from '../src/components/RepeatingGroupItem';
 import type { RepeatingGroupQuestion } from '../src/controls/repeatingGroup';
 import '../src/controls/repeatingGroup'; // loads the `repeatingGroup` control augmentation
 import { useRepeatingGroup } from '../src/hooks/useRepeatingGroup';
+import {
+	type UseRepeatingGroupItemOptions,
+	useRepeatingGroupItem,
+} from '../src/hooks/useRepeatingGroupItem';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
+import { resetProUsageForTests } from '../src/license/proUsage';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
 
+// One repeated row, mirroring the `<Row>` the ejected renderer defines: a
+// component is required because `useRepeatingGroupItem` is a hook and hooks
+// cannot be called inside a `.map()` callback.
+function Row({ groupKey, index, groups, defaultItem }: UseRepeatingGroupItemOptions) {
+	const { groups: prefixed } = useRepeatingGroupItem({ groupKey, index, groups, defaultItem });
+	return (
+		<>
+			{prefixed.map((g, i) => (
+				<StubGroupRenderer key={g.id ?? g.title ?? `row-${index}-${i}`} group={g} />
+			))}
+		</>
+	);
+}
+
 // The ejectable registry renderer lives in @easy-forms/registry, so it is not
-// importable here. This in-file harness mirrors it exactly (hook + item + markup)
+// importable here. This in-file harness mirrors it exactly (hook + row + markup)
 // so these tests exercise the same Pro contract the ejected renderer relies on.
 function RepeatingGroupRenderer(props: RendererProps<RepeatingGroupQuestion>) {
 	const { question } = props;
@@ -39,7 +66,7 @@ function RepeatingGroupRenderer(props: RendererProps<RepeatingGroupQuestion>) {
 					{itemLabel ? (
 						<div className="easy-forms-repeat__item-header">{itemLabel(position)}</div>
 					) : null}
-					<RepeatingGroupItem
+					<Row
 						groupKey={question.key}
 						index={index}
 						groups={question.groups}
@@ -103,13 +130,77 @@ function buildSchema(overrides: Record<string, unknown> = {}): FormSchema {
 	return { groups: [{ id: 'root', questions: [question] }] };
 }
 
+// Stand-in for the ejectable registry's GroupRenderer (core no longer ships
+// rendered chrome; each registry file imports its own). Mirrors the
+// deleted core GroupRenderer closely enough to exercise real field/group
+// rendering: walks questions + nested groups recursively.
+function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
+	const overrides = useGroup(group.id);
+	const hidden = overrides.hidden === true;
+	if (hidden) return null;
+	return (
+		<div data-depth={depth}>
+			{group.questions?.map((question) => (
+				<Field key={question.key} question={question} />
+			))}
+			{(group as Group).groups?.map((child, index) => (
+				<StubGroupRenderer
+					key={child.id ?? child.title ?? `group-${depth}-${index}`}
+					group={child}
+					depth={depth + 1}
+				/>
+			))}
+		</div>
+	);
+}
+
+// Stand-in for core's deleted <Form>: creates a store, attaches the dependency
+// engine (mirroring <Form>'s own useEffect timing), provides the renderer +
+// chrome registries, and wires a plain submit button through `store.submit`.
+function FormHarness({
+	schema,
+	registry: rendererRegistry,
+	onSubmit,
+}: {
+	schema: FormSchema;
+	registry: RendererRegistry;
+	onSubmit: (values: Record<string, unknown>) => void | Promise<void>;
+}) {
+	const store = useMemo(() => createFormStore(), []);
+
+	useEffect(() => {
+		const attached = attachDependencyEngine(store, schema, defaultDependencyHandlers);
+		return attached.detach;
+	}, [store, schema]);
+
+	return (
+		<FormStoreProvider store={store}>
+			<RendererRegistryContext.Provider value={rendererRegistry}>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						void store.submit((values) => onSubmit(values));
+					}}
+				>
+					{schema.groups.map((group, index) => (
+						<StubGroupRenderer key={group.id ?? group.title ?? `root-${index}`} group={group} />
+					))}
+					<button type="submit">Submit</button>
+				</form>
+			</RendererRegistryContext.Provider>
+		</FormStoreProvider>
+	);
+}
+
 function renderForm(schema: FormSchema, onSubmit = vi.fn()) {
-	render(<Form schema={schema} registry={registry} onSubmit={onSubmit} />);
+	render(<FormHarness schema={schema} registry={registry} onSubmit={onSubmit} />);
 	return onSubmit;
 }
 
 beforeEach(() => {
 	resetWarningsForTests();
+	resetProUsageForTests();
+	document.body.innerHTML = '';
 	statusMock.mockReset();
 	statusMock.mockReturnValue(licensed);
 	vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -121,7 +212,7 @@ afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-describe('useRepeatingGroup + RepeatingGroupItem', () => {
+describe('useRepeatingGroup + useRepeatingGroupItem', () => {
 	it('seeds minItems rows on mount', () => {
 		renderForm(buildSchema({ minItems: 2 }));
 		expect(screen.getAllByLabelText('Currency')).toHaveLength(2);
@@ -454,26 +545,26 @@ describe('useRepeatingGroup + RepeatingGroupItem', () => {
 	it('shows the unlicensed watermark in dev when no license is set', () => {
 		statusMock.mockReturnValue(unlicensed);
 		renderForm(buildSchema());
-		expect(screen.getByText(/unlicensed/i)).toBeInTheDocument();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).not.toBeNull();
 	});
 
 	it('hides the watermark when licensed', () => {
 		statusMock.mockReturnValue(licensed);
 		renderForm(buildSchema());
-		expect(screen.queryByText(/unlicensed/i)).toBeNull();
+		expect(document.querySelector('[data-easy-forms-pro-watermark]')).toBeNull();
 	});
 
-	it('shows a single watermark across many rows and hands off when the owner is removed', async () => {
+	it('shows a single watermark across many rows', async () => {
 		const user = userEvent.setup();
 		statusMock.mockReturnValue(unlicensed);
 		renderForm(buildSchema({ minItems: 1, maxItems: 3 }));
 		// Two rows, but the singleton yields exactly one badge.
 		await user.click(screen.getByRole('button', { name: 'Add account' }));
-		expect(screen.getAllByText(/unlicensed/i)).toHaveLength(1);
-		// Remove the owning (first) row — ownership hands off, still exactly one.
+		expect(document.querySelectorAll('[data-easy-forms-pro-watermark]')).toHaveLength(1);
+		// Remove a row — usage count drops but stays > 0, still exactly one badge.
 		const [firstRemove] = screen.getAllByRole('button', { name: 'Remove' });
 		if (!firstRemove) throw new Error('expected a remove button');
 		await user.click(firstRemove);
-		expect(screen.getAllByText(/unlicensed/i)).toHaveLength(1);
+		expect(document.querySelectorAll('[data-easy-forms-pro-watermark]')).toHaveLength(1);
 	});
 });

@@ -7,6 +7,10 @@ export {
 } from './persistence';
 export { collectStepFieldKeys, isStepVisible } from './walkSteps';
 export {
+	type UseWizardRuntimeOptions,
+	useWizardRuntime,
+} from './useWizardRuntime';
+export {
 	useWizard,
 	WizardContext,
 	type WizardContextValue,
