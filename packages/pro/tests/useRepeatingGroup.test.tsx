@@ -24,16 +24,33 @@ vi.mock('../src/license/setEasyFormsProLicense', () => ({
 	getLicenseStatus: vi.fn(),
 }));
 
-import { RepeatingGroupItem } from '../src/components/RepeatingGroupItem';
 import type { RepeatingGroupQuestion } from '../src/controls/repeatingGroup';
 import '../src/controls/repeatingGroup'; // loads the `repeatingGroup` control augmentation
 import { useRepeatingGroup } from '../src/hooks/useRepeatingGroup';
+import {
+	type UseRepeatingGroupItemOptions,
+	useRepeatingGroupItem,
+} from '../src/hooks/useRepeatingGroupItem';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
 import { resetProUsageForTests } from '../src/license/proUsage';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
 
+// One repeated row, mirroring the `<Row>` the ejected renderer defines: a
+// component is required because `useRepeatingGroupItem` is a hook and hooks
+// cannot be called inside a `.map()` callback.
+function Row({ groupKey, index, groups, defaultItem }: UseRepeatingGroupItemOptions) {
+	const { groups: prefixed } = useRepeatingGroupItem({ groupKey, index, groups, defaultItem });
+	return (
+		<>
+			{prefixed.map((g, i) => (
+				<StubGroupRenderer key={g.id ?? g.title ?? `row-${index}-${i}`} group={g} />
+			))}
+		</>
+	);
+}
+
 // The ejectable registry renderer lives in @easy-forms/registry, so it is not
-// importable here. This in-file harness mirrors it exactly (hook + item + markup)
+// importable here. This in-file harness mirrors it exactly (hook + row + markup)
 // so these tests exercise the same Pro contract the ejected renderer relies on.
 function RepeatingGroupRenderer(props: RendererProps<RepeatingGroupQuestion>) {
 	const { question } = props;
@@ -50,7 +67,7 @@ function RepeatingGroupRenderer(props: RendererProps<RepeatingGroupQuestion>) {
 					{itemLabel ? (
 						<div className="easy-forms-repeat__item-header">{itemLabel(position)}</div>
 					) : null}
-					<RepeatingGroupItem
+					<Row
 						groupKey={question.key}
 						index={index}
 						groups={question.groups}

@@ -1,5 +1,4 @@
 import {
-	ChromeRegistryContext,
 	Field,
 	FormStoreProvider,
 	type Group,
@@ -18,12 +17,11 @@ vi.mock('../src/license/setEasyFormsProLicense', () => ({
 	getLicenseStatus: vi.fn(),
 }));
 
-import { AdvancedWizardPanel } from '../src/components/AdvancedWizardPanel';
 import { useAdvancedWizard } from '../src/hooks/useAdvancedWizard';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
 import { resetProUsageForTests } from '../src/license/proUsage';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
-import type { AdvancedWizardConfig } from '../src/wizard/types';
+import type { AdvancedWizardConfig, AdvancedWizardStep } from '../src/wizard/types';
 
 const statusMock = vi.mocked(getLicenseStatus);
 const ORIGINAL_ENV = process.env.NODE_ENV;
@@ -73,6 +71,18 @@ function StubGroupRenderer({ group, depth = 0 }: GroupRendererProps) {
 	);
 }
 
+// The step panel the ejected <AdvancedWizard> now owns (absorbed from the deleted
+// Pro-owned <AdvancedWizardPanel>): inactive panels stay mounted but CSS-hidden.
+function Panel({ step, active }: { step: AdvancedWizardStep; active: boolean }) {
+	return (
+		<div role="tabpanel" aria-hidden={!active} style={{ display: active ? 'block' : 'none' }}>
+			{step.groups.map((g, i) => (
+				<StubGroupRenderer key={g.id ?? g.title ?? `${step.id}-${i}`} group={g} />
+			))}
+		</div>
+	);
+}
+
 // In-file harness mirroring the ejectable <AdvancedWizard> (which lives in the
 // registry and is not importable here): the HOOK owns the store, and the harness
 // provides it below itself — exactly what the registry file now does.
@@ -96,50 +106,48 @@ function Inner({
 	const wiz = useAdvancedWizard(config, { onSubmit });
 	return (
 		<FormStoreProvider store={wiz.store}>
-		<RendererRegistryContext.Provider value={registry}>
-		<ChromeRegistryContext.Provider value={{ GroupRenderer: StubGroupRenderer }}>
-		<div>
-			<nav>
-				{wiz.path.map((s) => (
-					<button
-						key={s.id}
-						type="button"
-						data-testid={`nav-${s.id}`}
-						data-status={s.status}
-						data-error-count={s.errorCount}
-						data-has-errors={s.hasErrors}
-						disabled={!s.canNavigateTo}
-						onClick={() => void wiz.goTo(s.id)}
-					>
-						{s.title}
-					</button>
-				))}
-			</nav>
-			<div data-testid="invalid-steps">{wiz.invalidSteps.map((s) => s.id).join(',')}</div>
-			<div>
-				{config.steps
-					.filter((s) => wiz.mountedStepIds.includes(s.id))
-					.map((s) => (
-						<AdvancedWizardPanel key={s.id} step={s} active={s.id === wiz.current.id} />
-					))}
-			</div>
-			<footer>
-				<button type="button" onClick={() => wiz.goPrevious()} disabled={!wiz.canGoPrevious}>
-					Back
-				</button>
-				{wiz.isTerminalStep ? (
-					<button type="button" onClick={() => void wiz.submit()}>
-						Submit
-					</button>
-				) : (
-					<button type="button" onClick={() => void wiz.goNext()}>
-						Next
-					</button>
-				)}
-			</footer>
-		</div>
-		</ChromeRegistryContext.Provider>
-		</RendererRegistryContext.Provider>
+			<RendererRegistryContext.Provider value={registry}>
+				<div>
+					<nav>
+						{wiz.path.map((s) => (
+							<button
+								key={s.id}
+								type="button"
+								data-testid={`nav-${s.id}`}
+								data-status={s.status}
+								data-error-count={s.errorCount}
+								data-has-errors={s.hasErrors}
+								disabled={!s.canNavigateTo}
+								onClick={() => void wiz.goTo(s.id)}
+							>
+								{s.title}
+							</button>
+						))}
+					</nav>
+					<div data-testid="invalid-steps">{wiz.invalidSteps.map((s) => s.id).join(',')}</div>
+					<div>
+						{config.steps
+							.filter((s) => wiz.mountedStepIds.includes(s.id))
+							.map((s) => (
+								<Panel key={s.id} step={s} active={s.id === wiz.current.id} />
+							))}
+					</div>
+					<footer>
+						<button type="button" onClick={() => wiz.goPrevious()} disabled={!wiz.canGoPrevious}>
+							Back
+						</button>
+						{wiz.isTerminalStep ? (
+							<button type="button" onClick={() => void wiz.submit()}>
+								Submit
+							</button>
+						) : (
+							<button type="button" onClick={() => void wiz.goNext()}>
+								Next
+							</button>
+						)}
+					</footer>
+				</div>
+			</RendererRegistryContext.Provider>
 		</FormStoreProvider>
 	);
 }

@@ -1,13 +1,5 @@
 // @easy-forms/pro — public entrypoint.
 
-export {
-	AdvancedWizardPanel,
-	type AdvancedWizardPanelProps,
-} from './components/AdvancedWizardPanel';
-export {
-	RepeatingGroupItem,
-	type RepeatingGroupItemProps,
-} from './components/RepeatingGroupItem';
 export type {
 	RepeatingGroupConfig,
 	RepeatingGroupQuestion,
@@ -19,6 +11,11 @@ export {
 	useRepeatingGroup,
 	type UseRepeatingGroupResult,
 } from './hooks/useRepeatingGroup';
+export {
+	useRepeatingGroupItem,
+	type UseRepeatingGroupItemOptions,
+	type UseRepeatingGroupItemResult,
+} from './hooks/useRepeatingGroupItem';
 // Optional helper: wire `minItems` / `maxItems` into submit-time validators on a
 // declarative question (`validators: repeatingGroupValidators({ minItems, maxItems })`).
 // The control already enforces the bounds in its UI, so this is opt-in.
