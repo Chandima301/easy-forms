@@ -1,13 +1,13 @@
-import { render, renderHook, screen } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/license/setEasyFormsProLicense', () => ({
 	getLicenseStatus: vi.fn(),
 }));
 
-import { ProWatermark } from '../src/components/ProWatermark';
 import { useProLicense } from '../src/hooks/useProLicense';
 import { resetWarningsForTests } from '../src/license/assertLicensed';
+import { resetProUsageForTests } from '../src/license/proUsage';
 import { getLicenseStatus } from '../src/license/setEasyFormsProLicense';
 
 const statusMock = vi.mocked(getLicenseStatus);
@@ -24,6 +24,8 @@ beforeEach(() => {
 	statusMock.mockReset();
 	vi.spyOn(console, 'warn').mockImplementation(() => {});
 	process.env.NODE_ENV = 'development';
+	resetProUsageForTests();
+	document.body.innerHTML = '';
 });
 
 afterEach(() => {
@@ -49,23 +51,28 @@ describe('useProLicense', () => {
 	});
 });
 
-describe('ProWatermark', () => {
-	it('renders the unlicensed badge in development', () => {
+function Consumer() {
+	useProLicense('repeatingGroup');
+	return null;
+}
+
+function badgeCount(): number {
+	return document.querySelectorAll('[data-easy-forms-pro-watermark]').length;
+}
+
+describe('watermark via useProLicense', () => {
+	it('injects the unlicensed badge while a Pro feature is mounted', () => {
 		statusMock.mockReturnValue(invalidStatus);
-		render(<ProWatermark />);
-		expect(screen.getByText(/unlicensed/i)).toBeInTheDocument();
+		const { unmount } = render(<Consumer />);
+		expect(badgeCount()).toBe(1);
+		unmount();
+		expect(badgeCount()).toBe(0);
 	});
 
-	it('renders nothing when licensed', () => {
+	it('shows no badge when licensed', () => {
 		statusMock.mockReturnValue(validStatus);
-		const { container } = render(<ProWatermark />);
-		expect(container).toBeEmptyDOMElement();
-	});
-
-	it('renders the unlicensed badge in production too', () => {
-		process.env.NODE_ENV = 'production';
-		statusMock.mockReturnValue(invalidStatus);
-		render(<ProWatermark />);
-		expect(screen.getByText(/unlicensed/i)).toBeInTheDocument();
+		const { unmount } = render(<Consumer />);
+		expect(badgeCount()).toBe(0);
+		unmount();
 	});
 });

@@ -1,4 +1,5 @@
 // Module singleton holding the verified license status for the running app.
+import { syncProWatermark } from './proUsage';
 import type { LicenseStatus } from './types';
 import { verifyLicense } from './verify';
 
@@ -11,6 +12,7 @@ let current: LicenseStatus = { valid: false, reason: 'missing' };
  */
 export function setEasyFormsProLicense(key: string): void {
 	current = verifyLicense(key);
+	syncProWatermark();
 }
 
 /** Read the cached license status. Defaults to `missing` until a key is set. */

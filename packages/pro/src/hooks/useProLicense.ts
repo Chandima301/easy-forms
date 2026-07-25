@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { assertLicensed } from '../license/assertLicensed';
+import { registerProUsage } from '../license/proUsage';
 import { getLicenseStatus } from '../license/setEasyFormsProLicense';
 import type { LicenseStatus } from '../license/types';
 
@@ -20,6 +21,7 @@ export function useProLicense(feature: string): UseProLicenseResult {
 
 	useEffect(() => {
 		setLicensed(assertLicensed(feature));
+		return registerProUsage();
 	}, [feature]);
 
 	return { licensed, status: getLicenseStatus() };
