@@ -6,6 +6,15 @@ const withMDX = createMDX();
 const config = {
 	reactStrictMode: true,
 	transpilePackages: ['@easy-forms/core'],
+	async redirects() {
+		return [
+			{
+				source: '/docs/api/form',
+				destination: '/docs/api/use-form-runtime',
+				permanent: true,
+			},
+		];
+	},
 };
 
 export default withMDX(config);

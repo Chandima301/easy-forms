@@ -1,0 +1,77 @@
+---
+title: useFormRuntime
+description: The hook that owns a form's store, dependency engine, and plugins.
+icon: Cpu
+---
+
+```ts
+import { useFormRuntime } from '@easy-forms/core';
+```
+
+<Callout type="warn" title="Removed in 0.2">
+	`@easy-forms/core` no longer exports a `<Form>` component. Core is headless: it ships this
+	hook, and the chrome that used to live in `<Form>` is now the ejectable
+	[`<EasyForm>`](/docs/api/registry) you own. If you are upgrading, see
+	[Upgrading](/docs/upgrading).
+</Callout>
+
+## Signature
+
+```ts
+function useFormRuntime(
+	schema: FormSchema<TFormData>,
+	options?: UseFormRuntimeOptions
+): { store: FormStore };
+```
+
+## Options
+
+<PropsTable rows={[
+	{ name: 'initialValues', type: 'Record<string, unknown>', description: 'Seed values for the internally created store. Ignored when you pass your own store.' },
+	{ name: 'store', type: 'FormStore', description: 'Provide an external store instead of creating one. An external store always wins.' },
+	{ name: 'dependencyHandlers', type: 'DependencyHandlerRegistry', description: 'Additional or replacement handlers, merged over defaultDependencyHandlers.' },
+	{ name: 'plugins', type: 'FormPlugin[]', description: 'Lifecycle plugins (logger, autosave, custom). Attached in their own effect.' },
+]} />
+
+## What it owns
+
+- **The store** — created via `createFormStore({ initialValues })`, or the one you passed in.
+- **The merged handler registry** — `{ ...defaultDependencyHandlers, ...dependencyHandlers }`.
+- **The dependency engine** — attached in an effect, detached on cleanup.
+- **Plugins** — attached in a second effect, skipped entirely when the array is empty.
+
+It renders nothing. You provide the store yourself:
+
+```tsx
+import { FormStoreProvider, RendererRegistryContext, useFormRuntime } from '@easy-forms/core';
+
+function MyForm({ schema, onSubmit }) {
+	const { store } = useFormRuntime(schema, { plugins: [] });
+
+	return (
+		<FormStoreProvider store={store}>
+			<RendererRegistryContext.Provider value={myRegistry}>
+				{/* your chrome + <Field>s */}
+			</RendererRegistryContext.Provider>
+		</FormStoreProvider>
+	);
+}
+```
+
+## Mount order matters
+
+The engine is attached inside `useEffect`. React runs child effects **before** parent effects,
+so by the time this hook's effect fires, every descendant `<Field>` has already registered
+with the store — and the engine's first pass sees all of them.
+
+<Callout type="warn">
+	Call `useFormRuntime` from the component that **owns the subtree** — the one that renders the
+	provider and the fields beneath it. Calling it from a component mounted *beside* the fields
+	breaks that ordering and silently disables all dependencies.
+</Callout>
+
+## Related
+
+- [`<EasyForm>` & the registry](/docs/api/registry) — the ejectable shell that calls this hook
+- [The store](/docs/api/store) — what `store` exposes
+- [Hooks](/docs/api/hooks) — subscribing to slices of form state
