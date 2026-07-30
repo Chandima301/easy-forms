@@ -76,3 +76,13 @@ declare module '@easy-forms/core' {
 	interface DependencyRegistry<TFormData> { /* custom kinds */ }
 }
 ```
+
+## GroupRendererProps
+
+```ts
+import type { GroupRendererProps } from '@easy-forms/core';
+```
+
+The contract the ejected `group-renderer.tsx` implements. Core keeps this type even though it
+no longer ships a `GroupRenderer` component, so your ejected copy stays type-checked against
+the engine.

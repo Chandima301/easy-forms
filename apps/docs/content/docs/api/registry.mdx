@@ -29,22 +29,22 @@ See [Installation](/docs/installation) for the full setup.
 
 | Item | What you get |
 | --- | --- |
-| `@easy-forms/easy-form` | The whole kit: every renderer + `registry.ts` + the `<EasyForm>` wrapper + `easy-forms.css`. |
+| `@easy-forms/easy-form` | The whole kit: every renderer + `registry.ts` + `group-renderer.tsx` + `wizard.tsx` + the `<EasyForm>` wrapper. |
 | `@easy-forms/registry` | `registry.ts` — the assembled `easyFormsRegistry` (pulls all renderers). |
 | `@easy-forms/field-shell` | `FieldShell` — the shared label + description + inline-error wrapper. |
 | `@easy-forms/text`, `…/email`, `…/number`, `…/textarea`, `…/select`, `…/multiselect`, `…/checkbox`, `…/checkbox-list`, `…/radio-group`, `…/date`, `…/file`, `…/custom` | One renderer per control. Each pulls `field-shell` + the canonical shadcn primitives it needs. |
+| `@easy-forms/group-renderer` | `GroupRenderer` — draws a group's fields, owns the grid/stack layout, and CSS-hides hidden groups. |
+| `@easy-forms/wizard` | `Wizard` — the linear multi-step shell over core's `useWizardRuntime`. |
 
 Add the whole kit (`@easy-forms/easy-form`) or just the controls you need
 (`npx shadcn@latest add @easy-forms/select`).
 
 ## `<EasyForm>`
 
-The pre-wired wrapper scaffolded at `@/components/easy-forms/easy-form.tsx` — it's `<Form>`
-with the renderer registry and chrome styles baked in, so there's no `registry` prop:
-
-```ts
-type EasyFormProps<TFormData> = Omit<FormProps<TFormData>, 'registry'>;
-```
+The pre-wired shell scaffolded at `@/components/easy-forms/easy-form.tsx`. It calls
+[`useFormRuntime`](/docs/api/use-form-runtime) for all behaviour and renders only the
+container, header, body, and footer — so you can restyle it freely without being able to
+break form behaviour.
 
 ```tsx
 import { EasyForm } from '@/components/easy-forms/easy-form';
@@ -52,20 +52,37 @@ import { EasyForm } from '@/components/easy-forms/easy-form';
 <EasyForm schema={schema} initialValues={initialValues} onSubmit={onSubmit} />;
 ```
 
-It accepts everything [`<Form>`](/docs/api/form) does except `registry`.
+<PropsTable rows={[
+	{ name: 'schema', type: 'FormSchema<TFormData>', required: true, description: 'The form definition.' },
+	{ name: 'onSubmit', type: '(values: TFormData) => void | Promise<void>', required: true, description: 'Called with the validated, visible values on submit.' },
+	{ name: 'initialValues', type: 'Partial<TFormData>', description: 'Initial field values.' },
+	{ name: 'store', type: 'FormStore', description: 'Provide an external store instead of creating one internally.' },
+	{ name: 'dependencyHandlers', type: 'DependencyHandlerRegistry', description: 'Additional or replacement dependency handlers, merged over the defaults.' },
+	{ name: 'plugins', type: 'FormPlugin[]', description: 'Lifecycle plugins (logger, autosave, custom).' },
+	{ name: 'submitLabel', type: 'string', default: "'Submit'", description: 'Submit button label.' },
+	{ name: 'resetLabel', type: 'string', default: "'Reset'", description: 'Reset button label.' },
+	{ name: 'showReset', type: 'boolean', default: 'false', description: 'Show a reset button in the footer.' },
+	{ name: 'className', type: 'string', description: 'Class applied to the form element.' },
+	{ name: 'wizardNextLabel', type: 'string', description: 'Override the wizard Next label.' },
+	{ name: 'wizardPreviousLabel', type: 'string', description: 'Override the wizard Previous label.' },
+]} />
+
+When `schema.wizard` is present, `<EasyForm>` renders `<Wizard>` instead of a single page and
+lets it own the submit flow. Hidden fields — via field or group visibility — are excluded from
+the `onSubmit` payload.
 
 ## `easyFormsRegistry`
 
-The assembled control → renderer map at `@/components/easy-forms/registry.ts`. It's what
-`<EasyForm>` passes to `<Form>`. Edit it to add a control or point one at your own renderer
-— see [Theming & customization](/docs/theming).
+The assembled control → renderer map at `@/components/easy-forms/registry.ts`. It's the
+registry `<EasyForm>` provides via `RendererRegistryContext`. Edit it to add a control or
+point one at your own renderer — see [Theming & customization](/docs/theming).
 
 ## Files you own
 
 `shadcn add @easy-forms/easy-form` writes into your repo:
 
 - `components/easy-forms/*-renderer.tsx` — one per control (e.g. `text-renderer.tsx`, `dropdown-renderer.tsx`).
-- `components/easy-forms/field-shell.tsx`, `registry.ts`, `easy-form.tsx`, `easy-forms.css`.
+- `components/easy-forms/field-shell.tsx`, `registry.ts`, `easy-form.tsx`, `group-renderer.tsx`, `wizard.tsx`.
 - `components/ui/*` — the canonical shadcn primitives the renderers use (`input`, `select`, `checkbox`, `radio-group`, `popover`, `label`, `textarea`).
 
 All of it is editable. Each renderer is a React component typed `RendererProps<TQuestion>`
