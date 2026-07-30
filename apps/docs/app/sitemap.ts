@@ -2,7 +2,7 @@ import { exampleMeta } from '@/lib/examples-meta';
 import { source } from '@/lib/source';
 import type { MetadataRoute } from 'next';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://easy-forms.dev';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://easy-forms-docs.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
 	const docPages = source.getPages().map((page) => ({

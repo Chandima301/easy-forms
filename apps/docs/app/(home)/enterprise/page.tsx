@@ -25,7 +25,7 @@ export default function EnterprisePage() {
 				</p>
 				<div className="mt-7 flex flex-wrap justify-center gap-3">
 					<Link
-						href="mailto:enterprise@easy-forms.dev"
+						href="https://github.com/Chandima301/easy-forms/discussions"
 						className="inline-flex items-center gap-1.5 rounded-lg bg-fd-primary px-5 py-2.5 text-sm font-semibold text-fd-primary-foreground"
 					>
 						Talk to us <ArrowRight className="h-4 w-4" />
