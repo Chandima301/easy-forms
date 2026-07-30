@@ -57,8 +57,9 @@ interface FieldState {
 
 ## Bring your own store
 
-`<EasyForm>` creates a store for you. For advanced cases (driving values
-programmatically, sharing one store across components), create one yourself and pass it in:
+`<EasyForm>` calls [`useFormRuntime`](/docs/api/use-form-runtime), which creates a store for
+you. For advanced cases (driving values programmatically, sharing one store across
+components), create one yourself and pass it in — an external store always wins:
 
 ```tsx
 import { createFormStore } from '@easy-forms/core';

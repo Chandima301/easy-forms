@@ -31,6 +31,13 @@ The validation mode controls **when** a field validates:
 
 Regardless of mode, all visible fields are validated on submit before `onSubmit` runs.
 
+## When errors become visible
+
+Validation *running* and errors *displaying* are separate things. Regardless of mode, a
+field's error is only revealed once the field has been touched, or once the form has been
+submitted (or a wizard step advanced with Next). This stops a pristine form from turning red
+before the user has typed anything.
+
 ## The submit gate
 
 The default footer keeps the submit button disabled until the form is **dirty and valid**,

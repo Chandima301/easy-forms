@@ -16,17 +16,32 @@ without them.
 `npx shadcn@latest add @easy-forms/easy-form`. Tailwind scans your `components/` directory
 automatically. See [Installation](/docs/installation).
 
-## The form chrome is missing
+## The form chrome looks unstyled
 
 **Symptom:** the container, footer, and buttons have no styling.
 
-**Cause:** the ejected chrome stylesheet (`easy-forms.css`) isn't loaded, or your theme
-tokens (`--primary`, `--border`, `--card`, …) aren't defined.
+**Cause:** your Tailwind build is not scanning `components/easy-forms/`, or your shadcn theme
+tokens (`--primary`, `--border`, `--card`, …) are not defined.
 
-**Fix:** render with `<EasyForm>` — it imports `components/easy-forms/easy-forms.css` for
-you. (Using `<Form>` directly? Import that file yourself.) The chrome reads `var(--primary)`
-etc., so make sure `shadcn init` wrote your theme tokens. Don't move the `easy-forms*`
-classes into a Tailwind `@layer components` block.
+**Fix:** run `npx shadcn@latest init` if you have not — it writes the tokens and Tailwind
+setup. The chrome is plain Tailwind utilities in files you own, so if the rest of your app is
+styled and this is not, the cause is almost always content-scanning configuration.
+
+## My chrome broke after upgrading to 0.2
+
+**Symptom:** chrome that used to render correctly is now unstyled, or you have a dangling
+import of `easy-forms.css`.
+
+**Cause:** 0.2 deleted `easy-forms.css` and moved all chrome into ejectable components.
+
+**Fix:** re-run `npx shadcn@latest add @easy-forms/easy-form` to pull the current files, and
+delete any leftover `easy-forms.css` import. See [Upgrading](/docs/upgrading).
+
+<Callout type="info">
+	The old stylesheet used bare `var(--token)` references, which are only valid for Tailwind
+	v4-style full-colour tokens. Consumers on Tailwind v3 with HSL-triplet tokens got silently
+	broken chrome. Utilities route through your own Tailwind wiring, so that mismatch is gone.
+</Callout>
 
 ## A group's fields are misaligned
 

@@ -55,3 +55,18 @@ wizard: { persistKey: 'checkout-v1', steps: [...] }
 
 All step panels are mounted (and CSS-hidden) so field state is preserved as the user moves
 between steps.
+
+## How the wizard is assembled
+
+Since 0.2 the wizard is split the same way the rest of the library is — logic in core, markup
+in a file you own:
+
+- **`useWizardRuntime(wizard, { onSubmit })`** (core) — the state machine: visible-step
+  tracking, per-step validation gating, `goNext` / `goPrevious` / `goTo`, and `persistKey`
+  localStorage resume.
+- **`<Wizard>`** (`shadcn add @easy-forms/wizard`) — the step indicator and navigation
+  buttons. It calls the hook and provides `WizardContext`.
+
+All step panels stay mounted and the inactive ones are CSS-hidden, so every field stays
+registered with the store — which is what keeps cross-step `valueDependsOn` working and
+`getValues()` complete.

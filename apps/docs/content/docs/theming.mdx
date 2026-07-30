@@ -69,10 +69,10 @@ export const easyFormsRegistry: RendererRegistry = {
 lower-level `<Form>` and spread the registry:
 
 ```tsx
-import { Form } from '@easy-forms/core';
+import { EasyForm } from '@/components/easy-forms/easy-form';
 import { easyFormsRegistry } from '@/components/easy-forms/registry';
 
-<Form schema={schema} registry={{ ...easyFormsRegistry, dropdown: MyFancySelect }} onSubmit={onSubmit} />;
+<EasyForm schema={schema} registry={{ ...easyFormsRegistry, dropdown: MyFancySelect }} onSubmit={onSubmit} />;
 ```
 
 ## Build a renderer from primitives
@@ -99,16 +99,27 @@ function PhoneRenderer({ question, value, onChange, onBlur, error, touched }: Re
 
 ## Style the form chrome
 
-The container, footer, group grid, and wizard navigation are rendered by
-`@easy-forms/core` and styled by `easy-forms.css`, added next to your renderers at
-`@/components/easy-forms/easy-forms.css` and imported by `<EasyForm>`. It's plain CSS keyed
-to `easy-forms*` classes and driven by your shadcn tokens (`var(--primary)`,
-`var(--border)`, …) — edit it freely:
+The container, header, footer, group grid, and wizard navigation are **yours** — they live in
+the components the registry copied into your repo, styled with ordinary Tailwind utilities:
 
-```css title="components/easy-forms/easy-forms.css"
-.easy-forms { border-radius: var(--radius); border: 1px solid var(--border); }
-.easy-forms__submit { background-color: var(--primary); color: var(--primary-foreground); }
+| File | Renders |
+| --- | --- |
+| `@/components/easy-forms/easy-form.tsx` | Container, header, body, footer, submit/reset buttons |
+| `@/components/easy-forms/group-renderer.tsx` | Group section, title, and the grid/stack layout |
+| `@/components/easy-forms/wizard.tsx` | Step indicator and Previous/Next navigation |
+
+Edit them like any other component in your codebase:
+
+```tsx title="components/easy-forms/easy-form.tsx"
+<form className={cn('easy-forms', 'flex flex-col gap-6 rounded-lg border border-border bg-card p-6 shadow-sm', className)}>
 ```
+
+<Callout type="info" title="Changed in 0.2">
+	Earlier versions shipped an `easy-forms.css` stylesheet that core's chrome depended on. That
+	file is gone. The `easy-forms`, `easy-forms__header`, `easy-forms__title` class names are
+	kept as **unstyled semantic hooks** — useful for tests and global overrides — but they carry
+	no styles of their own.
+</Callout>
 
 ## Dark mode
 
