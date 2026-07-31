@@ -1,0 +1,5 @@
+{
+	"title": "Pro",
+	"icon": "Crown",
+	"pages": ["index", "install", "repeating-groups", "advanced-wizard", "licensing"]
+}

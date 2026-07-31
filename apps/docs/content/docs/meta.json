@@ -22,8 +22,9 @@
 		"api",
 		"best-practices",
 		"troubleshooting",
+		"---Pro---",
+		"pro",
 		"---Enterprise---",
-		"enterprise",
-		"pro-install"
+		"enterprise"
 	]
 }

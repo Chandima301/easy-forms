@@ -1,0 +1,49 @@
+---
+title: Easy Forms Pro
+description: What Pro adds, how it is packaged, and what stays free.
+icon: Crown
+---
+
+Easy Forms Pro is a commercial add-on for teams that need repeating line items and
+branching multi-step flows. Everything else — the engine, all 12 controls, validation,
+dependencies, the linear wizard — is free and MIT licensed.
+
+## What's free vs. what's Pro
+
+| | Free (`@easy-forms/core`) | Pro (`@easy-forms/pro`) |
+| --- | --- | --- |
+| Schema, validation, dependencies | ✅ | ✅ |
+| 12 controls + renderer registry | ✅ | ✅ |
+| Linear multi-step wizard | ✅ | ✅ |
+| Plugins (autosave, logging) | ✅ | ✅ |
+| **Repeating groups** | — | ✅ |
+| **Branching (non-linear) wizard** | — | ✅ |
+| License | MIT | Commercial, per seat |
+
+[Buy Easy Forms Pro →](https://buy.polar.sh/polar_cl_wRwAZKdSs5Oqdd8bSfIpgza3caqqPlkOKel7P1qvElJ)
+
+## How Pro is packaged
+
+Pro follows the same split as the free library: **the npm package holds the behaviour, the
+registry holds the markup.**
+
+- **`@easy-forms/pro`** (npm) — hooks, control types, wizard routing, and the license layer.
+  It ships **zero React components**.
+- **`@ef-pro/*`** (authenticated shadcn registry) — the renderers you eject and own:
+  `repeating-group` and `advanced-wizard`.
+
+<Callout type="warn" title="The Pro renderers depend on the free registry">
+	`@ef-pro/repeating-group` and `@ef-pro/advanced-wizard` declare registry dependencies on
+	**`@easy-forms/group-renderer`** and **`@easy-forms/registry`** — items from the *free,
+	public* `@easy-forms` registry. Configure both registries in `components.json` before
+	installing, or the install will fail to resolve them. See [Installing Pro](/docs/pro/install).
+</Callout>
+
+## Pages
+
+<Cards>
+	<Card title="Installing Pro" href="/docs/pro/install" description="Buy, configure both registries, set your license key." />
+	<Card title="Repeating groups" href="/docs/pro/repeating-groups" description="Line items with add/remove, bounds, and per-row dependencies." />
+	<Card title="Advanced wizard" href="/docs/pro/advanced-wizard" description="Branching flows where the next step is computed from answers." />
+	<Card title="Licensing" href="/docs/pro/licensing" description="Setting a key, checking status, and the watermark." />
+</Cards>

@@ -13,6 +13,11 @@ const config = {
 				destination: '/docs/api/use-form-runtime',
 				permanent: true,
 			},
+			{
+				source: '/docs/pro-install',
+				destination: '/docs/pro/install',
+				permanent: true,
+			},
 		];
 	},
 };
