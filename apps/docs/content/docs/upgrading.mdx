@@ -1,0 +1,102 @@
+---
+title: Upgrading
+description: Migrating to core 0.2.0 and Pro 1.0.0 — the headless refactor.
+icon: ArrowUpCircle
+---
+
+<Callout type="info">
+	Under 0.x semver the **minor** is the breaking slot, so a `^0.1.3` range will **not** pull
+	`0.2.0` on its own. You upgrade deliberately.
+</Callout>
+
+## `@easy-forms/core` 0.1.x → 0.2.0
+
+Core is now fully headless: it ships no rendered chrome. Everything visual is an ejectable
+component you own.
+
+### `<Form>` is gone
+
+```diff
+- import { Form } from '@easy-forms/core';
+-
+- <Form schema={schema} registry={easyFormsRegistry} onSubmit={onSubmit} />
++ import { EasyForm } from '@/components/easy-forms/easy-form';
++
++ <EasyForm schema={schema} onSubmit={onSubmit} />
+```
+
+`<EasyForm>` comes from the registry (`npx shadcn@latest add @easy-forms/easy-form`) and
+supplies the renderer registry itself, so there is no `registry` prop. If you were passing a
+custom registry, edit `@/components/easy-forms/registry.ts` instead.
+
+Wiring your own chrome? Call the hook directly — see
+[useFormRuntime](/docs/api/use-form-runtime):
+
+```diff
++ const { store } = useFormRuntime(schema, { initialValues, plugins });
++
++ <FormStoreProvider store={store}>…</FormStoreProvider>
+```
+
+### `easy-forms.css` is deleted
+
+```diff
+- import '@/components/easy-forms/easy-forms.css';
+```
+
+Re-run `npx shadcn@latest add @easy-forms/easy-form` to pull the current utility-first
+components, then delete the import and the file. The `easy-forms*` class names survive as
+unstyled semantic hooks.
+
+### `ChromeRegistryContext` is removed
+
+```diff
+- <ChromeRegistryContext.Provider value={{ GroupRenderer }}>{children}</ChromeRegistryContext.Provider>
++ import { GroupRenderer } from '@/components/easy-forms/group-renderer';
+```
+
+Every call site is now itself a file you own, so it imports `GroupRenderer` directly.
+`GroupRendererProps` is still exported from core.
+
+### `<Wizard>` and `<GroupRenderer>` moved
+
+Both are registry items now: `shadcn add @easy-forms/wizard` and
+`shadcn add @easy-forms/group-renderer`. The wizard **state machine** stayed in core as
+[`useWizardRuntime`](/docs/wizard).
+
+## `@easy-forms/pro` 0.3.x → 1.0.0
+
+**Pro now ships zero React components** — only hooks, controls, wizard routing, types, and
+the license layer. All markup moved to the `@ef-pro` registry.
+
+### Repeating groups
+
+```diff
+- import { RepeatingGroupItem } from '@easy-forms/pro';
++ import { useRepeatingGroupItem } from '@easy-forms/pro';
+```
+
+Re-eject the renderer with `shadcn add @ef-pro/repeating-group`.
+
+### Advanced wizard
+
+```diff
+- import { AdvancedWizardPanel, AdvancedWizardContext } from '@easy-forms/pro';
++ import { useAdvancedWizard } from '@easy-forms/pro';
+```
+
+`AdvancedWizardContext` is gone — its consumers were direct children, so they read the hook's
+return value as props instead. `useAdvancedWizard` now returns `store`; provide it yourself:
+
+```diff
+  const wizard = useAdvancedWizard(config, { onSubmit });
++ return <FormStoreProvider store={wizard.store}>…</FormStoreProvider>;
+```
+
+Re-eject with `shadcn add @ef-pro/advanced-wizard`.
+
+### The watermark
+
+`<ProWatermark>` is deleted. The unlicensed badge is now a singleton injected into
+`document.body` while any Pro feature is mounted — no component to render, nothing to place.
+See [Licensing](/docs/pro/licensing).
