@@ -1,0 +1,94 @@
+---
+title: Licensing
+description: Setting your key, checking status, and how the unlicensed watermark works.
+icon: KeyRound
+---
+
+Pro is honour-based: the license gate is not DRM. An unlicensed build works fully — it just
+shows a watermark.
+
+## Setting the key
+
+Call once at startup, before any Pro feature mounts:
+
+```ts
+import { setEasyFormsProLicense } from '@easy-forms/pro';
+
+setEasyFormsProLicense('<your license key>');
+```
+
+## Checking status
+
+```ts
+import { getLicenseStatus } from '@easy-forms/pro';
+
+const status = getLicenseStatus();
+if (status.valid) {
+	console.log(status.claims.customer, status.claims.seats);
+} else {
+	console.warn(status.reason);
+}
+```
+
+`LicenseStatus` is a discriminated union:
+
+```ts
+type LicenseStatus =
+	| { valid: true; claims: LicenseClaims }
+	| { valid: false; reason: LicenseInvalidReason };
+```
+
+`reason` is one of `'missing'`, `'malformed'`, `'bad-signature'`, `'expired'`, or
+`'wrong-audience'`.
+
+## What the token contains
+
+```ts
+interface LicenseClaims {
+	customer: string;   // licensee name / organization
+	edition: 'pro';
+	seats: number;      // contracted seats (honour-based, not enforced)
+	iat: number;        // issued-at, Unix seconds
+	exp: number;        // expiry, Unix seconds
+	aud?: 'license' | 'registry';
+}
+```
+
+<Callout type="info">
+	The token is **signed, not encrypted**. You can read your own claims; they are tamper-evident,
+	not secret. The public verification key ships inside the package.
+</Callout>
+
+## Two tokens, two jobs
+
+| Token | Used by | Where it goes |
+| --- | --- | --- |
+| **License key** | `setEasyFormsProLicense` at runtime | Your app's startup code |
+| **Registry token** | `shadcn add @ef-pro/*` at install time | `components.json` / `EASY_FORMS_PRO_TOKEN` |
+
+Passing one where the other is expected fails with `reason: 'wrong-audience'`.
+
+## The unlicensed watermark
+
+<Callout type="info" title="Changed in 1.0">
+	`<ProWatermark>` was removed. There is no component to render or place.
+</Callout>
+
+The badge is a **singleton injected into `document.body`**. A mount counter tracks how many
+Pro features are active; the badge appears while `activeCount > 0` and no valid license is
+set, and disappears when the last Pro feature unmounts. Calling `setEasyFormsProLicense`
+re-syncs it immediately.
+
+Consequences worth knowing:
+
+- Two repeating groups and an advanced wizard on one page produce **one** badge, not three.
+- A page using only free features never shows it, even in an app that also uses Pro.
+- It is outside your React tree, so it cannot be styled or positioned by your components.
+
+## Other exports
+
+- **`assertLicensed(feature)`** — returns a boolean and warns once per feature, in every
+	environment (not just development). It never blocks — the feature still renders when
+	unlicensed.
+- **`verifyLicense(key)`** — verify a key without installing it as the active license.
+- **`verifyRegistryToken(token)`** — used by the registry worker; rarely needed in app code.
