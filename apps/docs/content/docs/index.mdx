@@ -13,7 +13,7 @@ It is a *higher-level* alternative to libraries like React Hook Form. There is n
 `useForm`, `register`, or `Controller` to wire up. **The schema is the source of truth.**
 
 <Callout title="The one-sentence mental model">
-	You write a typed `FormSchema`. `<Form>` reads it, builds the state store, renders the
+	You write a typed `FormSchema`. The runtime reads it, builds the state store, renders the
 	right control for each question, runs validation, evaluates dependencies, and hands you
 	the validated values on submit.
 </Callout>

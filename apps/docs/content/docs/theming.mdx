@@ -65,14 +65,25 @@ export const easyFormsRegistry: RendererRegistry = {
 };
 ```
 
-`<EasyForm>` uses that registry. For a one-off override at the call site, drop to the
-lower-level `<Form>` and spread the registry:
+`<EasyForm>` uses that registry internally — there is no per-call-site `registry` prop. To use
+a different registry for one form only, render your own shell and provide it through
+`RendererRegistryContext`:
 
 ```tsx
-import { EasyForm } from '@/components/easy-forms/easy-form';
+import { FormStoreProvider, RendererRegistryContext, useFormRuntime } from '@easy-forms/core';
 import { easyFormsRegistry } from '@/components/easy-forms/registry';
 
-<EasyForm schema={schema} registry={{ ...easyFormsRegistry, dropdown: MyFancySelect }} onSubmit={onSubmit} />;
+function OneOffForm({ schema }) {
+	const { store } = useFormRuntime(schema);
+
+	return (
+		<FormStoreProvider store={store}>
+			<RendererRegistryContext.Provider value={{ ...easyFormsRegistry, dropdown: MyFancySelect }}>
+				{/* your chrome + <Field>s */}
+			</RendererRegistryContext.Provider>
+		</FormStoreProvider>
+	);
+}
 ```
 
 ## Build a renderer from primitives
