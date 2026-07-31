@@ -1,0 +1,92 @@
+---
+title: Advanced wizard
+description: Branching multi-step flows where the next step is computed from answers.
+icon: GitBranch
+---
+
+The free wizard walks a flat step array in order. The Pro wizard adds **declarative
+per-step routing**, so the taken path is a graph walk rather than `index++`.
+
+```ts
+const wizard = useAdvancedWizard(config, { onSubmit, initialValues, dependencyHandlers, plugins });
+```
+
+The hook creates its own store. Provide it so the step fields register into it:
+
+```tsx
+<FormStoreProvider store={wizard.store}>{/* step panels */}</FormStoreProvider>
+```
+
+## Configuring routes
+
+```ts
+const config: AdvancedWizardConfig = {
+	steps: [
+		{
+			id: 'account',
+			title: 'Account type',
+			groups: [/* … */],
+			next: [
+				{ fieldNames: ['accountType'], when: (v) => v.accountType === 'business', to: 'company' },
+				{ fieldNames: [], when: () => true, to: 'personal' },
+			],
+		},
+		{ id: 'company', title: 'Company details', groups: [/* … */], next: 'review' },
+		{ id: 'personal', title: 'Your details', groups: [/* … */], next: 'review' },
+		{ id: 'review', title: 'Review', groups: [/* … */], terminal: true },
+	],
+};
+```
+
+`next` accepts three shapes:
+
+| Value | Behaviour |
+| --- | --- |
+| omitted | Linear — the next step in array order, or terminal if last |
+| `string` | Always advance to that step id |
+| `AdvancedWizardRoute[]` | First route whose `when` returns true wins. A trailing `when: () => true` acts as the else. If none match, the step is terminal |
+
+`fieldNames` is the subscription surface — the values passed to `when` — mirroring how
+`propsDependsOn` works.
+
+## Navigation modes
+
+<PropsTable rows={[
+	{ name: "'strict'", type: 'navigation', default: 'default', description: 'A step with errors blocks Next. The classic wizard.' },
+	{ name: "'lenient'", type: 'navigation', description: 'Next always advances; errors are still computed and surfaced per step, the whole projected path is jumpable, and submit() still validates and blocks so every error surfaces at the last stage.' },
+]} />
+
+## What the hook returns
+
+<PropsTable rows={[
+	{ name: 'store', type: 'FormStore', description: 'The store this wizard created. Provide it via FormStoreProvider.' },
+	{ name: 'steps', type: 'AdvancedWizardStepState[]', description: 'Every configured step decorated with navigation state.' },
+	{ name: 'path', type: 'AdvancedWizardStepState[]', description: 'completed + active + upcoming — what a progress indicator renders.' },
+	{ name: 'current', type: 'AdvancedWizardStepState', description: "The active step's state." },
+	{ name: 'mountedStepIds', type: 'string[]', description: 'Step ids whose panels should mount. Off-path steps stay unmounted.' },
+	{ name: 'invalidSteps', type: 'AdvancedWizardStepState[]', description: 'Path steps currently in error — for a final-stage summary.' },
+	{ name: 'goNext', type: '() => Promise<boolean>', description: 'Validate (if gated) then advance along the resolved route. Resolves false if blocked or terminal.' },
+	{ name: 'goPrevious', type: '() => void', description: 'Pop back one step. No validation.' },
+	{ name: 'goTo', type: '(stepId: string) => Promise<boolean>', description: 'Jump to a navigable step, truncating the stack.' },
+	{ name: 'isTerminalStep', type: 'boolean', description: 'True when the active step should show Submit rather than Next.' },
+]} />
+
+Each step state carries a `status` of `active`, `completed`, `upcoming`, or `unreachable`
+(a not-taken branch), plus `errorCount` / `hasErrors` for error chips.
+
+## Rerouting is automatic
+
+The back-stack is always exactly *start → current*. `goNext` re-resolves the route from the
+live answers each time, so going back and changing an earlier answer naturally reroutes and
+discards a previously-taken forward branch.
+
+## Persistence is yours
+
+Unlike the free wizard's `persistKey`, the Pro wizard has no built-in persistence — save and
+resume are the consumer's to own.
+
+## Getting the renderer
+
+```bash
+EASY_FORMS_PRO_TOKEN=<your token> npx shadcn@latest add @ef-pro/advanced-wizard
+```
