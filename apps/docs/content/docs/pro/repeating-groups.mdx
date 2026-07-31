@@ -1,0 +1,95 @@
+---
+title: Repeating groups
+description: Line-item sections with add/remove, bounds, and per-row dependencies.
+icon: Rows3
+---
+
+A repeating group renders a set of fields once per row — invoice lines, contacts, order items.
+Behaviour lives in two hooks; the markup is the ejectable `@ef-pro/repeating-group` renderer.
+
+## useRepeatingGroup
+
+Drives the container: the row list, add/remove, and bounds.
+
+```ts
+const { indices, add, remove, atMax, canRemove, minItems, maxItems } =
+	useRepeatingGroup(props);
+```
+
+<PropsTable rows={[
+	{ name: 'indices', type: 'number[]', description: 'Active row indices. Sparse and monotonic — never reindexed.' },
+	{ name: 'add', type: '() => void', description: 'Append a row. No-op at maxItems.' },
+	{ name: 'remove', type: '(index: number) => void', description: 'Remove a row by index. No-op at minItems.' },
+	{ name: 'atMax', type: 'boolean', description: 'True when another row cannot be added.' },
+	{ name: 'canRemove', type: 'boolean', description: 'True when rows may be removed (count > minItems).' },
+	{ name: 'minItems', type: 'number', description: 'Lower bound from the control config.' },
+	{ name: 'maxItems', type: 'number | undefined', description: 'Upper bound from the control config.' },
+]} />
+
+<Callout type="info" title="Why indices are sparse">
+	Removing row 1 of three leaves `[0, 2]` — indices are never renumbered. This is deliberate:
+	renumbering would change the field keys of surviving rows, and every field's state (value,
+	touched, dirty, errors) is keyed by name. Sparse indices mean removing a row cannot disturb
+	the rows around it.
+</Callout>
+
+## useRepeatingGroupItem
+
+Drives one row: key prefixing and that row's own dependency engine.
+
+```ts
+const { groups } = useRepeatingGroupItem({ groupKey, index, groups, defaultItem });
+```
+
+<PropsTable rows={[
+	{ name: 'groupKey', type: 'string', required: true, description: "The container field's key." },
+	{ name: 'index', type: 'number', required: true, description: "This row's index, from useRepeatingGroup().indices." },
+	{ name: 'groups', type: 'Group[]', required: true, description: 'The per-item group template from the control config.' },
+	{ name: 'defaultItem', type: 'Record<string, unknown>', description: 'Seed values for a newly added row.' },
+]} />
+
+It returns the template with every key and id prefixed `${groupKey}.${index}.`, and attaches a
+dependency engine scoped to that row — the parent form's engine only sees the static schema,
+not the dynamic item fields, so without this within-row `propsDependsOn` / `valueDependsOn` /
+`resetDependsOn` would never fire.
+
+The prefixed tree is memoised on the row's stable inputs, so adding or removing *other* rows
+never changes this row's field identities.
+
+## Reading form-level fields from inside a row
+
+Row fields are namespaced, so a dependency inside a row resolves names within that row by
+default. Use the `$root.` prefix to reach a form-level field:
+
+```ts
+import { ROOT_FIELD_PREFIX } from '@easy-forms/pro';
+
+dependents: {
+	propsDependsOn: [
+		{
+			fieldNames: ['$root.accountType'],
+			compute: (v) => ({ hidden: v['$root.accountType'] !== 'business' }),
+		},
+	],
+}
+```
+
+## Enforcing bounds at submit
+
+The renderer enforces `minItems` / `maxItems` in its UI. To also enforce them at submit time,
+opt in on the question:
+
+```ts
+import { repeatingGroupValidators } from '@easy-forms/pro';
+
+validators: repeatingGroupValidators({ minItems: 1, maxItems: 10 });
+```
+
+## Getting the renderer
+
+```bash
+EASY_FORMS_PRO_TOKEN=<your token> npx shadcn@latest add @ef-pro/repeating-group
+```
+
+Requires the free `@easy-forms` registry to be configured too — see
+[Installing Pro](/docs/pro/install).
