@@ -65,10 +65,15 @@ const config: AdvancedWizardConfig = {
 	{ name: 'current', type: 'AdvancedWizardStepState', description: "The active step's state." },
 	{ name: 'mountedStepIds', type: 'string[]', description: 'Step ids whose panels should mount. Off-path steps stay unmounted.' },
 	{ name: 'invalidSteps', type: 'AdvancedWizardStepState[]', description: 'Path steps currently in error — for a final-stage summary.' },
+	{ name: 'isFirstStep', type: 'boolean', description: 'True when the active step is the entry step.' },
+	{ name: 'canGoPrevious', type: 'boolean', description: 'True when there is a step to pop back to.' },
+	{ name: 'canGoNext', type: 'boolean', description: 'True when a forward route resolves from the current answers.' },
 	{ name: 'goNext', type: '() => Promise<boolean>', description: 'Validate (if gated) then advance along the resolved route. Resolves false if blocked or terminal.' },
 	{ name: 'goPrevious', type: '() => void', description: 'Pop back one step. No validation.' },
 	{ name: 'goTo', type: '(stepId: string) => Promise<boolean>', description: 'Jump to a navigable step, truncating the stack.' },
+	{ name: 'submit', type: '() => Promise<void>', description: "Validate the terminal step then submit through the store. This is what a terminal step's Submit button calls." },
 	{ name: 'isTerminalStep', type: 'boolean', description: 'True when the active step should show Submit rather than Next.' },
+	{ name: 'progress', type: '{ current: number; total: number }', description: 'Position along the projected path — for a progress bar or "step 2 of 5" label.' },
 ]} />
 
 Each step state carries a `status` of `active`, `completed`, `upcoming`, or `unreachable`
@@ -79,6 +84,16 @@ Each step state carries a `status` of `active`, `completed`, `upcoming`, or `unr
 The back-stack is always exactly *start → current*. `goNext` re-resolves the route from the
 live answers each time, so going back and changing an earlier answer naturally reroutes and
 discards a previously-taken forward branch.
+
+<Callout type="warn" title="Abandoned branches lose their answers">
+	Only steps on the projected path are mounted (`mountedStepIds`), so off-path fields never
+	register with the store. If a user answers several steps down one branch, goes back, and
+	reroutes, those answers are **gone** — not hidden.
+
+	This is deliberately different from the free wizard, which keeps every step mounted and
+	CSS-hides the inactive ones precisely to preserve state. If you need answers to survive a
+	reroute, capture them yourself in `onChange` before the branch changes.
+</Callout>
 
 ## Persistence is yours
 
