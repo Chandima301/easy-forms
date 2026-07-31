@@ -10,10 +10,10 @@ makes sense.
 ## The pipeline
 
 ```text
-FormSchema ──▶ <Form> ──▶ FormStore ──▶ <Field> per question ──▶ Renderer (from registry)
-                  │            ▲                                        │
-                  │            └──────────── values / errors ──────────┘
-                  └──▶ Dependency engine (props / value / reset)
+FormSchema ──▶ useFormRuntime ──▶ FormStore ──▶ <Field> per question ──▶ Renderer
+                     │                ▲                                     │
+                     │                └────────── values / errors ──────────┘
+                     └──▶ Dependency engine (props / value / reset)
                   └──▶ Plugins (onInit / onChange / onSubmit / onDestroy)
 ```
 
