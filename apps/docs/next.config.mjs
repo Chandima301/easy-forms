@@ -18,6 +18,11 @@ const config = {
 				destination: '/docs/pro/install',
 				permanent: true,
 			},
+			{
+				source: '/docs/enterprise',
+				destination: '/enterprise',
+				permanent: true,
+			},
 		];
 	},
 };

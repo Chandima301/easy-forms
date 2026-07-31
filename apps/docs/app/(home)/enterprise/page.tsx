@@ -31,10 +31,10 @@ export default function EnterprisePage() {
 						Talk to us <ArrowRight className="h-4 w-4" />
 					</Link>
 					<Link
-						href="/docs/enterprise"
+						href="/docs/pro"
 						className="inline-flex items-center gap-1.5 rounded-lg border border-fd-border px-5 py-2.5 text-sm font-semibold"
 					>
-						Read the enterprise docs
+						Explore Easy Forms Pro
 					</Link>
 				</div>
 			</div>
@@ -68,18 +68,14 @@ export default function EnterprisePage() {
 			<div className="mt-12 grid gap-8 rounded-2xl border border-fd-border bg-fd-card p-8 sm:grid-cols-2">
 				<div>
 					<h2 className="flex items-center gap-2 text-lg font-semibold">
-						<Check className="h-5 w-5 text-emerald-500" /> Available today
+						<Check className="h-5 w-5 text-emerald-500" /> Available today, self-serve
 					</h2>
 					<ul className="mt-4 space-y-2.5 text-sm text-fd-muted-foreground">
 						{[
-							'Schema-driven forms with strict TypeScript types',
-							'Type-narrowed validation (sync + async)',
-							'Conditional logic, derived values, and resets',
-							'Multi-step wizards with resumable persistence',
-							'Accessible renderers built on Radix primitives',
-							'Plugin lifecycle hooks (autosave, logging, audit)',
-							'Swappable renderer registry for your design system',
-							'Dual ESM/CJS builds, tree-shakeable, MIT licensed',
+							'Everything in the free MIT core — schema, validation, dependencies, wizards',
+							'Easy Forms Pro: repeating groups + branching wizards, $199/seat/yr',
+							'Own-the-code renderers — no vendor UI to fight at review time',
+							'Strict TypeScript end to end, dual ESM/CJS, tree-shakeable',
 						].map((t) => (
 							<li key={t} className="flex gap-2">
 								<Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
