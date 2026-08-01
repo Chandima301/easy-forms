@@ -12,7 +12,12 @@ import type { FormSchema } from '@easy-forms/core';
 const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
 function quote(value: string): string {
-	return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+	return `'${value
+		.replace(/\\/g, '\\\\')
+		.replace(/'/g, "\\'")
+		.replace(/\n/g, '\\n')
+		.replace(/\r/g, '\\r')
+		.replace(/\t/g, '\\t')}'`;
 }
 
 function print(value: unknown, depth: number, path: string): string {
@@ -22,6 +27,7 @@ function print(value: unknown, depth: number, path: string): string {
 		);
 	}
 	if (value === null) return 'null';
+	if (value instanceof RegExp) return String(value);
 	if (typeof value === 'string') return quote(value);
 	if (typeof value === 'number' || typeof value === 'boolean') return String(value);
 
@@ -35,6 +41,12 @@ function print(value: unknown, depth: number, path: string): string {
 	}
 
 	if (typeof value === 'object') {
+		const proto = Object.getPrototypeOf(value);
+		if (proto !== Object.prototype && proto !== null) {
+			throw new Error(
+				`serializeSchema: cannot serialize a non-plain object at ${path}. Move this demo into components/demo/examples.tsx with a hand-authored code string.`
+			);
+		}
 		const entries = Object.entries(value as Record<string, unknown>).filter(
 			([, v]) => v !== undefined
 		);

@@ -71,4 +71,24 @@ describe('serializeSchema', () => {
 			/schema\.groups\[0\]\.questions\[0\]\.validators\.custom/
 		);
 	});
+
+	it('serializes a RegExp as a literal', () => {
+		const schema = { groups: [], pattern: /^[A-Z]{3}$/i } as unknown as FormSchema;
+		expect(serializeSchema(schema)).toContain('pattern: /^[A-Z]{3}$/i,');
+	});
+
+	it('throws on a non-plain object like Date, naming the path', () => {
+		const schema = { groups: [], startedAt: new Date() } as unknown as FormSchema;
+		expect(() => serializeSchema(schema)).toThrow(/schema\.startedAt/);
+	});
+
+	it('escapes newlines so multi-line strings stay valid TSX', () => {
+		const schema = { groups: [], title: 'line one\nline two' } as unknown as FormSchema;
+		const out = serializeSchema(schema);
+		expect(out).toContain("title: 'line one\\nline two',");
+		// `out` is TSX (has a `: FormSchema` type annotation), which `Function` can't
+		// parse as plain JS — strip the annotation so this proves the escaped string
+		// itself is syntactically valid, not just that it contains the right substring.
+		expect(() => new Function(out.replace(': FormSchema', ''))).not.toThrow();
+	});
 });
