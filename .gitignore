@@ -24,6 +24,9 @@ packages/registry/public
 
 # Local planning/specs docs (root docs/ only, not apps/docs)
 /docs/
+
+# Brainstorming visual-companion sessions
+.superpowers/
 BACKLOG.md
 
 # Easy Forms Pro signing keys — NEVER commit the private key
