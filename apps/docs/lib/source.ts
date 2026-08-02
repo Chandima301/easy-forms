@@ -1,7 +1,8 @@
 import { docs } from '@/.source';
+import { ProChip } from '@/components/mdx/ProChip';
 import { loader } from 'fumadocs-core/source';
 import { icons } from 'lucide-react';
-import { createElement } from 'react';
+import { Fragment, createElement } from 'react';
 
 // fumadocs-mdx 11.x's `toFumadocsSource()` returns `files` as a lazy function
 // (`() => VirtualFile[]`), while fumadocs-core 15.x's `loader` expects
@@ -23,4 +24,21 @@ export const source = loader({
 			return createElement(icons[icon as keyof typeof icons]);
 		}
 	},
+	plugins: [
+		{
+			name: 'easy-forms-pro-chip',
+			transformPageTree: {
+				file(node, filePath) {
+					if (!filePath) return node;
+					const file = this.storage.read(filePath);
+					if (!file || file.format !== 'page') return node;
+					if (!(file.data as { pro?: boolean }).pro) return node;
+					return {
+						...node,
+						name: createElement(Fragment, null, node.name, createElement(ProChip)),
+					};
+				},
+			},
+		},
+	],
 });
