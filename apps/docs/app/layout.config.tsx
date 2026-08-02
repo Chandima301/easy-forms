@@ -29,10 +29,13 @@ export const baseOptions: BaseLayoutProps = {
 			</span>
 		),
 	},
+	// `on: 'nav'` keeps these in the top bar and out of the docs sidebar, so the
+	// sidebar opens on "Get started" rather than on links to where you already are.
 	links: [
-		{ text: 'Docs', url: '/docs', active: 'nested-url' },
-		{ text: 'Examples', url: '/examples' },
-		{ text: 'Enterprise', url: '/enterprise' },
+		{ text: 'Docs', url: '/docs', active: 'nested-url', on: 'nav' },
+		{ text: 'Examples', url: '/examples', on: 'nav' },
+		{ text: 'Pricing', url: '/pricing', on: 'nav' },
+		{ text: 'Contact', url: '/contact', on: 'nav' },
 	],
 	githubUrl: 'https://github.com/Chandima301/easy-forms',
 };
