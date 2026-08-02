@@ -1,5 +1,5 @@
 import { docs } from '@/.source';
-import { ProChip } from '@/components/mdx/ProChip';
+import { ProChip } from '@/components/layout/ProChip';
 import { loader } from 'fumadocs-core/source';
 import { icons } from 'lucide-react';
 import { Fragment, createElement } from 'react';
