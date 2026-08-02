@@ -29,8 +29,11 @@ export const baseOptions: BaseLayoutProps = {
 			</span>
 		),
 	},
-	// `on: 'nav'` keeps these in the top bar and out of the docs sidebar, so the
-	// sidebar opens on "Get started" rather than on links to where you already are.
+	// `on: 'nav'` is honoured by HomeLayout ONLY — it keeps these in the marketing
+	// top bar and out of its mobile menu. DocsLayout ignores `.on` entirely and
+	// renders every non-icon link above the page tree, so it is `links={[]}` in
+	// app/docs/layout.tsx that keeps the docs sidebar opening on "Get started".
+	// Do not remove that override on the assumption these markers cover it.
 	links: [
 		{ text: 'Docs', url: '/docs', active: 'nested-url', on: 'nav' },
 		{ text: 'Examples', url: '/examples', on: 'nav' },

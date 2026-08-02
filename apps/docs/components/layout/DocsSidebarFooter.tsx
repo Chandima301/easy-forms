@@ -16,18 +16,20 @@ const links = [
  */
 export function DocsSidebarFooter() {
 	return (
-		<ul className="mt-3 flex flex-col gap-1 border-t border-fd-border pt-3 text-xs text-fd-muted-foreground">
-			{links.map(({ label, href, icon: Icon }) => (
-				<li key={href}>
-					<Link
-						href={href}
-						className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:text-fd-foreground"
-					>
-						<Icon className="h-3.5 w-3.5" />
-						{label}
-					</Link>
-				</li>
-			))}
-		</ul>
+		<nav aria-label="Site links">
+			<ul className="mt-3 flex flex-col gap-1 border-t border-fd-border pt-3 text-xs text-fd-muted-foreground">
+				{links.map(({ label, href, icon: Icon }) => (
+					<li key={href}>
+						<Link
+							href={href}
+							className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:text-fd-foreground"
+						>
+							<Icon className="h-3.5 w-3.5" aria-hidden="true" />
+							{label}
+						</Link>
+					</li>
+				))}
+			</ul>
+		</nav>
 	);
 }
