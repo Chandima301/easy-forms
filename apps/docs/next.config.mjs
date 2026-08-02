@@ -24,6 +24,11 @@ const config = {
 				permanent: true,
 			},
 			{
+				source: '/enterprise',
+				destination: '/pricing',
+				permanent: true,
+			},
+			{
 				source: '/docs/pro',
 				destination: '/pricing',
 				permanent: true,
