@@ -66,7 +66,10 @@ export function serializeSchema(
 	schema: FormSchema,
 	initialValues?: Record<string, unknown>
 ): string {
-	const parts = [`const schema: FormSchema = ${print(schema, 0, 'schema')};`];
+	const parts = [
+		"import type { FormSchema } from '@easy-forms/core';",
+		`const schema: FormSchema = ${print(schema, 0, 'schema')};`,
+	];
 	if (initialValues) {
 		parts.push(`const initialValues = ${print(initialValues, 0, 'initialValues')};`);
 	}

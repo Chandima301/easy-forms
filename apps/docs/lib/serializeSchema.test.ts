@@ -9,6 +9,8 @@ describe('serializeSchema', () => {
 		};
 		expect(serializeSchema(schema)).toBe(
 			[
+				"import type { FormSchema } from '@easy-forms/core';",
+				'',
 				'const schema: FormSchema = {',
 				'\tgroups: [',
 				'\t\t{',
@@ -34,7 +36,9 @@ describe('serializeSchema', () => {
 	});
 
 	it('renders empty arrays and objects inline', () => {
-		expect(serializeSchema({ groups: [] })).toBe('const schema: FormSchema = {\n\tgroups: [],\n};');
+		expect(serializeSchema({ groups: [] })).toBe(
+			"import type { FormSchema } from '@easy-forms/core';\n\nconst schema: FormSchema = {\n\tgroups: [],\n};"
+		);
 	});
 
 	it('omits undefined properties', () => {
@@ -86,9 +90,20 @@ describe('serializeSchema', () => {
 		const schema = { groups: [], title: 'line one\nline two' } as unknown as FormSchema;
 		const out = serializeSchema(schema);
 		expect(out).toContain("title: 'line one\\nline two',");
-		// `out` is TSX (has a `: FormSchema` type annotation), which `Function` can't
-		// parse as plain JS — strip the annotation so this proves the escaped string
-		// itself is syntactically valid, not just that it contains the right substring.
-		expect(() => new Function(out.replace(': FormSchema', ''))).not.toThrow();
+		// `out` is TSX (a top-level `import` plus a `: FormSchema` type annotation),
+		// neither of which `Function` can parse as a function body — strip both so
+		// this proves the escaped string itself is syntactically valid, not just
+		// that it contains the right substring.
+		const asJs = out
+			.replace("import type { FormSchema } from '@easy-forms/core';\n\n", '')
+			.replace(': FormSchema', '');
+		expect(() => new Function(asJs)).not.toThrow();
+	});
+
+	it('emits the FormSchema import exactly once, at the top', () => {
+		const out = serializeSchema({ groups: [] }, { name: '' });
+		const importLine = "import type { FormSchema } from '@easy-forms/core';";
+		expect(out.split('\n')[0]).toBe(importLine);
+		expect(out.split(importLine)).toHaveLength(2);
 	});
 });
