@@ -1,5 +1,6 @@
 import { ComponentPreview } from '@/components/demo/ComponentPreview';
 import { LiveForm } from '@/components/demo/LiveForm';
+import { ProEmbed } from '@/components/demo/ProEmbed';
 import { SchemaPreview } from '@/components/demo/SchemaPreview';
 import {
 	CheckboxRequiredDemo,
@@ -34,6 +35,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 		ComponentPreview,
 		LiveForm,
 		SchemaPreview,
+		ProEmbed,
 		PackageInstall,
 		PropsTable,
 		// Function-bearing demos (client boundary)

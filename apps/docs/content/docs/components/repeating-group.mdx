@@ -8,6 +8,41 @@ pro: true
 A repeating group renders a set of fields once per row — invoice lines, contacts, order items.
 Behaviour lives in two hooks; the markup is the ejectable `@ef-pro/repeating-group` renderer.
 
+<ProEmbed
+	name="repeating-group"
+	title="Live preview of the Pro repeating-group renderer"
+	code={`const schema: FormSchema = {
+	groups: [
+		{
+			questions: [
+				{
+					key: 'lines',
+					label: 'Invoice lines',
+					control: 'repeatingGroup',
+					minItems: 1,
+					maxItems: 5,
+					groups: [
+						{
+							layout: 'grid',
+							gridCols: 2,
+							questions: [
+								{ key: 'description', label: 'Description', control: 'text' },
+								{ key: 'amount', label: 'Amount', control: 'number', prefix: '$' },
+							],
+						},
+					],
+				},
+			],
+		},
+	],
+};`}
+/>
+
+<Callout type="info" title="About the badge in the corner">
+	The preview above is unlicensed, so `@easy-forms/pro` renders its watermark badge. Setting a
+	license key removes it — see [Licensing](/docs/pro/licensing).
+</Callout>
+
 ## useRepeatingGroup
 
 Drives the container: the row list, add/remove, and bounds.

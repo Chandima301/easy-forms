@@ -8,6 +8,81 @@ pro: true
 The free wizard walks a flat step array in order. The Pro wizard adds **declarative
 per-step routing**, so the taken path is a graph walk rather than `index++`.
 
+<ProEmbed
+	name="advanced-wizard"
+	title="Live preview of the Pro branching wizard"
+	minHeight={520}
+	code={`const config: AdvancedWizardConfig = {
+	steps: [
+		{
+			id: 'account',
+			title: 'Account type',
+			groups: [
+				{
+					questions: [
+						{
+							key: 'accountType',
+							label: 'Account type',
+							control: 'radioGroup',
+							options: [
+								{ value: 'business', label: 'Business' },
+								{ value: 'personal', label: 'Personal' },
+							],
+							validators: { required: true },
+						},
+					],
+				},
+			],
+			next: [
+				{ fieldNames: ['accountType'], when: (v) => v.accountType === 'business', to: 'company' },
+				{ fieldNames: [], when: () => true, to: 'personal' },
+			],
+		},
+		{
+			id: 'company',
+			title: 'Company details',
+			groups: [
+				{
+					questions: [
+						{ key: 'companyName', label: 'Company name', control: 'text', validators: { required: true } },
+					],
+				},
+			],
+			next: 'review',
+		},
+		{
+			id: 'personal',
+			title: 'Your details',
+			groups: [
+				{
+					questions: [
+						{ key: 'fullName', label: 'Full name', control: 'text', validators: { required: true } },
+					],
+				},
+			],
+			next: 'review',
+		},
+		{
+			id: 'review',
+			title: 'Review',
+			groups: [
+				{
+					questions: [
+						{ key: 'email', label: 'Email', control: 'email', validators: { required: true, email: true } },
+					],
+				},
+			],
+			terminal: true,
+		},
+	],
+};`}
+/>
+
+<Callout type="info" title="About the badge in the corner">
+	The preview above is unlicensed, so `@easy-forms/pro` renders its watermark badge. Setting a
+	license key removes it — see [Licensing](/docs/pro/licensing).
+</Callout>
+
 ```ts
 const wizard = useAdvancedWizard(config, { onSubmit, initialValues, dependencyHandlers, plugins });
 ```
