@@ -10,10 +10,10 @@ makes sense.
 ## The pipeline
 
 ```text
-FormSchema ──▶ <Form> ──▶ FormStore ──▶ <Field> per question ──▶ Renderer (from registry)
-                  │            ▲                                        │
-                  │            └──────────── values / errors ──────────┘
-                  └──▶ Dependency engine (props / value / reset)
+FormSchema ──▶ useFormRuntime ──▶ FormStore ──▶ <Field> per question ──▶ Renderer
+                     │                ▲                                     │
+                     │                └────────── values / errors ──────────┘
+                     └──▶ Dependency engine (props / value / reset)
                   └──▶ Plugins (onInit / onChange / onSubmit / onDestroy)
 ```
 
@@ -36,7 +36,7 @@ FormSchema ──▶ <Form> ──▶ FormStore ──▶ <Field> per question �
 
 ## Mount order matters
 
-`<Field>` registers itself with the store in a `useEffect`. `<Form>` attaches the
+`<Field>` registers itself with the store in a `useEffect`. `useFormRuntime` attaches the
 dependency engine and plugins in its own `useEffect`, which runs **after** all child
 field effects — so the engine sees every registered field on its first run. You never
 manage this yourself; it is worth knowing when reasoning about timing.

@@ -70,8 +70,9 @@ export function SignupForm() {
 ```
 
 <Callout type="info">
-	Prefer to keep the lower-level component or bring your own UI? Use `<Form>` from
-	`@easy-forms/core` with a `registry` prop — `<EasyForm>` is just a thin wrapper around it.
+	Want your own chrome, or a different registry? `<EasyForm>` is a thin shell over
+	[`useFormRuntime`](/docs/api/use-form-runtime) — call that hook yourself and render whatever
+	markup you like.
 </Callout>
 
 </Step>
@@ -83,7 +84,7 @@ export function SignupForm() {
 The submit button stays disabled until the form is dirty and valid. Try submitting with
 empty fields, then fill them in.
 
-<LiveForm
+<SchemaPreview
 	schema={{
 		title: 'Create your account',
 		groups: [

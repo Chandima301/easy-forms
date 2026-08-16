@@ -6,10 +6,10 @@ icon: Workflow
 
 ## Mount
 
-1. `<Form>` creates (or receives) a `FormStore`.
+1. `useFormRuntime` creates (or receives) a `FormStore`.
 2. Each `<Field>` registers its descriptor (key, validators, options) with the store in a
    `useEffect`.
-3. `<Form>` attaches the **dependency engine** and **plugins** in its own `useEffect`,
+3. `useFormRuntime` attaches the **dependency engine** and **plugins** in its own `useEffect`,
    which runs after all field effects — so the engine sees every field on its first pass
    and computes initial conditional state.
 

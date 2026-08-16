@@ -1,5 +1,7 @@
 import { ComponentPreview } from '@/components/demo/ComponentPreview';
 import { LiveForm } from '@/components/demo/LiveForm';
+import { ProEmbed } from '@/components/demo/ProEmbed';
+import { SchemaPreview } from '@/components/demo/SchemaPreview';
 import {
 	CheckboxRequiredDemo,
 	ConditionalGroupsDemo,
@@ -32,6 +34,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 		// Easy Forms doc components
 		ComponentPreview,
 		LiveForm,
+		SchemaPreview,
+		ProEmbed,
 		PackageInstall,
 		PropsTable,
 		// Function-bearing demos (client boundary)

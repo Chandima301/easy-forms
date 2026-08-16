@@ -18,7 +18,7 @@ One published package + a registry source + dev apps:
 | `packages/core` | `@easy-forms/core` | Headless engine: types, custom store, hooks, components, dependency engine, wizard, plugins. Zero UI deps. **The only npm-published package.** |
 | `packages/registry` | (private) | Source of the `@easy-forms` **shadcn registry**: ejectable renderers + `field-shell` + the pre-wired `<EasyForm>` wrapper + re-tokenized chrome CSS (`easy-forms.css`). Built with `shadcn build` → `public/r/*.json`, hosted on GitHub Pages. Consumers install with `shadcn add @easy-forms/*`. |
 | `apps/playground` | `playground` (private) | Vite sandbox; a representative shadcn consumer using the ejected components + `<EasyForm>`. |
-| `apps/docs` | `docs` (private) | Fumadocs site, mid-refactor onto the registry (landing refactor in progress). **`pnpm lint` (`biome check .`) covers `apps/docs`** — keep these files lint-clean. Still excluded from `pnpm build` / `pnpm typecheck`. |
+| `apps/docs` | `docs` (private) | Fumadocs site. **In every gate** — `pnpm build`, `pnpm typecheck`, `pnpm test`, `pnpm lint` all cover it. Has its own vitest suite (`apps/docs/lib/*.test.ts`). |
 
 ## Monorepo / tooling
 
@@ -35,10 +35,10 @@ quotes). Versioning: **changesets**.
 pnpm install
 pnpm dev                          # turbo: watch-builds core, runs playground
 pnpm --filter playground dev      # playground only (see dist gotcha below)
-pnpm test                         # core tests (58)
+pnpm test                         # all packages: core 89, pro 101, docs 26
 pnpm --filter @easy-forms/core test
-pnpm typecheck                    # per-package tsc (apps/docs excluded via --filter=!docs)
-pnpm build                        # core + playground (apps/docs excluded until refactored)
+pnpm typecheck                    # per-package tsc, unfiltered (docs included)
+pnpm build                        # all packages + apps (docs included)
 pnpm lint                         # biome
 pnpm --filter @easy-forms/registry registry:build   # build the shadcn registry JSON
 ```
@@ -164,10 +164,18 @@ side `required`/`readOnly` props on `RendererProps`.
 
 ## Status
 
-`@easy-forms/core@0.1.1` is published to npm. UI ships via the `@easy-forms`
-shadcn registry (`packages/registry`), hosted on GitHub Pages; consumers
-`shadcn add @easy-forms/easy-form`. The old `@easy-forms/shadcn` package has been
-removed (deleted from the repo and unpublished from npm). **58 core tests pass**;
-core + playground typecheck/lint are green. **`apps/docs` is mid-refactor onto the
-registry** — it is linted by CI (`biome check .` covers the whole repo) so its files
-must stay lint-clean, but it is still excluded from `pnpm build` / `pnpm typecheck`.
+`@easy-forms/core` and `@easy-forms/pro` are published to npm. UI ships via the
+`@easy-forms` shadcn registry (`packages/registry`); consumers
+`shadcn add @easy-forms/easy-form`. Pro renderers ship separately via the
+authenticated `@ef-pro` registry (`easy-forms-pro-registry`, a private repo). The
+old `@easy-forms/shadcn` package has been removed (deleted from the repo and
+unpublished from npm).
+
+**All gates are green and cover every package including `apps/docs`:** `pnpm test`
+(core 89, pro 101, docs 26), `pnpm typecheck`, `pnpm build`, `pnpm lint`.
+
+Docs IA was reworked (see `docs/superpowers/specs/2026-08-01-docs-ia-pricing-contact-design.md`):
+every example has a Preview/Code toggle whose code is derived from the schema
+object; site links live in the docs sidebar footer rather than above the page
+tree; the two Pro control pages sit inside Form components with a PRO chip; and
+`/enterprise` is replaced by `/pricing` plus a `/contact` page.

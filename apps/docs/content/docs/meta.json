@@ -6,6 +6,7 @@
 		"index",
 		"installation",
 		"quick-start",
+		"upgrading",
 		"---Core concepts---",
 		"concepts",
 		"components",
@@ -21,8 +22,7 @@
 		"api",
 		"best-practices",
 		"troubleshooting",
-		"---Enterprise---",
-		"enterprise",
-		"pro-install"
+		"---Pro---",
+		"pro"
 	]
 }

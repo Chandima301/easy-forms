@@ -23,16 +23,27 @@ After checkout you'll receive an email with **two tokens**:
 Both are set up below. Your license covers every version released during your
 subscription term; renewing keeps you on the latest.
 
-Add the registry to your `components.json`:
+Add the Pro registry to your `components.json` **alongside** the free `@easy-forms` one — the
+Pro renderers depend on items from it, so both entries must be present:
 
 ```jsonc title="components.json"
-"registries": {
-	"@ef-pro": {
-		"url": "https://easy-forms-pro-registry.easyforms.workers.dev/r/{name}.json",
-		"headers": { "Authorization": "Bearer ${EASY_FORMS_PRO_TOKEN}" }
+{
+	"registries": {
+		// keep this — @ef-pro items resolve against it
+		"@easy-forms": "https://chandima301.github.io/easy-forms/r/{name}.json",
+		"@ef-pro": {
+			"url": "https://easy-forms-pro-registry.easyforms.workers.dev/r/{name}.json",
+			"headers": { "Authorization": "Bearer ${EASY_FORMS_PRO_TOKEN}" }
+		}
 	}
 }
 ```
+
+<Callout type="warn" title="Don't replace the free registry">
+	`@ef-pro/repeating-group` and `@ef-pro/advanced-wizard` declare registry dependencies on
+	`@easy-forms/group-renderer` and `@easy-forms/registry`. If you overwrite the `registries`
+	field with only the `@ef-pro` entry, the next `shadcn add` fails to resolve them.
+</Callout>
 
 Set the token in your environment and add a renderer:
 

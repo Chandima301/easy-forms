@@ -353,7 +353,7 @@ function Enterprise() {
 						</p>
 						<div className="mt-6 flex flex-wrap gap-3">
 							<Link
-								href="/enterprise"
+								href="/contact"
 								className="inline-flex items-center gap-1.5 rounded-lg bg-fd-primary px-4 py-2 text-sm font-semibold text-fd-primary-foreground"
 							>
 								Talk to us
@@ -443,7 +443,7 @@ function Footer() {
 			links: [
 				{ label: 'Documentation', href: '/docs' },
 				{ label: 'Examples', href: '/examples' },
-				{ label: 'Enterprise', href: '/enterprise' },
+				{ label: 'Pricing', href: '/pricing' },
 			],
 		},
 		{

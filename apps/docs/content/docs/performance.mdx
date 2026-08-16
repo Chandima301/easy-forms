@@ -38,8 +38,9 @@ recompute efficiently and don't churn the dirty state or trigger unrelated work.
 - `@easy-forms/core` has **zero UI dependencies** and is tree-shakeable — you pull in only
   what you import.
 - Builds ship in dual **ESM/CJS** with `.d.ts`, so bundlers can shake unused exports.
-- The shadcn package marks CSS as a side effect so styles aren't dropped, while code stays
-  shakeable.
+- Renderers and chrome are **ejected into your repo**, so they compile as your own source.
+  There is no renderer package to bundle and no stylesheet to load — unused renderers are
+  dropped by your own tree-shaking.
 
 ## Tips for very large forms
 

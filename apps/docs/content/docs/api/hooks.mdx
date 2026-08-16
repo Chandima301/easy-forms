@@ -4,7 +4,18 @@ description: Subscribe to exactly the slice of form state you need.
 icon: Anchor
 ---
 
-All hooks must be used inside a `<Form>` (or a `FormStoreProvider`).
+All hooks must be used inside a `FormStoreProvider` — which the ejected
+[`<EasyForm>`](/docs/api/registry) renders for you.
+
+## useFormRuntime
+
+```ts
+const { store } = useFormRuntime(schema, options?);
+```
+
+Owns the store, the merged dependency handlers, and the engine + plugin attachment. This is
+the headless entry point — see [useFormRuntime](/docs/api/use-form-runtime) for the full
+options table and the mount-order contract.
 
 ## useField
 
@@ -18,10 +29,16 @@ setters (`setValue`, `setTouched`, …). This is what renderers use under the ho
 ## useFormState
 
 ```ts
-const { isDirty, isValid, isSubmitting, submitCount } = useFormState();
+const { isDirty, isValid, isSubmitting, submitCount } = useFormState(store?);
 ```
 
 Subscribes to the aggregate form state. Use it to build a custom footer or submit gate.
+
+<Callout type="info" title="Added in 0.2">
+	The optional `store` argument lets a hook that *creates* a store read it before the provider
+	is rendered below itself — which is how `useAdvancedWizard` surfaces live per-step error
+	counts. Existing no-argument callers are unaffected.
+</Callout>
 
 ## useFormValues
 

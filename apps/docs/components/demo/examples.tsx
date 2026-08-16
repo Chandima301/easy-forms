@@ -14,6 +14,25 @@ import type { FormSchema } from '@easy-forms/core';
 import { ComponentPreview } from './ComponentPreview';
 import { LiveForm } from './LiveForm';
 
+const CHECKBOX_REQUIRED_CODE = `const schema: FormSchema = {
+	groups: [
+		{
+			questions: [
+				{
+					key: 'terms',
+					label: 'Terms',
+					control: 'checkbox',
+					checkboxLabel: 'I agree to the terms of service',
+					validators: {
+						required: true,
+						custom: (v) => (v ? null : 'You must agree to continue'),
+					},
+				},
+			],
+		},
+	],
+};`;
+
 export function CheckboxRequiredDemo() {
 	const schema: FormSchema = {
 		groups: [
@@ -33,7 +52,11 @@ export function CheckboxRequiredDemo() {
 			},
 		],
 	};
-	return <LiveForm schema={schema} initialValues={{ terms: false }} />;
+	return (
+		<ComponentPreview code={CHECKBOX_REQUIRED_CODE}>
+			<LiveForm schema={schema} initialValues={{ terms: false }} framed={false} />
+		</ComponentPreview>
+	);
 }
 
 const PROPS_DEPENDS_ON_CODE = `const schema: FormSchema = {

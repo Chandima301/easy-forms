@@ -4,6 +4,11 @@ description: A schema-driven React form library. Hand it an array of question ob
 icon: Album
 ---
 
+<Callout type="info">
+	These docs describe **`@easy-forms/core` 0.2.x** and **`@easy-forms/pro` 1.x**. On an earlier
+	version? See [Upgrading](/docs/upgrading).
+</Callout>
+
 Easy Forms is a **schema-driven React form library**. You describe a form as data —
 an array of question objects — and the library owns the entire workflow: rendering,
 validation, conditional logic, dirty/touched tracking, multi-step wizard navigation,
@@ -13,7 +18,7 @@ It is a *higher-level* alternative to libraries like React Hook Form. There is n
 `useForm`, `register`, or `Controller` to wire up. **The schema is the source of truth.**
 
 <Callout title="The one-sentence mental model">
-	You write a typed `FormSchema`. `<Form>` reads it, builds the state store, renders the
+	You write a typed `FormSchema`. The runtime reads it, builds the state store, renders the
 	right control for each question, runs validation, evaluates dependencies, and hands you
 	the validated values on submit.
 </Callout>
@@ -23,7 +28,7 @@ It is a *higher-level* alternative to libraries like React Hook Form. There is n
 The form below is **live** — it is the genuine `@easy-forms/core` engine rendering the
 schema beside it, with the `@easy-forms` renderer registry.
 
-<LiveForm
+<SchemaPreview
 	schema={{
 		title: 'Say hello',
 		groups: [

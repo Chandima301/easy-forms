@@ -10,9 +10,10 @@ import { createFormStore } from '@easy-forms/core';
 const store = createFormStore({ initialValues, validationMode });
 ```
 
-Most apps never call this — `<Form>` creates a store internally. Create one yourself to
-drive values programmatically or share state across components, then pass it to
-`<Form store={store}>`.
+Most apps never call this — [`useFormRuntime`](/docs/api/use-form-runtime) creates a store
+internally, and the ejected `<EasyForm>` calls that hook. Create one yourself to drive values
+from outside the form or share one store across components, then pass it as
+`<EasyForm store={store}>`.
 
 ## Options
 

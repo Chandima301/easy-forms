@@ -41,7 +41,19 @@ export function DropdownRenderer({
 					aria-describedby={showError ? `${question.key}-error` : undefined}
 					onBlur={onBlur}
 				>
-					<SelectValue placeholder={question.placeholder ?? 'Select...'} />
+					{/* Base UI's SelectValue renders the raw *value* unless given a
+					    formatter, so a selected `us` showed as "us" rather than "United
+					    States". Radix (what registry consumers wire up) renders the item's
+					    children instead, which is why only this docs copy needs it. Note
+					    a `children` function overrides the `placeholder` prop, so the
+					    empty case is handled here too. */}
+					<SelectValue>
+						{(val) =>
+							val == null || val === ''
+								? (question.placeholder ?? 'Select...')
+								: (options.find((o) => String(o.value) === String(val))?.label ?? String(val))
+						}
+					</SelectValue>
 				</SelectTrigger>
 				<SelectContent>
 					{options.map((opt) => (

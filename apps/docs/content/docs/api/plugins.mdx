@@ -4,7 +4,8 @@ description: Lifecycle hooks and the built-in logger / autosave plugins.
 icon: Plug
 ---
 
-Plugins observe and react to the form lifecycle. Pass them to `<Form plugins={[...]}>`.
+Plugins observe and react to the form lifecycle. Pass them to `<EasyForm plugins={[...]}>`,
+or to `useFormRuntime(schema, { plugins })` if you are wiring your own chrome.
 
 ## definePlugin
 
@@ -26,7 +27,7 @@ Each hook receives a `PluginContext` with access to the store and current values
 ```ts
 import { loggerPlugin } from '@easy-forms/core';
 
-<Form plugins={[loggerPlugin({ prefix: '[signup]' })]} ... />;
+<EasyForm plugins={[loggerPlugin({ prefix: '[signup]' })]} ... />;
 ```
 
 Logs lifecycle events to the console — handy in development.
@@ -36,7 +37,7 @@ Logs lifecycle events to the console — handy in development.
 ```ts
 import { autosavePlugin } from '@easy-forms/core';
 
-<Form plugins={[autosavePlugin({ key: 'draft', debounceMs: 800 })]} ... />;
+<EasyForm plugins={[autosavePlugin({ key: 'draft', debounceMs: 800 })]} ... />;
 ```
 
 Debounced persistence of form values. Use it for draft-saving long forms.

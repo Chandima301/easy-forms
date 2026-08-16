@@ -29,10 +29,16 @@ export const baseOptions: BaseLayoutProps = {
 			</span>
 		),
 	},
+	// `on: 'nav'` is honoured by HomeLayout ONLY — it keeps these in the marketing
+	// top bar and out of its mobile menu. DocsLayout ignores `.on` entirely and
+	// renders every non-icon link above the page tree, so it is `links={[]}` in
+	// app/docs/layout.tsx that keeps the docs sidebar opening on "Get started".
+	// Do not remove that override on the assumption these markers cover it.
 	links: [
-		{ text: 'Docs', url: '/docs', active: 'nested-url' },
-		{ text: 'Examples', url: '/examples' },
-		{ text: 'Enterprise', url: '/enterprise' },
+		{ text: 'Docs', url: '/docs', active: 'nested-url', on: 'nav' },
+		{ text: 'Examples', url: '/examples', on: 'nav' },
+		{ text: 'Pricing', url: '/pricing', on: 'nav' },
+		{ text: 'Contact', url: '/contact', on: 'nav' },
 	],
 	githubUrl: 'https://github.com/Chandima301/easy-forms',
 };

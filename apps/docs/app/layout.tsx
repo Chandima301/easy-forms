@@ -8,7 +8,7 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const inter = Inter({ subsets: ['latin'] });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://easy-forms.dev';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://easy-forms-docs.vercel.app';
 
 export const metadata = {
 	metadataBase: new URL(SITE_URL),
